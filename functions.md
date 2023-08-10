@@ -10,10 +10,10 @@ gethostbyname:	Gets host information by its name (IPv4).
 getaddrinfo:	Gets address information based on host and service (IPv6 support).
 freeaddrinfo:	Frees the memory allocated by getaddrinfo.
 ##	Socket Binding and Connection Functions:
-bind:	Binds a socket to a specific address and port.
+bind:		Binds a socket to a specific address and port.
 connect:	Initiates a connection on a socket.
-listen:	Marks a socket as passive and ready to accept incoming connections.
-accept:	Accepts an incoming connection request, creating a new connected socket.
+listen:		Marks a socket as passive and ready to accept incoming connections.
+accept:		Accepts an incoming connection request, creating a new connected socket.
 
 #	Network Byte Order Conversion Functions:
 htons:	Converts a short integer (16 bits) from host byte order to network byte order (big-endian).
