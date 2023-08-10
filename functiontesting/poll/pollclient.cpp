@@ -20,7 +20,7 @@ int main() {
     // Set server address
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Replace with the server IP address
-    serverAddr.sin_port = htons(12345); // Replace with the desired port
+    serverAddr.sin_port = htons(6667); // Replace with the desired port
 
     // Connect to the server
     if (connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {

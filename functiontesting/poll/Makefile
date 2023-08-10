@@ -1,10 +1,16 @@
-all:
-	c++ pollserver.cpp -o pollserver
-	c++ pollclient.cpp -o pollclient
+FILES :=	pollserver\
+			pollclient\
+			gptserver\
+			gptclient\
+			eavesdrop
+
+all: $(FILES)
+
+%: %.cpp
+	c++ $< -o $@
 
 clean:
-	rm -f pollclient
-	rm -f pollserver
+	rm -f $(FILES)
 
 fclean: clean
 
