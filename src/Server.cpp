@@ -16,6 +16,7 @@
 #include <iostream>
 // std::
 // int	stoi(const char *)
+#include <iomanip>
 #include <sys/socket.h>
 //	int		socket(int domain, int type, int protocol);
 //	ssize_t	recv(int socket, void *buffer, size_t length, int flags);
@@ -46,6 +47,7 @@
 // }
 Server::Server(int argc, char **argv)
 {
+	this->pollInfo.fd = -1;
 	if (argc < 3)
 		throw (std::range_error("Not enough aruments passed."));
 	if (argc > 3)
@@ -54,10 +56,11 @@ Server::Server(int argc, char **argv)
 	this->password = argv[2];
 	this->ip = this->getHostIp();
 	this->bootUpServer();
-
-	
-	// std::cout	<< this->validatePassword("password ")	<< std::endl;
-	// std::cout	<< "IP is:\t"	<< this->ip	<< std::endl;
+	std::cout	<< "\nServer setup complete.\n"	
+				<< std::left	<< std::setw(14)	<< " IP address: "	<< this->ip	<< "\n"
+				<< std::setw(14)	<< " Port: "	<< this->port	<< "\n"
+				<< "Ready to receive incoming users!"
+				<< std::right	<< std::endl;
 }
 
 Server::Server(const Server &src)
@@ -77,7 +80,8 @@ Server::Server(const Server &src)
 
 Server::~Server(void)
 {
-	close(this->pollInfo.fd);
+	if (this->pollInfo.fd != -1)
+		close(this->pollInfo.fd);
 	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< "Server"
 				<< C_DRED	<< " called"
@@ -93,15 +97,17 @@ Server::~Server(void)
 void	Server::bootUpServer(void)
 {
 	std::cout	<< C_BOLD	<< "Setting up server:\n"	<< C_RESET;
-	std::cout	<< "Connecting socket..."	<< std::endl;	
+	std::cout	<< "Creating socket for incoming connections...\n";
 	this->pollInfo.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->pollInfo.fd < 0)
 		throw (std::runtime_error("socket(): "));
+	std::cout	<< "Configuring socket for non-blocking mode...\n";
 	if (fcntl(this->pollInfo.fd, F_SETFL, fcntl(this->pollInfo.fd, F_GETFL, 0) | O_NONBLOCK) == -1)
 	{
 		close(this->pollInfo.fd);
 		throw (std::runtime_error("fcntl(): "));
 	}
+	std::cout	<< "Binding socket to port "	<< this->port	<< "...\n";
 	this->socketAddress.sin_family = AF_INET;
 	this->socketAddress.sin_port = htons(this->port);
 	this->socketAddress.sin_addr.s_addr = inet_addr(this->ip.c_str());
@@ -110,6 +116,7 @@ void	Server::bootUpServer(void)
 		close(this->pollInfo.fd);
 		throw (std::runtime_error("bind(): "));
 	}
+	std::cout	<< "Setting socket to listen for incoming connections...\n";
 	if (listen(this->pollInfo.fd, SOMAXCONN))
 	{
 		close(this->pollInfo.fd);
