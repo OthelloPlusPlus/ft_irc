@@ -40,6 +40,9 @@ class Server
 		Server(const Server &src);
 		~Server(void);
 
+		void	checkNewClient(void);
+		void	checkClients(void) const;
+
 		bool	validatePassword(const std::string password) const;
 
 		Server	&operator=(const Server &src);

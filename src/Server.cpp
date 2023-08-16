@@ -47,6 +47,10 @@
 // }
 Server::Server(int argc, char **argv)
 {
+	std::cout	<< std::left
+				<< C_HEADER	<< std::setw(76)	<< "Setting up server "
+				<< C_RESET	<< "\n";
+
 	this->pollInfo.fd = -1;
 	if (argc < 3)
 		throw (std::range_error("Not enough aruments passed."));
@@ -56,10 +60,12 @@ Server::Server(int argc, char **argv)
 	this->password = argv[2];
 	this->ip = this->getHostIp();
 	this->bootUpServer();
-	std::cout	<< "\nServer setup complete.\n"	
-				<< std::left	<< std::setw(14)	<< " IP address: "	<< this->ip	<< "\n"
-				<< std::setw(14)	<< " Port: "	<< this->port	<< "\n"
-				<< "Ready to receive incoming users!"
+	
+	std::cout	<< "\n"
+				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
+				<< std::setw(16)	<< " - IP address: "	<< this->ip	<< "\n"
+				<< std::setw(16)	<< " - Port: "	<< this->port	<< "\n"
+				<< " - Ready to receive incoming users!"
 				<< std::right	<< std::endl;
 }
 
@@ -96,17 +102,21 @@ Server::~Server(void)
 
 void	Server::bootUpServer(void)
 {
-	std::cout	<< C_BOLD	<< "Setting up server:\n"	<< C_RESET;
 	std::cout	<< "Creating socket for incoming connections...\n";
 	this->pollInfo.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->pollInfo.fd < 0)
 		throw (std::runtime_error("socket(): "));
 	std::cout	<< "Configuring socket for non-blocking mode...\n";
-	if (fcntl(this->pollInfo.fd, F_SETFL, fcntl(this->pollInfo.fd, F_GETFL, 0) | O_NONBLOCK) == -1)
+	if (fcntl(this->pollInfo.fd, F_SETFL, O_NONBLOCK) == -1)
 	{
 		close(this->pollInfo.fd);
 		throw (std::runtime_error("fcntl(): "));
 	}
+	// if (fcntl(this->pollInfo.fd, F_SETFL, fcntl(this->pollInfo.fd, F_GETFL, 0) | O_NONBLOCK) == -1)
+	// {
+	// 	close(this->pollInfo.fd);
+	// 	throw (std::runtime_error("fcntl(): "));
+	// }
 	std::cout	<< "Binding socket to port "	<< this->port	<< "...\n";
 	this->socketAddress.sin_family = AF_INET;
 	this->socketAddress.sin_port = htons(this->port);
@@ -131,12 +141,22 @@ std::string	Server::getHostIp(void) const
 	struct ifaddrs	*ifap0, *ifap;
 
 	if (getifaddrs(&ifap0))
-		throw(std::runtime_error("Couldn't get address."));
+		throw(std::runtime_error("getifaddrs(): "));
 	for (ifap = ifap0; ifap != nullptr; ifap = ifap->ifa_next)
 		if (ifap->ifa_addr && ifap->ifa_addr->sa_family == AF_INET)
 			ip = inet_ntoa(((struct sockaddr_in *)ifap->ifa_addr)->sin_addr);
 	freeifaddrs(ifap);
 	return (ip);
+}
+
+void	Server::checkNewClient(void)
+{
+	std::cout	<< "I'm checking for new!"	<< std::endl;
+}
+
+void	Server::checkClients(void) const
+{
+	std::cout	<< "I'm checking existing!"	<< std::endl;
 }
 
 bool	Server::validatePassword(const std::string password) const
