@@ -32,9 +32,11 @@ $(DIRS):
 	@mkdir $(DIRS)
 
 $(NAME): $(OBJ)
+	@printf	"Linking object files together in binary: %s\n"	$@
 	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
+	@printf	"Compiling object file: %s\n"	$@
 	@$(CC) $(CFLAGS) $(DEPFLAGS) $(INCL_HDR) -c $< -o $@
 
 -include $(DEP)
