@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/16 15:46:37 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/16 20:46:00 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/08/16 21:14:00 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ int	main(int argc, char **argv)
 		{
 			server.checkNewClient();
 			server.checkClients();
-			break ;
 		}
 	}
 	catch(const std::exception& e)

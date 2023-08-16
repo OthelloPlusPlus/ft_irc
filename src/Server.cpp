@@ -151,12 +151,43 @@ std::string	Server::getHostIp(void) const
 
 void	Server::checkNewClient(void)
 {
-	std::cout	<< "I'm checking for new!"	<< std::endl;
+	if (poll(&this->pollInfo, 1, 0) == -1)
+		throw (std::runtime_error("poll(): "));
+	if (this->pollInfo.revents == 0)
+		return ;
+	if (this->pollInfo.revents & POLLIN)
+		this->acceptClient();
+}
+
+void	Server::acceptClient(void)
+{
+	try
+	{
+		Client	*newClient = new Client;
+		this->clients.push_back(newClient);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr	<< C_RED	<< "Failed to connect Client: "	<< C_RESET
+					<< e.what() << std::endl;
+	}
 }
 
 void	Server::checkClients(void) const
 {
-	std::cout	<< "I'm checking existing!"	<< std::endl;
+	size_t	i;
+
+	i = this->clients.size();
+	while (i > 0)
+	{
+		// if (!this->clients[i - 1]->stillActive())
+		// {
+		// 	delete this->clients[i - 1];
+		// 	this->clients.erase(this->clients.begin() + i - 1);
+		// }
+		// this->clients[i - 1]->getMsg();
+		--i;
+	}
 }
 
 bool	Server::validatePassword(const std::string password) const
@@ -174,6 +205,11 @@ Server	&Server::operator=(const Server &src)
 {
 	if (this == &src)
 		return (*this);
-
+	this->pollInfo = src.pollInfo;
+	this->socketAddress = src.socketAddress;
+	this->clients = src.clients;
+	this->port = src.port;
+	this->password = src.password;
+	this->ip = src.ip;
 	return (*this);
 }

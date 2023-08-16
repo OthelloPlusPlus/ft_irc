@@ -13,24 +13,30 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-#include <iostream>
+# include "Client.hpp"
+
+# include <iostream>
 // std::
-#include <poll.h>
+# include <poll.h>
 // struct pollfd
-#include <netinet/in.h>
+# include <netinet/in.h>
 // struct sockaddr_in
+# include <vector>
+// std::vector
 
 class Server
 {
 	private:
-		struct pollfd		pollInfo;
-		struct sockaddr_in	socketAddress;
+		struct pollfd			pollInfo;
+		struct sockaddr_in		socketAddress;
+		std::vector<Client *>	clients;
 		int			port;
 		std::string	password;
 		std::string	ip;
 
 		std::string	getHostIp(void) const;
 		void		bootUpServer(void);
+		void		acceptClient(void);
 
 	protected:
 
