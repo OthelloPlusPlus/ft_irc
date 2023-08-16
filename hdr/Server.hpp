@@ -13,16 +13,34 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+#include <iostream>
+// std::
+#include <poll.h>
+// struct pollfd
+#include <netinet/in.h>
+// struct sockaddr_in
+
 class Server
 {
 	private:
+		struct pollfd		pollInfo;
+		struct sockaddr_in	socketAddress;
+		int			port;
+		std::string	password;
+		std::string	ip;
+
+		std::string	getHostIp(void) const;
+		void		bootUpServer(void);
 
 	protected:
 
 	public:
-		Server(void);
+		// Server(void);
+		Server(int argc, char **argv);
 		Server(const Server &src);
 		~Server(void);
+
+		bool	validatePassword(const std::string password) const;
 
 		Server	&operator=(const Server &src);
 };
