@@ -167,6 +167,13 @@ void	Server::acceptClient(void)
 	{
 		newClient = new Client;
 		// *newClient = new Client(this->pollInfo.fd);//when magicemy is ready
+		std::cout	<< "Creating new client!"	<< std::endl;
+		Client	*newClient = new Client(this->pollInfo.fd);
+		// newClient->initialize(this->pollInfo.fd);
+		// ipAddressFromSocketAddress(this->socketAddress)
+		newClient->sendMsg(":localhost 375 Othello :- ft_irc Message of the Day - \r\n");
+		newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
+		newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 		this->clients.push_back(newClient);
 	}
 	catch(const std::exception& e)

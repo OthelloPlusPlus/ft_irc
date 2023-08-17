@@ -14,9 +14,12 @@
 #include "colors.hpp"
 
 #include <iostream>
+#include <string>
 // std::
 #include <unistd.h>
 //	int	close(int fildes);
+#include <arpa/inet.h>
+// char		*inet_ntoa(struct in_addr);
 
 /** ************************************************************************ **\
  * 
@@ -24,12 +27,13 @@
  * 
 \* ************************************************************************** */
 
-Client::Client(void)
+Client::Client(int serverFD) //const std::string& ipAddress
 {
-	std::cout	<< C_DGREEN	<< "Default constructor "
+	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+	initialize(serverFD);
 }
 
 Client::Client(const Client &src)
@@ -61,6 +65,10 @@ Client::~Client(void)
  * 
 \* ************************************************************************** */
 
+std::string ipAddress(const struct sockaddr_in& socketAddress) {
+	return inet_ntoa(socketAddress.sin_addr);
+	}
+
 void	Client::initialize(int serverFD)
 {
 	this->socketAddressLen = sizeof(this->socketAddress);
@@ -68,25 +76,25 @@ void	Client::initialize(int serverFD)
 	if (this->pollInfo.fd < 0)
 		throw (std::runtime_error("accept(): "));
 	this->pollInfo.events = POLLIN;
-	
+	std::cout	<< __func__	<< " " <<  __LINE__	<< std::endl;
+	std::cout << ipAddress(this->socketAddress)	<< std::endl;
 	// this->username = "Othello";
-	this->sendMsg(":Othello!~Othello JOIN #WelcomeChannel\r\n");
+	// this->sendMsg(":Othello!~Othello JOIN #WelcomeChannel\r\n");
 	this->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
 }
 
 void    Client::sendMsg(std::string msg)
 {
-    // std::cout    << "About to send:\t"   << msg  << std::flush;
     std::cout   << "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
                 << "]\t"    << msg      << std::endl;
 }
 
-void	Client::getMsg(void)
+std::string	Client::getMsg(void)
 {
 	if (poll(&this->pollInfo, 1, 0) < 0)
 	{
 		std::cerr	<< "Error poll(): "	<< strerror(errno)	<< std::endl;
-		return ;
+		return "";
 	}
 	if (this->pollInfo.revents & POLLIN)
 	{
@@ -100,21 +108,23 @@ void	Client::getMsg(void)
 		if (recvLen == 0)
 		{
 			close(this->pollInfo.fd);
-			this->pollInfo.fd = 0;
+			this->pollInfo.fd = -1;
 			std::cout	<< "Client disconnected from server."	<< std::endl;
 		}
 		else
 		{
-			std::cout	<< buffer	<< std::endl;
-			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
+			std::cout	<< "Here comes the buffer \n" << buffer << "Here stops the buffer" << std::endl;
+			this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
 			this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
+			return buffer;
 		}
 	}
+	return "";
 }
 
 bool	Client::stillActive(void) const
 {
-	return (this->pollInfo.fd > 0);
+	return (this->pollInfo.fd != -1);
 }
 
 // void	Client::printInfo(void) const
