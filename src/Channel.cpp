@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Channel.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/03 20:34:08 by ohengelm          #+#    #+#             */
-/*   Updated: 2023/08/16 16:48:48 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Channel.cpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
+/*   Updated: 2023/08/17 16:37:29 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,42 @@ Channel::~Channel(void)
  * 
 \* ************************************************************************** */
 
+std::string	Channel::getName(void) const
+{
+	return (this->name);
+}
+
+std::string	Channel::getTopic(void) const
+{
+	return (this->topic);
+}
+
+void	Channel::sendMsgToChannel(Client *sender, std::string msg)
+{
+	size_t	i;
+
+	i = this->operators.size();
+	while (i > 0)
+	{
+		if (this->operators[i - 1]->stillActive() && \
+			this->operators[i - 1] != sender)
+			this->operators[i - 1]->sendMsg(msg);
+		--i;
+	}
+	i = this->clients.size();
+	while (i > 0)
+	{
+		if (this->clients[i - 1]->stillActive() && \
+			this->clients[i - 1] != sender)
+			this->clients[i - 1]->sendMsg(msg);
+		--i;
+	}
+}
+
+void	Channel::sendWhoToClient(Client *client, std::string msg)
+{
+	
+}
 
 /** ************************************************************************ **\
  * 

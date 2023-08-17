@@ -46,7 +46,10 @@ class Channel
 		Channel(const Channel &src);
 		~Channel(void);
 
+		void	sendMsgToChannel(Client *sender, std::string msg);
 
+		std::string	getName(void) const;
+		std::string	getTopic(void) const;
 
 		Channel	&operator=(const Channel &src);
 };
