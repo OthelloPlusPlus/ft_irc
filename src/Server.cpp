@@ -15,6 +15,22 @@
 
 #include <iostream>
 // std::
+// int	stoi(const char *)
+#include <iomanip>
+#include <sys/socket.h>
+//	int		socket(int domain, int type, int protocol);
+//	ssize_t	recv(int socket, void *buffer, size_t length, int flags);
+//	int		bind(int socket, const struct sockaddr *address, socklen_t address_len);
+//	int		listen(int socket, int backlog);
+#include <fcntl.h>
+//	int	fcntl(int fildes, int cmd, ...);
+#include <unistd.h>
+//	int	close(int fildes);
+#include <ifaddrs.h>
+// int	getifaddrs(ifaddrs **)
+// void	freeifaddrs(ifaddrs *)
+#include <arpa/inet.h>
+// char	*inet_ntoa(in_addr)
 
 /** ************************************************************************ **\
  * 
@@ -84,6 +100,109 @@ Server::~Server(void)
  * 
 \* ************************************************************************** */
 
+void	Server::bootUpServer(void)
+{
+	std::cout	<< "Creating socket for incoming connections...\n";
+	this->pollInfo.fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->pollInfo.fd < 0)
+		throw (std::runtime_error("socket(): "));
+	std::cout	<< "Configuring socket for non-blocking mode...\n";
+	if (fcntl(this->pollInfo.fd, F_SETFL, O_NONBLOCK) == -1)
+	{
+		close(this->pollInfo.fd);
+		throw (std::runtime_error("fcntl(): "));
+	}
+	// if (fcntl(this->pollInfo.fd, F_SETFL, fcntl(this->pollInfo.fd, F_GETFL, 0) | O_NONBLOCK) == -1)
+	// {
+	// 	close(this->pollInfo.fd);
+	// 	throw (std::runtime_error("fcntl(): "));
+	// }
+	std::cout	<< "Binding socket to port "	<< this->port	<< "...\n";
+	this->socketAddress.sin_family = AF_INET;
+	this->socketAddress.sin_port = htons(this->port);
+	this->socketAddress.sin_addr.s_addr = inet_addr(this->ip.c_str());
+	if (bind(this->pollInfo.fd, (struct sockaddr *)&this->socketAddress, sizeof(this->socketAddress)))
+	{
+		close(this->pollInfo.fd);
+		throw (std::runtime_error("bind(): "));
+	}
+	std::cout	<< "Setting socket to listen for incoming connections...\n";
+	if (listen(this->pollInfo.fd, SOMAXCONN))
+	{
+		close(this->pollInfo.fd);
+		throw (std::runtime_error("listen(): "));
+	}
+	this->pollInfo.events = POLLIN;
+}
+
+std::string	Server::getHostIp(void) const
+{
+	std::string		ip;
+	struct ifaddrs	*ifap0, *ifap;
+
+	if (getifaddrs(&ifap0))
+		throw(std::runtime_error("getifaddrs(): "));
+	for (ifap = ifap0; ifap != nullptr; ifap = ifap->ifa_next)
+		if (ifap->ifa_addr && ifap->ifa_addr->sa_family == AF_INET)
+			ip = inet_ntoa(((struct sockaddr_in *)ifap->ifa_addr)->sin_addr);
+	freeifaddrs(ifap);
+	return (ip);
+}
+
+void	Server::checkNewClient(void)
+{
+	if (poll(&this->pollInfo, 1, 0) == -1)
+		throw (std::runtime_error("poll(): "));
+	if (this->pollInfo.revents == 0)
+		return ;
+	if (this->pollInfo.revents & POLLIN)
+		this->acceptClient();
+}
+
+void	Server::acceptClient(void)
+{
+	Client	*newClient;
+
+	try
+	{
+		newClient = new Client;
+		// *newClient = new Client(this->pollInfo.fd);//when magicemy is ready
+		this->clients.push_back(newClient);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr	<< C_RED	<< "Failed to connect Client: "	<< C_RESET
+					<< e.what() << std::endl;
+	}
+}
+
+void	Server::checkClients(void) const
+{
+	size_t	i;
+
+	i = this->clients.size();
+	while (i > 0)
+	{
+		if (!this->clients[i - 1]->stillActive())
+		{
+			delete this->clients[i - 1];
+			this->clients.erase(this->clients.begin() + i - 1);
+		}
+		else
+		{
+			std::string	msg = this->clients[i - 1]->getMsg();
+			std::cout	<< "Server received:\t["	
+						<< C_ORANGE	<< msg	
+						<< C_RESET	<< "]"	<< std::endl;
+		}
+		--i;
+	}
+}
+
+bool	Server::validatePassword(const std::string password) const
+{
+	return (this->password == password);
+}
 
 /** ************************************************************************ **\
  * 
