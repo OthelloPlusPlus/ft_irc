@@ -14,20 +14,30 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-#include <netinet/in.h>
+# include "Client.hpp"
+
+# include <netinet/in.h>
 // struct sockaddr_in
 // socklen_t
-#include <poll.h>
+# include <poll.h>
 // struct pollfd
-#include <iostream>
+# include <iostream>
 // std::
+# include <vector>
+// std::vector
 
 class Channel
 {
 	private:
-		// std::string	name;
-		// std::string	topic;
-		// int			mode;
+		std::string	name;
+		std::string	topic;
+		bool		modeInvite;
+		bool		modeTopic;
+		std::string	key;
+		int			userLimit;
+
+		std::vector<Client *>	operators;
+		std::vector<Client *>	clients;
 
 	protected:
 
