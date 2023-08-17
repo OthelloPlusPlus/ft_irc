@@ -20,6 +20,7 @@
 // struct pollfd
 #include <iostream>
 // std::
+#include <vector>
 
 class Client
 {
@@ -28,9 +29,11 @@ class Client
 		socklen_t			socketAddressLen;
 		struct pollfd		pollInfo;
 
-		std::string			username;
-		std::string			nickname;
-		// bool				admin;
+		std::vector<std::string> cmd;
+		std::string				_buffer;
+		std::string				username;
+		std::string				nickname;
+		// bool					admin;
 
 	protected:
 
@@ -42,6 +45,8 @@ class Client
 		void		initialize(int serverFd);
 		void		sendMsg(std::string msg);
 		std::string	getMsg(void);
+		std::string	getBuff(void);
+		void		setBuff(std::string buffer);
 		bool		stillActive(void) const;
 		// void	printInfo(void) const;
 

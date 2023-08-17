@@ -21,6 +21,9 @@
 #include <arpa/inet.h>
 // char		*inet_ntoa(struct in_addr);
 
+#include "Message.hpp"
+// namespace Message
+
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -66,8 +69,7 @@ Client::~Client(void)
 \* ************************************************************************** */
 
 std::string ipAddress(const struct sockaddr_in& socketAddress) {
-	return inet_ntoa(socketAddress.sin_addr);
-}
+	return inet_ntoa(socketAddress.sin_addr);}
 
 void	Client::initialize(int serverFD)
 {
@@ -116,20 +118,29 @@ std::string	Client::getMsg(void)
 		}
 		else
 		{
-			std::cout	<< "Here comes the buffer \n" << buffer << "Here stops the buffer" << std::endl;
-			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
-			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
-			return buffer;
+			this->_buffer = buffer;
+			Message::cleanMsg(*this);
+			std::cout << _buffer << "Here stops the new buffer" << std::endl;
+			return this->_buffer;
 		}
 	}
 	return "";
 }
 
+	// this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
+	// this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
 bool	Client::stillActive(void) const
 {
 	return (this->pollInfo.fd != -1);
 }
 
+std::string	Client::getBuff(void){
+	return _buffer;
+}
+
+void Client::setBuff(std::string buffer){
+	this->_buffer = buffer;
+}
 // void	Client::printInfo(void) const
 // {
 // 	std::cout	<< "socketAddress.sin_addr.s_addr\t"	<< this->socketAddress.sin_addr.s_addr	<< "\n"
