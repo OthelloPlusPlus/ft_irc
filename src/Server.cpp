@@ -71,7 +71,7 @@ bool	Server::initialize(void)
 	{
 		this->socketAddress.sin_family = AF_INET;
 		this->socketAddress.sin_port = htons(6667);
-		this->socketAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
+		this->socketAddress.sin_addr.s_addr = inet_addr("10.11.2.7"); //ipconfig getifaddr en0
 		this->socketAddressLen = sizeof(this->socketAddress);
 		this->setSocket();
 		this->pollInfo.events = POLLIN;
@@ -119,12 +119,13 @@ bool	Server::checkNewClients(void)
 
 void	Server::acceptClient(void)
 {
-	Client	*newClient = new Client;
 
 	try
 	{
 		std::cout	<< "Creating new client!"	<< std::endl;
-		newClient->initialize(this->pollInfo.fd);
+		Client	*newClient = new Client(this->pollInfo.fd);
+		// newClient->initialize(this->pollInfo.fd);
+		// ipAddressFromSocketAddress(this->socketAddress)
 		newClient->sendMsg(":localhost 375 Othello :- ft_irc Message of the Day - \r\n");
 		newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
 		newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");

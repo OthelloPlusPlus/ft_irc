@@ -35,14 +35,14 @@ class Client
 	protected:
 
 	public:
-		Client(void);
+		Client(int serverFD);
 		Client(const Client &src);
 		~Client(void);
 
-		void	initialize(int serverFd);
-		void	sendMsg(std::string msg);
-		void	getMsg(void);
-		bool	stillActive(void) const;
+		void		initialize(int serverFd);
+		void		sendMsg(std::string msg);
+		std::string	getMsg(void);
+		bool		stillActive(void) const;
 		// void	printInfo(void) const;
 
 		Client	&operator=(const Client &src);
