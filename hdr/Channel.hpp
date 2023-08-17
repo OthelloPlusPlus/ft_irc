@@ -39,14 +39,23 @@ class Channel
 		std::vector<Client *>	operators;
 		std::vector<Client *>	clients;
 
+		void	sendTopic(Client *client);
+		void	sendNames(Client *client);
+		void	sendPrivMsg(Client *sender, std::string msg);
+
+		void	kickClient(Client *client);
+		void	inviteClient(Client *client);
+		
 	protected:
 
 	public:
-		Channel(void);
+		Channel(std::string name);
 		Channel(const Channel &src);
 		~Channel(void);
 
-		void	sendMsgToChannel(Client *sender, std::string msg);
+		void	addClient(Client *newClient);
+		// void	sendMsgToChannel(Client *sender, std::string msg);
+		void	sendWho(Client *client);
 
 		std::string	getName(void) const;
 		std::string	getTopic(void) const;

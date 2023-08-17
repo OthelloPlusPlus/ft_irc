@@ -175,6 +175,8 @@ void	Server::acceptClient(void)
 		// newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
 		// newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 		this->clients.push_back(newClient);
+		Channel channel("#WelcomeChannel");
+		channel.addClient(newClient);
 	}
 	catch(const std::exception& e)
 	{
@@ -199,9 +201,18 @@ void	Server::checkClients(void)
 		{
 			std::string	msg = this->clients[i - 1]->getMsg();
 			if (!msg.empty())
+			{
 				std::cout	<< "Server received:\n"	
 							<< C_ORANGE	<< msg	
 							<< C_RESET	<< std::endl;
+				// if (msg == "WHO #WelcomeChannel\r\n")
+				// {
+				// 	Channel	channel;
+				// 	channel.sendWhoToClient(this->clients[i - 1]);
+				// }
+				// else
+				// 	std::cout	<< "diff message!"	<< std::endl;
+			}
 		}
 		--i;
 	}

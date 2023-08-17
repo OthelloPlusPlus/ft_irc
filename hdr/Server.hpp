@@ -14,6 +14,7 @@
 # define SERVER_HPP
 
 # include "Client.hpp"
+# include "Channel.hpp"
 
 # include <iostream>
 // std::
