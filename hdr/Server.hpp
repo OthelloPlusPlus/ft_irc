@@ -47,7 +47,7 @@ class Server
 		~Server(void);
 
 		void	checkNewClient(void);
-		void	checkClients(void) const;
+		void	checkClients(void);
 
 		bool	validatePassword(const std::string password) const;
 

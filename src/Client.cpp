@@ -67,7 +67,7 @@ Client::~Client(void)
 
 std::string ipAddress(const struct sockaddr_in& socketAddress) {
 	return inet_ntoa(socketAddress.sin_addr);
-	}
+}
 
 void	Client::initialize(int serverFD)
 {
@@ -81,6 +81,9 @@ void	Client::initialize(int serverFD)
 	// this->username = "Othello";
 	// this->sendMsg(":Othello!~Othello JOIN #WelcomeChannel\r\n");
 	this->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
+	this->sendMsg(":localhost 375 Othello :- ft_irc Message of the Day - \r\n");
+	this->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
+	this->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 }
 
 void    Client::sendMsg(std::string msg)
@@ -114,8 +117,8 @@ std::string	Client::getMsg(void)
 		else
 		{
 			std::cout	<< "Here comes the buffer \n" << buffer << "Here stops the buffer" << std::endl;
-			this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
-			this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
+			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
+			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
 			return buffer;
 		}
 	}

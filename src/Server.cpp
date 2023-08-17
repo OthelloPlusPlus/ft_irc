@@ -165,15 +165,15 @@ void	Server::acceptClient(void)
 
 	try
 	{
-		newClient = new Client;
-		// *newClient = new Client(this->pollInfo.fd);//when magicemy is ready
-		std::cout	<< "Creating new client!"	<< std::endl;
+		// newClient = new Client;
+		// // *newClient = new Client(this->pollInfo.fd);//when magicemy is ready
+		// std::cout	<< "Creating new client!"	<< std::endl;
 		Client	*newClient = new Client(this->pollInfo.fd);
 		// newClient->initialize(this->pollInfo.fd);
 		// ipAddressFromSocketAddress(this->socketAddress)
-		newClient->sendMsg(":localhost 375 Othello :- ft_irc Message of the Day - \r\n");
-		newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
-		newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
+		// newClient->sendMsg(":localhost 375 Othello :- ft_irc Message of the Day - \r\n");
+		// newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
+		// newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 		this->clients.push_back(newClient);
 	}
 	catch(const std::exception& e)
@@ -183,7 +183,7 @@ void	Server::acceptClient(void)
 	}
 }
 
-void	Server::checkClients(void) const
+void	Server::checkClients(void)
 {
 	size_t	i;
 
@@ -198,9 +198,10 @@ void	Server::checkClients(void) const
 		else
 		{
 			std::string	msg = this->clients[i - 1]->getMsg();
-			std::cout	<< "Server received:\t["	
-						<< C_ORANGE	<< msg	
-						<< C_RESET	<< "]"	<< std::endl;
+			if (!msg.empty())
+				std::cout	<< "Server received:\n"	
+							<< C_ORANGE	<< msg	
+							<< C_RESET	<< std::endl;
 		}
 		--i;
 	}
