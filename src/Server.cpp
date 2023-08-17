@@ -161,9 +161,12 @@ void	Server::checkNewClient(void)
 
 void	Server::acceptClient(void)
 {
+	Client	*newClient;
+
 	try
 	{
-		Client	*newClient = new Client;
+		newClient = new Client;
+		// *newClient = new Client(this->pollInfo.fd);//when magicemy is ready
 		this->clients.push_back(newClient);
 	}
 	catch(const std::exception& e)
@@ -180,12 +183,18 @@ void	Server::checkClients(void) const
 	i = this->clients.size();
 	while (i > 0)
 	{
-		// if (!this->clients[i - 1]->stillActive())
-		// {
-		// 	delete this->clients[i - 1];
-		// 	this->clients.erase(this->clients.begin() + i - 1);
-		// }
-		// this->clients[i - 1]->getMsg();
+		if (!this->clients[i - 1]->stillActive())
+		{
+			delete this->clients[i - 1];
+			this->clients.erase(this->clients.begin() + i - 1);
+		}
+		else
+		{
+			std::string	msg = this->clients[i - 1]->getMsg();
+			std::cout	<< "Server received:\t["	
+						<< C_ORANGE	<< msg	
+						<< C_RESET	<< "]"	<< std::endl;
+		}
 		--i;
 	}
 }
