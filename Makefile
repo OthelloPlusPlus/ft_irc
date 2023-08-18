@@ -18,7 +18,7 @@ SRC_DIR =	src/
 SRC_MAIN =	main.cpp
 SRC_CLASS =	Server.cpp Client.cpp Channel.cpp
 SRC_FUNC =	
-SRC_NMSPC =	Message.cpp
+SRC_NMSPC =	Command.cpp
 
 DIRS =	$(OBJ_DIR) $(DEP_DIR)
 OBJ_DIR =	obj/
