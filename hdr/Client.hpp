@@ -20,6 +20,7 @@
 // struct pollfd
 #include <iostream>
 // std::
+#include <vector>
 
 class Client
 {
@@ -28,10 +29,18 @@ class Client
 		socklen_t			socketAddressLen;
 		struct pollfd		pollInfo;
 
-		std::string			username;
-		std::string			nickname;
+		std::string			_IpHostName;
+		std::string			_userName;
+		std::string			_identName;
+		std::string			_realName;
+		std::string			_nickName;
+		std::string			_password;
+		std::string			_server;
+		std::string			_hostName;
 		// bool				admin;
 
+		std::vector<std::string> _cmd;
+		std::string				_buffer;
 	protected:
 
 	public:
@@ -40,13 +49,31 @@ class Client
 		~Client(void);
 
 		void		initialize(int serverFd);
+		bool		stillActive(void) const;
+
 		void		sendMsg(std::string msg);
 		std::string	getMsg(void);
-		bool		stillActive(void) const;
-		// void	printInfo(void) const;
+
+		std::string	const &getBuff(void) const;
+		std::string const &getUserName(void) const; 
+		std::string const &getIdentName(void) const; // Emanuela De la Vega
+		std::string const &getRealName(void) const; //Emanuela Licameli
+		std::string const &getNickName(void) const; //Magic
+		std::string const &getPassword(void) const; //Gatto
+		std::string const &getServer(void) const; //computer of server
+		std::string const &getIpHostName(void) const; //computer of client
+
+		void setBuff(std::string buffer);
+		void setUserName(std::string username);
+		void setIdentName(std::string identname);
+		void setRealName(std::string realname);
+		void setNickName(std::string nickname);
+		void setPassword(std::string password);
+		void setServer(std::string server);
+		void setIpHostName(std::string ipAddress);
 
 		Client	&operator=(const Client &src);
+		void	printInfo(void) const;
 };
 
 #endif
-

@@ -21,6 +21,9 @@
 #include <arpa/inet.h>
 // char		*inet_ntoa(struct in_addr);
 
+#include "Command.hpp"
+// namespace Command
+
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -76,11 +79,8 @@ void	Client::initialize(int serverFD)
 	if (this->pollInfo.fd < 0)
 		throw (std::runtime_error("accept(): "));
 	this->pollInfo.events = POLLIN;
-	std::cout	<< __func__	<< " " <<  __LINE__	<< std::endl;
-	std::cout << ipAddress(this->socketAddress)	<< std::endl;
-	// this->username = "Othello";
-	this->sendMsg(":Othello!~Othello JOIN #WelcomeChannel\r\n");
-	// this->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
+	setIpHostName(ipAddress(this->socketAddress));
+	this->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
 	this->sendMsg(":localhost 375 Othello :- ft_irc Message of the Day - \r\n");
 	this->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
 	this->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
@@ -116,10 +116,12 @@ std::string	Client::getMsg(void)
 		}
 		else
 		{
-			std::cout	<< "Here comes the buffer \n" << buffer << "Here stops the buffer" << std::endl;
-			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
-			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
-			return buffer;
+			this->_buffer = buffer;
+			Command::parseMsg(*this);
+			this->printInfo();
+			this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
+			this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
+			return this->_buffer;
 		}
 	}
 	return "";
@@ -130,12 +132,62 @@ bool	Client::stillActive(void) const
 	return (this->pollInfo.fd != -1);
 }
 
-// void	Client::printInfo(void) const
-// {
-// 	std::cout	<< "socketAddress.sin_addr.s_addr\t"	<< this->socketAddress.sin_addr.s_addr	<< "\n"
-// 				<< "PollInfo.fd\t"	<< this->pollInfo.fd	<< "\n"
-// 				<< std::flush;
-// }
+std::string	const & Client::getBuff( void )const { return _buffer;}
+std::string const & Client::getUserName( void ) const  { return _userName; }
+std::string const & Client::getIdentName ( void ) const { return _identName; }
+std::string const & Client::getRealName( void ) const  { return _realName; }
+std::string const & Client::getNickName( void ) const  { return _nickName; }
+std::string const & Client::getPassword( void ) const  { return _password; }
+std::string const & Client::getServer( void ) const  { return _server; }
+std::string const & Client::getIpHostName( void ) const  { return _IpHostName; }
+
+void Client::setBuff(std::string buffer){
+	this->_buffer = buffer;
+}
+
+void Client::setUserName(std::string username){
+	this->_userName = username;
+}
+
+void Client::setIdentName(std::string identname){
+	this->_identName = identname;
+}
+
+void Client::setRealName(std::string realname){
+	this->_realName = realname;
+}
+
+void Client::setNickName(std::string nickname){
+	this->_nickName = nickname;
+}
+
+void Client::setPassword(std::string password){
+	this->_password = password;
+}
+
+void Client::setServer(std::string server){
+	this->_server = server;
+}
+
+void Client::setIpHostName(std::string ipAddress){
+	this->_IpHostName = ipAddress;
+}
+
+void	Client::printInfo(void) const
+{
+	std::cout << "this->getNickName()\t" << C_RED << this->getNickName() << C_RESET	<< std::endl;
+	std::cout << "this->getIdentName()\t" << C_RED << this->getIdentName() << C_RESET	<< std::endl;
+	std::cout << "this->getRealName()\t" << C_RED << this->getRealName() << C_RESET	<< std::endl;
+	std::cout << "this->getPassword()\t" << C_RED << this->getPassword() << C_RESET	<< std::endl;
+	std::cout << "this->getServer()\t" << C_RED << this->getServer() << C_RESET	<< std::endl;
+	std::cout << "this->getIpHostName()\t" << C_RED << this->getIpHostName() << C_RESET	<< std::endl;
+	std::cout << std::endl;
+	// std::cout	<< "socketAddress.sin_addr.s_addr\t"	
+	//				<< this->socketAddress.sin_addr.s_addr	<< "\n"
+	// 				<< "PollInfo.fd\t"	<< this->pollInfo.fd	<< "\n"
+	// 				<< std::flush;
+}
+// std::cout	<< __func__	<< " " <<  __LINE__	<< std::endl;
 
 /** ************************************************************************ **\
  * 
