@@ -117,10 +117,9 @@ std::string	Client::getMsg(void)
 		else
 		{
 			this->_buffer = buffer;
-			Command::parseMsg(*this);
-			this->printInfo();
+			// this->printInfo();
 			this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
-			this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
+			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
 			return this->_buffer;
 		}
 	}

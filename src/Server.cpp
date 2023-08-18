@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 #include "colors.hpp"
+#include "Command.hpp"
 
 #include <iostream>
 // std::
@@ -210,9 +211,17 @@ void	Server::checkClients(void)
 			std::string	msg = this->clients[i - 1]->getMsg();
 			if (!msg.empty())
 			{
+				if (this->clients[i - 1]->getNickName().empty())
+				{
+					Command::parseMsg(*this->clients[i - 1]);
+					std::cout	<< "Go gentle its my first time..."	<< std::endl;
+				}
+				else
+					Command::parseMsg(*this->clients[i - 1]);
 				std::cout	<< "Server received:\n"	
 							<< C_ORANGE	<< msg	
 							<< C_RESET	<< std::endl;
+				// this->clients[i - 1]->printInfo();
 				// if (msg == "WHO #WelcomeChannel\r\n")
 				// {
 				// 	Channel	channel;
