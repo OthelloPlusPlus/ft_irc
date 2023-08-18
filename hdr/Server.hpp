@@ -40,6 +40,8 @@ class Server
 		void		bootUpServer(void);
 		void		acceptClient(void);
 		void		joinChannel(Client *client, const std::string channelName);
+		void		sendWelcome(Client *client);
+
 
 	protected:
 
