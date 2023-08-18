@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/17 20:57:15 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/08/18 17:39:41 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,44 @@ std::string	Channel::getTopic(void) const
 	return (this->topic);
 }
 
+bool	Channel::userIsInChannel(const Client *client) const
+{
+	for (size_t i = this->users.size(); i > 0; --i)
+		if (this->users[i - 1].client == client)
+			return (true);
+	return (false);
+}
+
+void	Channel::setTopic(ChannelUser user, const std::string newTopic)
+{
+	if (this->modeTopic == false || user.admin == false)
+		return ;
+	this->topic = newTopic;
+}
+
 void	Channel::addClient(Client *newClient)
 {
-	this->clients.push_back(newClient);
-	this->sendTopic(newClient);
-	this->sendNames(newClient);
+	ChannelUser	newUser;
+
+	if (this->userIsInChannel(newClient))
+	{
+		std::cout	<< C_LRED	<< "User "
+					<< C_RESET	<< std::string("Othello")
+					<< C_LRED	" is already in channel "
+					<< C_RESET	<< this->name	<< std::endl;
+		return ;
+	}
+	newUser.client = newClient;
+	newUser.admin = false;
+	newUser.timestamp = 0;
+	this->users.push_back(newUser);
+	newClient->sendMsg(":" + std::string("Othello") + " JOIN " + this->name + "\r\n");
+	this->sendTopic(newUser.client);
+	this->sendNames(newUser.client);
+	std::cout	<< C_LGREEN	<< "User "
+				<< C_RESET	<< std::string("Othello")
+				<< C_LGREEN	<< " joined "
+				<< C_RESET	<< this->name	<< std::endl;
 }
 
 // void	Channel::sendMsgToChannel(Client *sender, std::string msg)
@@ -101,7 +134,6 @@ void	Channel::addClient(Client *newClient)
 // 	}
 // }
 
-
 void	Channel::sendTopic(Client *client)
 {
 	std::string	msg;
@@ -115,10 +147,12 @@ void	Channel::sendNames(Client *client)
 	std::string	msg;
 
 	msg = ": 353 " + std::string("Othello") + " = " + this->name + " :";
-	for (size_t i = this->operators.size(); i > 0; --i)
-		msg += "@" + std::string("Othello") + " ";
-	for (size_t i = this->clients.size(); i > 0; --i)
-		msg += std::string("Othello") + " ";
+	for (size_t i = this->users.size(); i > 0; --i)
+	{
+		if (this->users[i - 1].admin == true)
+			msg += "@";
+		msg+= std::string("Othello") + " ";
+	}
 	msg += "\r\n";
 	client->sendMsg(msg);
 	msg = ": 366 " + std::string("Othello") + " " + this->name + " :end of /Names list.\r\n";
@@ -128,12 +162,9 @@ void	Channel::sendNames(Client *client)
 void	Channel::sendPrivMsg(Client *sender, std::string msg)
 {
 	msg = ":" + std::string("Othello") + " PRIVMSG " + this->name + " :" + msg + "\r\n";
-	for (size_t i = this->operators.size(); i > 0; --i)
-		if (this->operators[i - 1] != sender)
-			this->operators[i - 1]->sendMsg(msg);
-	for (size_t i = this->clients.size(); i > 0; --i)
-		if (this->clients[i - 1] != sender)
-			this->clients[i - 1]->sendMsg(msg);
+	for (size_t i = this->users.size(); i > 0; --i)
+		if (this->users[i - 1].client != sender)
+			this->users[i - 1].client->sendMsg(msg);
 // client->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
 }
 
@@ -141,25 +172,19 @@ void	Channel::sendWho(Client *client)
 {
 	std::string	msg;
 
-	// msg = ": 352 " + std::string("Othello") + " " + this->name + " ";
-	// for (size_t i = this->operators.size(); i > 0; --i)
+	msg = ": 352 " + std::string("Othello") + " " + this->name + " ";
+	// for (size_t i = this->users.size(); i > 0; --i)
 	// {
 	// 	std::string	msgWho;
-	// 	msgWho = msg +	this->operators[i - 1].getIdentName() + " " + \
-	// 					this->operators[i - 1].getHostName() + " " + \
-	// 					this->operators[i - 1].getServer() + " " + \
-	// 					this->operators[i - 1].getNick() + " H@:0 " + \
-	// 					this->operators[i - 1].getRealName() + "\r\n";
-	// 	client->sendMsg(msgWho);
-	// }
-	// for (size_t i = this->clients.size(); i > 0; --i)
-	// {
-	// 	std::string	msgWho;
-	// 	msgWho = msg +	this->clients[i - 1].getIdentName() + " " + \
-	// 					this->clients[i - 1].getHostName() + " " + \
-	// 					this->clients[i - 1].getServer() + " " + \
-	// 					this->clients[i - 1].getNick() + " H:0 " + \
-	// 					this->clients[i - 1].getRealName() + "\r\n";
+	// 	msgWho = msg +	this->users[i - 1].client->getIdentName() + " " + \
+	// 					this->users[i - 1].client->getHostName() + " " + \
+	// 					this->users[i - 1].client->getServer() + " " + \
+	// 					this->users[i - 1].client->getNick();
+	// 	if (this->users[i - 1].admin == true)
+	// 		msgWho += " H@:0 ";
+	// 	else
+	// 		msgWho += " H:0 ";
+	// 	msgWho +=		this->users[i - 1].client->getRealName() + "\r\n";
 	// 	client->sendMsg(msgWho);
 	// }
 	msg = ": 315 " + std::string("Othello") + " " + this->name + " :End of /WHO list.\r\n";
@@ -174,18 +199,33 @@ void	Channel::inviteClient(Client *client)
 	client->sendMsg(msg);
 }
 
-void	Channel::kickClient(Client *client)
+void	Channel::removeUser(const Client *client)
 {
-	for (size_t i = this->clients.size(); i > 0; --i)
-	{
-		if (this->clients[i - 1] == client)
+	for (size_t i = this->users.size(); i > 0; --i)
+		if (this->users[i - 1].client == client)
 		{
-			this->clients[i - 1]->sendMsg("PART " + this->name);
-			this->clients.erase(this->clients.begin() + 1 - 1);
+			this->users[i - 1].client->sendMsg("PART " + this->name);
+			this->users.erase(this->users.begin() + i - 1);
+			std::cout	<< C_LORANGE	<< "User "
+						<< C_RESET	<< std::string("Othello")
+						<< C_LORANGE	<< " has left channel "
+						<< C_RESET	<< this->name	<< std::endl;
 			return ;
 		}
-	}
 }
+
+// void	Channel::kickClient(Client *client)
+// {
+// 	for (size_t i = this->users.size(); i > 0; --i)
+// 	{
+// 		if (this->users[i - 1].client == client)
+// 		{
+// 			this->users[i - 1].client->sendMsg("PART " + this->name);
+// 			this->users.erase(this->users.begin() + i - 1);
+// 			return ;
+// 		}
+// 	}
+// }
 
 /** ************************************************************************ **\
  * 

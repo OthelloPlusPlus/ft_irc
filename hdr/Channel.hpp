@@ -28,6 +28,13 @@
 
 class Channel
 {
+	struct ChannelUser
+	{
+		Client			*client;
+		bool			admin;
+		unsigned int	timestamp;
+	};
+
 	private:
 		std::string	name;
 		std::string	topic;
@@ -36,15 +43,19 @@ class Channel
 		std::string	key;
 		int			userLimit;
 
-		std::vector<Client *>	operators;
-		std::vector<Client *>	clients;
+		std::vector<ChannelUser>	users;
+
+		// std::vector<Client *>	operators;
+		// std::vector<Client *>	clients;
 
 		void	sendTopic(Client *client);
 		void	sendNames(Client *client);
 		void	sendPrivMsg(Client *sender, std::string msg);
 
-		void	kickClient(Client *client);
+		void	setTopic(ChannelUser user, const std::string newTopic);
+
 		void	inviteClient(Client *client);
+		// void	kickClient(Client *client);
 		
 	protected:
 
@@ -56,6 +67,8 @@ class Channel
 		void	addClient(Client *newClient);
 		// void	sendMsgToChannel(Client *sender, std::string msg);
 		void	sendWho(Client *client);
+		bool	userIsInChannel(const Client *client) const;
+		void	removeUser(const Client *client);
 
 		std::string	getName(void) const;
 		std::string	getTopic(void) const;

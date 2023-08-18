@@ -31,6 +31,7 @@ class Server
 		struct pollfd			pollInfo;
 		struct sockaddr_in		socketAddress;
 		std::vector<Client *>	clients;
+		std::vector<Channel *>	channels;
 		int			port;
 		std::string	password;
 		std::string	ip;
@@ -38,6 +39,7 @@ class Server
 		std::string	getHostIp(void) const;
 		void		bootUpServer(void);
 		void		acceptClient(void);
+		void		joinChannel(Client *client, const std::string channelName);
 
 	protected:
 

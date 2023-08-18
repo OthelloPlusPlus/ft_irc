@@ -175,8 +175,8 @@ void	Server::acceptClient(void)
 		// newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
 		// newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 		this->clients.push_back(newClient);
-		Channel channel("#WelcomeChannel");
-		channel.addClient(newClient);
+		this->joinChannel(newClient, "#WelcomeChannel");
+		this->joinChannel(newClient, "#WelcomeChannel");
 	}
 	catch(const std::exception& e)
 	{
@@ -194,6 +194,9 @@ void	Server::checkClients(void)
 	{
 		if (!this->clients[i - 1]->stillActive())
 		{
+			for (size_t j = this->channels.size(); j > 0; --j)
+				if (this->channels[j - 1]->userIsInChannel(this->clients[i - 1]))
+					this->channels[j - 1]->removeUser(this->clients[i - 1]);
 			delete this->clients[i - 1];
 			this->clients.erase(this->clients.begin() + i - 1);
 		}
@@ -221,6 +224,21 @@ void	Server::checkClients(void)
 bool	Server::validatePassword(const std::string password) const
 {
 	return (this->password == password);
+}
+
+void	Server::joinChannel(Client *client, const std::string channelName)
+{
+	for (size_t i = this->channels.size(); i > 0; --i)
+	{
+		if (this->channels[i - 1]->getName() == channelName)
+		{
+			this->channels[i - 1]->addClient(client);
+			return ;
+		}
+	}
+	Channel	*newChannel = new Channel(channelName);
+	this->channels.push_back(newChannel);
+	newChannel->addClient(client);
 }
 
 /** ************************************************************************ **\
