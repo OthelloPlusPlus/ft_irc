@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/18 17:39:41 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/08/18 18:57:46 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	Channel::addClient(Client *newClient)
 	if (this->userIsInChannel(newClient))
 	{
 		std::cout	<< C_LRED	<< "User "
-					<< C_RESET	<< std::string("Othello")
+					<< C_RESET	<< newClient->getNickName()
 					<< C_LRED	" is already in channel "
 					<< C_RESET	<< this->name	<< std::endl;
 		return ;
@@ -103,11 +103,11 @@ void	Channel::addClient(Client *newClient)
 	newUser.admin = false;
 	newUser.timestamp = 0;
 	this->users.push_back(newUser);
-	newClient->sendMsg(":" + std::string("Othello") + " JOIN " + this->name + "\r\n");
+	newClient->sendMsg(":" + newClient->getNickName() + " JOIN " + this->name + "\r\n");
 	this->sendTopic(newUser.client);
 	this->sendNames(newUser.client);
 	std::cout	<< C_LGREEN	<< "User "
-				<< C_RESET	<< std::string("Othello")
+				<< C_RESET	<< newClient->getNickName()
 				<< C_LGREEN	<< " joined "
 				<< C_RESET	<< this->name	<< std::endl;
 }
@@ -138,7 +138,7 @@ void	Channel::sendTopic(Client *client)
 {
 	std::string	msg;
 
-	msg = ": 332 " + std::string("Othello") + " " + this->name + " :" + this->topic + "\r\n";
+	msg = ": 332 " + client->getNickName() + " " + this->name + " :" + this->topic + "\r\n";
 	client->sendMsg(msg);
 }
 
@@ -146,22 +146,22 @@ void	Channel::sendNames(Client *client)
 {
 	std::string	msg;
 
-	msg = ": 353 " + std::string("Othello") + " = " + this->name + " :";
+	msg = ": 353 " + client->getNickName() + " = " + this->name + " :";
 	for (size_t i = this->users.size(); i > 0; --i)
 	{
 		if (this->users[i - 1].admin == true)
 			msg += "@";
-		msg+= std::string("Othello") + " ";
+		msg+= this->users[i - 1].client->getNickName() + " ";
 	}
 	msg += "\r\n";
 	client->sendMsg(msg);
-	msg = ": 366 " + std::string("Othello") + " " + this->name + " :end of /Names list.\r\n";
+	msg = ": 366 " + client->getNickName() + " " + this->name + " :end of /Names list.\r\n";
 	client->sendMsg(msg);
 }
 
 void	Channel::sendPrivMsg(Client *sender, std::string msg)
 {
-	msg = ":" + std::string("Othello") + " PRIVMSG " + this->name + " :" + msg + "\r\n";
+	msg = ":" + sender->getNickName() + " PRIVMSG " + this->name + " :" + msg + "\r\n";
 	for (size_t i = this->users.size(); i > 0; --i)
 		if (this->users[i - 1].client != sender)
 			this->users[i - 1].client->sendMsg(msg);
@@ -172,7 +172,7 @@ void	Channel::sendWho(Client *client)
 {
 	std::string	msg;
 
-	msg = ": 352 " + std::string("Othello") + " " + this->name + " ";
+	msg = ": 352 " + client->getNickName() + " " + this->name + " ";
 	// for (size_t i = this->users.size(); i > 0; --i)
 	// {
 	// 	std::string	msgWho;
@@ -187,7 +187,7 @@ void	Channel::sendWho(Client *client)
 	// 	msgWho +=		this->users[i - 1].client->getRealName() + "\r\n";
 	// 	client->sendMsg(msgWho);
 	// }
-	msg = ": 315 " + std::string("Othello") + " " + this->name + " :End of /WHO list.\r\n";
+	msg = ": 315 " + client->getNickName() + " " + this->name + " :End of /WHO list.\r\n";
 	client->sendMsg(msg);
 }
 
@@ -195,7 +195,7 @@ void	Channel::inviteClient(Client *client)
 {
 	std::string	msg;
 
-	msg = std::string("Othello") + "1" + std::string("Othello") + "JOIN" + this->name + "\r\n";
+	msg = client->getNickName() + "!" + client->getUserName() + "JOIN" + this->name + "\r\n";
 	client->sendMsg(msg);
 }
 
@@ -207,7 +207,7 @@ void	Channel::removeUser(const Client *client)
 			this->users[i - 1].client->sendMsg("PART " + this->name);
 			this->users.erase(this->users.begin() + i - 1);
 			std::cout	<< C_LORANGE	<< "User "
-						<< C_RESET	<< std::string("Othello")
+						<< C_RESET	<< this->users[i - 1].client->getNickName()
 						<< C_LORANGE	<< " has left channel "
 						<< C_RESET	<< this->name	<< std::endl;
 			return ;

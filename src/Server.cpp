@@ -175,8 +175,13 @@ void	Server::acceptClient(void)
 		// newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
 		// newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 		this->clients.push_back(newClient);
-		this->joinChannel(newClient, "#WelcomeChannel");
-		this->joinChannel(newClient, "#WelcomeChannel");
+		std::cout	<< "Trying to get info from client"	<< std::endl;
+		newClient->getMsg();
+		if (newClient->getNickName().empty())
+			std::cout	<< "no info from client yet!"	<< std::endl;
+		std::cout	<< "Trying to get info from client"	<< std::endl;
+		// this->joinChannel(newClient, "#WelcomeChannel");
+		// this->joinChannel(newClient, "#WelcomeChannel");
 	}
 	catch(const std::exception& e)
 	{
