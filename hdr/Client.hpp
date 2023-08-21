@@ -41,6 +41,7 @@ class Client
 
 		std::vector<std::string> _cmd;
 		std::string				_buffer;
+		std::string				_message;
 	protected:
 
 	public:
@@ -77,3 +78,24 @@ class Client
 };
 
 #endif
+
+/*
+
+
+Othello 1
+Othello 2
+Othello 3
+Othello 4
+Othello 5
+Othello 6
+Othello 7
+Othello 8
+Othello 9
+Othello 10
+Othello 11
+Othello 12
+Othello 13
+Othello 14
+Othello 15
+
+*/

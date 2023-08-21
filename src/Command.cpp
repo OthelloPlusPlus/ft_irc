@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/18 18:41:34 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/21 20:47:04 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,19 @@ std::vector<std::string> Command::ircSplit( const std::string& input,
 }
 
 void Command::parseCmd(Client &user, const std::string& cmd, const std::string& params){
+// void Command::parseCmd(Client &user, const std::string& cmd, const std::string& params, std::vector<Client*>& clients){
+
 	if (cmd == "USER")
 		Command::user(user, cmd, params);
 	else if (cmd == "PASS")
 		Command::password(user, cmd, params);
 	else if (cmd == "NICK")
+		// Command::nick(user, cmd, params, clients);
 		Command::nick(user, cmd, params);
 }
 
 void Command::parseMsg(Client &user){
+// void Command::parseMsg(Client &user, std::vector<Client*>& clients){
 	Command::cleanMsg(user);
 	std::vector<std::string>	cmd;
 	cmd = ircSplitMulti(user.getBuff(), "\r\n");
@@ -71,8 +75,14 @@ void Command::parseMsg(Client &user){
 			std::string command = element.substr(0, spacePos);
 	   	 	std::string params = element.substr(spacePos + 1);
 			parseCmd(user, command, params);
+			// parseCmd(user, command, params, clients);
 		}
 	}
+}
+
+// void Command::nick(Client &user, const std::string& cmd, const std::string &params, std::vector<Client*>& clients) {
+void Command::nick(Client &user, const std::string& cmd, const std::string &params) {
+		user.setNickName(params.substr(0));
 }
 
 void Command::user(Client &user, const std::string& cmd, const std::string &params) {
@@ -91,10 +101,38 @@ void Command::user(Client &user, const std::string& cmd, const std::string &para
 		user.setRealName(realName);
 	}
 }
-void Command::nick(Client &user, const std::string& cmd, const std::string &params) {
-		user.setNickName(params.substr(0));
-}
 
 void Command::password(Client &user, const std::string& cmd, const std::string& params) {
-	user.setPassword(params.substr(1));
+	if (params.at(0) == ':')
+		user.setPassword(params.substr(1));
+	else
+		user.setPassword(params.substr(0));
 }
+
+
+/*
+nc 10.11.2.7 6667
+:Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!
+:localhost 375 Othello :- ft_irc Message of the Day - 
+:localhost 372 Othello :- We know what we're doing! We swear!
+:localhost 376 Othello :End of /MOTD command.
+PASS Gatto
+:Bot!communicate@localhost NOTICE Othello Message received
+PASS matto
+:Bot!communicate@localhost NOTICE Othello Message received
+PASS :Gatto
+:Bot!communicate@localhost NOTICE Othello Message received
+NICK MAgic
+:Bot!communicate@localhost NOTICE Othello Message received
+Nick Magic
+:Bot!communicate@localhost NOTICE Othello Message received
+Nick Magic
+:Bot!communicate@localhost NOTICE Othello Message received
+
+:Bot!communicate@localhost NOTICE Othello Message received
+USER Magic
+:Bot!communicate@localhost NOTICE Othello Message received
+USER Emanuelia     
+:Bot!communicate@localhost NOTICE Othello Message received
+    
+*/

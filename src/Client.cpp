@@ -88,7 +88,7 @@ void	Client::initialize(int serverFD)
 
 void    Client::sendMsg(std::string msg)
 {
-    std::cout   << "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
+	std::cout   << "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
                 << "]\t"    << msg      << std::endl;
 }
 
@@ -100,7 +100,7 @@ std::string	Client::getMsg(void)
 		return "";
 	}
 	if (this->pollInfo.revents & POLLIN)
-	{
+	{	
 		char	buffer[4096];
 		ssize_t	recvLen;
 
@@ -112,26 +112,36 @@ std::string	Client::getMsg(void)
 		{
 			close(this->pollInfo.fd);
 			this->pollInfo.fd = -1;
-			std::cout	<< "Client disconnected from server."	<< std::endl;
+			std::cout	<< "Client " << getNickName() << " disconnected from server."	<< std::endl;
 		}
-		else
+		else	
 		{
-			this->_buffer = buffer;
-			// this->printInfo();
-			this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
-			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello :Message received\r\n");
+			this->_buffer += buffer;
+			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
+			std::string::size_type pos;
+			while ((pos = this->_buffer.find("\r\n")) != std::string::npos)
+			{
+				// Extract the complete message including the delimiter
+				this->_message = this->_buffer.substr(0, pos + 2);
+				this->_buffer.erase(0, pos + 2);
+				this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
+				return this->_message;
+			}
 			return this->_buffer;
 		}
 	}
 	return "";
 }
 
+// this->printInfo();
+
+
 bool	Client::stillActive(void) const
 {
 	return (this->pollInfo.fd != -1);
 }
 
-std::string	const & Client::getBuff( void )const { return _buffer;}
+std::string	const & Client::getBuff( void )const { return _message;}
 std::string const & Client::getUserName( void ) const  { return _userName; }
 std::string const & Client::getIdentName ( void ) const { return _identName; }
 std::string const & Client::getRealName( void ) const  { return _realName; }
@@ -141,7 +151,7 @@ std::string const & Client::getServer( void ) const  { return _server; }
 std::string const & Client::getIpHostName( void ) const  { return _IpHostName; }
 
 void Client::setBuff(std::string buffer){
-	this->_buffer = buffer;
+	this->_message = buffer;
 }
 
 void Client::setUserName(std::string username){
@@ -203,3 +213,36 @@ Client	&Client::operator=(const Client &src)
 	this->pollInfo = src.pollInfo;
 	return (*this);
 }
+
+/*
+:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
+:zirconium.libera.chat 322 Othello #xcat 6 :
+:zirconium.libera.chat 322 Othello #xcb 4 :
+:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
+:zirconium.libera.chat 322 Othello #xcat 6 :
+:zirconium.libera.chat 322 Othello #xcb 4 :
+:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
+:zirconium.libera.chat 322 Othello #xcat 6 :
+:zirconium.libera.chat 322 Othello #xcb 4 :
+:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
+:zirconium.libera.chat 322 Othello #xcat 6 :
+:zirconium.libera.chat 322 Othello #xcb 4 :
+:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
+:zirconium.libera.chat 322 Othello #xcat 6 :
+:zirconium.libera.chat 322 Othello #xcb 4 :
+:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
+:zirconium.libera.chat 322 Othello #xcat 6 :
+:zirconium.libera.chat 322 Othello #xcb 4 :
+:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
+:zirconium.libera.chat 322 Othello #xcat 6 :
+:zirconium.libera.chat 322 Othello #xcb 4 :
+:zirconium.libera.chat 322 Othello
+Sent: 4095 bytes
+Received:
+ #xchat 7 :
+:zirconium.libera.chat 322 Othello #xcl 4 :https://github.com/shadowcat-mst/nxcl https://github.com/shadowcat-mst/xcl
+
+
+
+
+*/
