@@ -86,54 +86,61 @@ void	Client::initialize(int serverFD)
 	this->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 }
 
-void    Client::sendMsg(std::string msg)
+void	Client::sendMsg(std::string msg)
 {
-	std::cout   << "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
-                << "]\t"    << msg      << std::endl;
+	std::cout	<< "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
+				<< "]\t"	<< msg	<< std::endl;
 }
 
 std::string	Client::getMsg(void)
 {
-	if (poll(&this->pollInfo, 1, 0) < 0)
-	{
+	if (poll(&this->pollInfo, 1, 0) < 0) {
 		std::cerr	<< "Error poll(): "	<< strerror(errno)	<< std::endl;
 		return "";
 	}
-	if (this->pollInfo.revents & POLLIN)
-	{	
-		char	buffer[4096];
+	if (this->pollInfo.revents & POLLIN) {	
+		char	buffer[10];
+		// char	buffer[2048];
 		ssize_t	recvLen;
 
 		bzero(buffer, sizeof(buffer));
 		recvLen = recv(this->pollInfo.fd, buffer, sizeof(buffer) - 1, 0);
-		if (recvLen < 0)
+		if (recvLen < 0) {
+			if (errno == EWOULDBLOCK || errno == EAGAIN) {
+				return "";	
+			} else {
 			std::cerr	<< "Error recv(): "	<< strerror(errno)	<< std::endl;
-		if (recvLen == 0)
-		{
+			return "";
+			}
+		}
+		if (recvLen == 0) {
 			close(this->pollInfo.fd);
 			this->pollInfo.fd = -1;
 			std::cout	<< "Client " << getNickName() << " disconnected from server."	<< std::endl;
+			return "";
 		}
-		else	
+
+		this->_buffer += std::string(buffer, recvLen);
+		std::string::size_type pos;
+
+		while ((pos = this->_buffer.find("\n")) != std::string::npos)
 		{
-			this->_buffer += buffer;
-			// this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
-			std::string::size_type pos;
-			while ((pos = this->_buffer.find("\r\n")) != std::string::npos)
-			{
-				// Extract the complete message including the delimiter
-				this->_message = this->_buffer.substr(0, pos + 2);
-				this->_buffer.erase(0, pos + 2);
-				this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
-				return this->_message;
-			}
-			return this->_buffer;
+			// Extract the complete message including the delimiter
+			this->_message = this->_buffer.substr(0, pos + 1);
+			this->_buffer.erase(0, pos + 1);
+			this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
+			return this->_message;
 		}
 	}
 	return "";
 }
 
-// this->printInfo();
+/*
+EWOULDBLOCK & EAGAIN)typically used to indicate that a non-blocking socket operation 
+would block because there is no data available to read at the moment. 
+In other words, these error codes mean that the recv function didn't receive any data 
+because the socket is non-blocking and no data was immediately available.
+*/
 
 
 bool	Client::stillActive(void) const
@@ -215,34 +222,26 @@ Client	&Client::operator=(const Client &src)
 }
 
 /*
-:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
-:zirconium.libera.chat 322 Othello #xcat 6 :
-:zirconium.libera.chat 322 Othello #xcb 4 :
-:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
-:zirconium.libera.chat 322 Othello #xcat 6 :
-:zirconium.libera.chat 322 Othello #xcb 4 :
-:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
-:zirconium.libera.chat 322 Othello #xcat 6 :
-:zirconium.libera.chat 322 Othello #xcb 4 :
-:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
-:zirconium.libera.chat 322 Othello #xcat 6 :
-:zirconium.libera.chat 322 Othello #xcb 4 :
-:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
-:zirconium.libera.chat 322 Othello #xcat 6 :
-:zirconium.libera.chat 322 Othello #xcb 4 :
-:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
-:zirconium.libera.chat 322 Othello #xcat 6 :
-:zirconium.libera.chat 322 Othello #xcb 4 :
-:zirconium.libera.chat 322 Othello #xbps 113 :daily pkg update-check https://repo-default.voidlinux.org/void-updates/void-updates.txt
-:zirconium.libera.chat 322 Othello #xcat 6 :
-:zirconium.libera.chat 322 Othello #xcb 4 :
-:zirconium.libera.chat 322 Othello
-Sent: 4095 bytes
-Received:
- #xchat 7 :
-:zirconium.libera.chat 322 Othello #xcl 4 :https://github.com/shadowcat-mst/nxcl https://github.com/shadowcat-mst/xcl
+	// if (this->pollInfo.revents & POLLOUT) {
+	//		 // The socket is ready for writing. You can send data here if needed.
+	//		 // Example: send(this->pollInfo.fd, data_to_send, data_length, 0);
+	//		 this->sendMsg(":Bot!communicate@localhost NOTICE Othello POLLOUT Message received\r\n");
+	//	 }
+	
+ 	// Check for POLLHUP
+	// if (this->pollInfo.revents & POLLHUP) {
+	//	 // The remote end has closed the connection.
+	//	 close(this->pollInfo.fd);
+	//	 this->pollInfo.fd = -1;
+	//	 std::cout << "Client " << getNickName() << " disconnected from server." << std::endl;
+	// }
 
-
-
+	// // Check for POLLERR
+	// if (this->pollInfo.revents & POLLERR) {
+	//	 // An error condition occurred on the socket.
+	//	 std::cerr << "Error on socket: " << strerror(errno) << std::endl;
+	//	 close(this->pollInfo.fd);
+	//	 this->pollInfo.fd = -1;
+	// }
 
 */

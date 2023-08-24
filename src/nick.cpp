@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 15:13:05 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/21 20:40:36 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/24 11:56:35 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ void Command::nick(Client &user, const std::string& cmd, const std::string &para
 		if (nickname.size() < 1)
 			return ;
 		for (size_t i = 0; i < clients.size(); ++i) {
-        // Do something with clients[i]
+		// Do something with clients[i]
 			if ((clients[i]->getNickName() == user.getNickName()) && (clients[i] != &user)){
 				user.sendMsg(":Nick name already in use"); //ERR_NICKNAMEINUSE 433
 			}
-   		}
+		}
 		user.setNickName(nickname);
 }
 */
@@ -64,7 +64,7 @@ Message Examples:
   :WiZ NICK Kilroy          ; WiZ changed his nickname to Kilroy.
 
   :dan-!d@localhost NICK Mamoped
-                            ; dan- changed his nickname to Mamoped.
+	; dan- changed his nickname to Mamoped.
 
 
 void	Server::checkClients(void)

@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/21 20:47:04 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/24 19:06:57 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::string& 
 
 void Command::parseMsg(Client &user){
 // void Command::parseMsg(Client &user, std::vector<Client*>& clients){
-	Command::cleanMsg(user);
+	// Command::cleanMsg(user);
 	std::vector<std::string>	cmd;
 	cmd = ircSplitMulti(user.getBuff(), "\r\n");
 	for (std::vector<std::string>::const_iterator it = cmd.begin(); it != cmd.end(); ++it) {
@@ -87,19 +87,20 @@ void Command::nick(Client &user, const std::string& cmd, const std::string &para
 
 void Command::user(Client &user, const std::string& cmd, const std::string &params) {
 	size_t space1Pos = params.find(' ', 0);
-	size_t space2Pos = params.find(' ', space1Pos + 1);
+	size_t space2Pos = params.find(' ', space1Pos + 1); 
 	size_t colonPos = params.find(':', space2Pos);
 
 	if (space1Pos != std::string::npos && space2Pos != std::string::npos && colonPos != std::string::npos) {
 		std::string idenName = params.substr(0, space1Pos);
 		std::string server = params.substr(space2Pos + 1 , colonPos - space2Pos - 2);
 		std::string realName = params.substr(colonPos + 1);
-
+		
 		// Set the class attributes
 		user.setIdentName(idenName);
 		user.setServer(server);
 		user.setRealName(realName);
 	}
+
 }
 
 void Command::password(Client &user, const std::string& cmd, const std::string& params) {
@@ -112,27 +113,4 @@ void Command::password(Client &user, const std::string& cmd, const std::string& 
 
 /*
 nc 10.11.2.7 6667
-:Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!
-:localhost 375 Othello :- ft_irc Message of the Day - 
-:localhost 372 Othello :- We know what we're doing! We swear!
-:localhost 376 Othello :End of /MOTD command.
-PASS Gatto
-:Bot!communicate@localhost NOTICE Othello Message received
-PASS matto
-:Bot!communicate@localhost NOTICE Othello Message received
-PASS :Gatto
-:Bot!communicate@localhost NOTICE Othello Message received
-NICK MAgic
-:Bot!communicate@localhost NOTICE Othello Message received
-Nick Magic
-:Bot!communicate@localhost NOTICE Othello Message received
-Nick Magic
-:Bot!communicate@localhost NOTICE Othello Message received
-
-:Bot!communicate@localhost NOTICE Othello Message received
-USER Magic
-:Bot!communicate@localhost NOTICE Othello Message received
-USER Emanuelia     
-:Bot!communicate@localhost NOTICE Othello Message received
-    
 */
