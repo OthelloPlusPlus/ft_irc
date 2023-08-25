@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/21 20:46:12 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/25 20:13:49 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,42 @@
 #include "Client.hpp"
 #include <string>
 
+//NICK
+#define ERR_NONICKNAMEGIVEN		":No nickname given\r\n"						// (431) "<client> :
+#define ERR_ERRONEUSNICKNAME	":Erroneus nickname\r\n"						// (432) "<client> <nick> :
+#define ERR_NICKNAMEINUSE		":Nickname is already in use\r\n"				// (433) "<client> <nick> :
+#define ERR_NICKCOLLISION		":Nickname collision KILL from <user>@<host>\r\n" //(433) "<client> <nick>  :
+
+//PASS
+#define ERR_NEEDMOREPARAMS		":Not enough parameters\r\n"					// (461) "<client> <command> :
+#define ERR_ALREADYREGISTERED	":You may not reregister\r\n"					// (462) "<client> :
+#define ERR_PASSWDMISMATCH		":Password incorrect\r\n"						// (464) "<client> :
+
+//PING : ERR_NEEDMOREPARAMS +
+#define ERR_NOORIGIN			":No origin specified\r\n"						// (409) "<client> :
+
+// #define
+
+//join a channel,send and receive private messages using your reference client.
 namespace Command
 {
 
 	void cleanMsg(Client &user);
-	void parseMsg(Client &user);
-	// void parseMsg(Client &user, std::vector<Client*>& clients);
-	void parseCmd(Client &user, const std::string& cmd, const std::string& params);
+	// void parseMsg(Client &user);
+	void parseMsg(Client &user, std::vector<Client*> &clients);
+	// void parseCmd(Client &user, const std::string& cmd, const std::string& params);
 	// void parseCmd(Client &user, const std::string& cmd, const std::string& params, std::vector<Client*>& clients);
+	void parseCmd(Client &user, const std::string &cmd, const std::vector<std::string>& params, std::vector<Client*> &clients);
 	
-	void user(Client &user, const std::string& cmd, const std::string &params);
-	void password(Client &user, const std::string& cmd, const std::string& params);
-	void nick(Client &user, const std::string& cmd, const std::string& params);
+	void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
+	// void password(Client &user, const std::string& cmd, const std::string& params, std::vector<Client*>& clients);
+	void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> &clients);
+	void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> &clients);
 	// void nick(Client &user, const std::string& cmd, const std::string& params, std::vector<Client*>& clients);
+	// void nick(Client &user, const std::string& cmd, const std::string& params);
 	
-	std::vector<std::string> ircSplit( const std::string& input, const std::string& delimiter);
-	std::vector<std::string> ircSplitMulti( const std::string& input, const std::string& delimiter);
+	std::vector<std::string> ircSplit( const std::string &input, const std::string &delimiter);
+	std::vector<std::string> ircSplitMulti( const std::string &input, const std::string &delimiter);
 }
 
 #endif

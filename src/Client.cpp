@@ -19,7 +19,7 @@
 #include <unistd.h>
 //	int	close(int fildes);
 #include <arpa/inet.h>
-// char		*inet_ntoa(struct in_addr);
+// char	*inet_ntoa(struct in_addr);
 
 #include "Command.hpp"
 // namespace Command
@@ -30,8 +30,10 @@
  * 
 \* ************************************************************************** */
 
-Client::Client(int serverFD) //const std::string& ipAddress
-{
+//const std::string& ipAddress
+Client::Client(int serverFD) : _socket(serverFD), _nickName(""), _userName(""),
+								_password(""), _identName(""), _realName(""),
+								_IpHostName(""), _server("") {
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called."
@@ -39,8 +41,7 @@ Client::Client(int serverFD) //const std::string& ipAddress
 	initialize(serverFD);
 }
 
-Client::Client(const Client &src)
-{
+Client::Client(const Client &src) {
 	*this = src;
 	std::cout	<< C_DGREEN	<< "Copy constructor "
 				<< C_GREEN	<< "Client"
@@ -54,8 +55,7 @@ Client::Client(const Client &src)
  * 
 \* ************************************************************************** */
 
-Client::~Client(void)
-{
+Client::~Client(void) {
 	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< "Client"
 				<< C_DRED	<< " called"
@@ -72,8 +72,7 @@ std::string ipAddress(const struct sockaddr_in& socketAddress) {
 	return inet_ntoa(socketAddress.sin_addr);
 }
 
-void	Client::initialize(int serverFD)
-{
+void	Client::initialize(int serverFD) {
 	this->socketAddressLen = sizeof(this->socketAddress);
 	this->pollInfo.fd = accept(serverFD, (struct sockaddr *)&this->socketAddress, &this->socketAddressLen);
 	if (this->pollInfo.fd < 0)
@@ -86,21 +85,19 @@ void	Client::initialize(int serverFD)
 	this->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 }
 
-void	Client::sendMsg(std::string msg)
-{
+void	Client::sendMsg(std::string msg) {
 	std::cout	<< "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
 				<< "]\t"	<< msg	<< std::endl;
 }
 
-std::string	Client::getMsg(void)
-{
+std::string	Client::getMsg(void) {
 	if (poll(&this->pollInfo, 1, 0) < 0) {
 		std::cerr	<< "Error poll(): "	<< strerror(errno)	<< std::endl;
 		return "";
 	}
 	if (this->pollInfo.revents & POLLIN) {	
 		char	buffer[10];
-		// char	buffer[2048];
+		// char	buffer[4096];
 		ssize_t	recvLen;
 
 		bzero(buffer, sizeof(buffer));
@@ -120,7 +117,7 @@ std::string	Client::getMsg(void)
 			return "";
 		}
 
-		this->_buffer += std::string(buffer, recvLen);
+		this->_buffer.append(buffer);
 		std::string::size_type pos;
 
 		while ((pos = this->_buffer.find("\n")) != std::string::npos)
@@ -143,8 +140,7 @@ because the socket is non-blocking and no data was immediately available.
 */
 
 
-bool	Client::stillActive(void) const
-{
+bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
 }
 
@@ -189,8 +185,7 @@ void Client::setIpHostName(std::string ipAddress){
 	this->_IpHostName = ipAddress;
 }
 
-void	Client::printInfo(void) const
-{
+void	Client::printInfo(void) const {
 	std::cout << "this->getNickName()\t" << C_RED << this->getNickName() << C_RESET	<< std::endl;
 	std::cout << "this->getIdentName()\t" << C_RED << this->getIdentName() << C_RESET	<< std::endl;
 	std::cout << "this->getRealName()\t" << C_RED << this->getRealName() << C_RESET	<< std::endl;
@@ -211,8 +206,7 @@ void	Client::printInfo(void) const
  * 
 \* ************************************************************************** */
 
-Client	&Client::operator=(const Client &src)
-{
+Client	&Client::operator=(const Client &src) {
 	if (this == &src)
 		return (*this);
 	this->socketAddress = src.socketAddress;

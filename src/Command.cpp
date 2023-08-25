@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/24 19:06:57 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/25 21:14:49 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,20 +51,20 @@ std::vector<std::string> Command::ircSplit( const std::string& input,
 	return tokens;
 }
 
-void Command::parseCmd(Client &user, const std::string& cmd, const std::string& params){
-// void Command::parseCmd(Client &user, const std::string& cmd, const std::string& params, std::vector<Client*>& clients){
+// void Command::parseCmd(Client &user, const std::string& cmd, const std::string& params){
+void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, std::vector<Client*>& clients){
 
 	if (cmd == "USER")
-		Command::user(user, cmd, params);
+		Command::user(user, cmd, args);
 	else if (cmd == "PASS")
-		Command::password(user, cmd, params);
+		Command::password(user, cmd, args, clients);
 	else if (cmd == "NICK")
-		// Command::nick(user, cmd, params, clients);
-		Command::nick(user, cmd, params);
+		Command::nick(user, cmd, args, clients);
+		// Command::nick(user, cmd, params);
 }
 
-void Command::parseMsg(Client &user){
-// void Command::parseMsg(Client &user, std::vector<Client*>& clients){
+// void Command::parseMsg(Client &user){
+void Command::parseMsg(Client &user, std::vector<Client*>& clients){
 	// Command::cleanMsg(user);
 	std::vector<std::string>	cmd;
 	cmd = ircSplitMulti(user.getBuff(), "\r\n");
@@ -74,43 +74,51 @@ void Command::parseMsg(Client &user){
 		if (spacePos != std::string::npos) {
 			std::string command = element.substr(0, spacePos);
 	   	 	std::string params = element.substr(spacePos + 1);
-			parseCmd(user, command, params);
-			// parseCmd(user, command, params, clients);
+			// parseCmd(user, command, params);
+			std::vector<std::string>	args;
+			args = ircSplit(params, " ");
+			parseCmd(user, command, args, clients);
 		}
+		//change!! no more cmd and args, if I pass only cmd and no space, if condition spacePos != std::string::npos fails and nothing happens
 	}
 }
 
-// void Command::nick(Client &user, const std::string& cmd, const std::string &params, std::vector<Client*>& clients) {
-void Command::nick(Client &user, const std::string& cmd, const std::string &params) {
-		user.setNickName(params.substr(0));
-}
 
-void Command::user(Client &user, const std::string& cmd, const std::string &params) {
-	size_t space1Pos = params.find(' ', 0);
-	size_t space2Pos = params.find(' ', space1Pos + 1); 
-	size_t colonPos = params.find(':', space2Pos);
-
-	if (space1Pos != std::string::npos && space2Pos != std::string::npos && colonPos != std::string::npos) {
-		std::string idenName = params.substr(0, space1Pos);
-		std::string server = params.substr(space2Pos + 1 , colonPos - space2Pos - 2);
-		std::string realName = params.substr(colonPos + 1);
+// void Command::user(Client &user, const std::string& cmd, const std::string &params) {
+// 	size_t space1Pos = params.find(' ', 0);
+// 	size_t space2Pos = params.find(' ', space1Pos + 1); 
+// 	size_t colonPos = params.find(':', space2Pos);
+// 	if (space1Pos != std::string::npos && space2Pos != std::string::npos && colonPos != std::string::npos) {
+// 		std::string idenName = params.substr(0, space1Pos);
+// 		std::string server = params.substr(space2Pos + 1 , colonPos - space2Pos - 2);
+// 		std::string realName = params.substr(colonPos + 1);
 		
-		// Set the class attributes
-		user.setIdentName(idenName);
-		user.setServer(server);
-		user.setRealName(realName);
-	}
+// 		// Set the class attributes
+// 		user.setIdentName(idenName);
+// 		user.setServer(server);
+// 		user.setRealName(realName);
+// 	}
+// }
 
-}
+// // void Command::nick(Client &user, const std::string& cmd, const std::string &params) {
+// 		user.setNickName(params.substr(0));
+// }
 
-void Command::password(Client &user, const std::string& cmd, const std::string& params) {
-	if (params.at(0) == ':')
-		user.setPassword(params.substr(1));
-	else
-		user.setPassword(params.substr(0));
-}
+// void Command::password(Client &user, const std::string& cmd, const std::string& params) {
+// 	if (params.at(0) == ':')
+// 		user.setPassword(params.substr(1));
+// 	else
+// 		user.setPassword(params.substr(0));
+// }
 
 
 /*
+PASS :Gatto
+USER Emanuela_De_La_Vega * 10.11.1.15 :Marylin vos Savant
+NICK Magic
+PRIVMSG Bot :a
+PING 1692972425
+
+
 nc 10.11.2.7 6667
 */

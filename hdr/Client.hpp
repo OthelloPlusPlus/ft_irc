@@ -29,14 +29,14 @@ class Client
 		socklen_t			socketAddressLen;
 		struct pollfd		pollInfo;
 
-		std::string			_IpHostName;
+		int					_socket;
+		std::string			_nickName;
 		std::string			_userName;
+		std::string			_password;
 		std::string			_identName;
 		std::string			_realName;
-		std::string			_nickName;
-		std::string			_password;
+		std::string			_IpHostName;
 		std::string			_server;
-		std::string			_hostName;
 		// bool				admin;
 
 		std::vector<std::string> _cmd;

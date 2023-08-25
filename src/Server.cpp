@@ -213,11 +213,11 @@ void	Server::checkClients(void)
 			{
 				if (this->clients[i - 1]->getNickName().empty())
 				{
-					Command::parseMsg(*this->clients[i - 1]);
+					Command::parseMsg(*this->clients[i - 1], this->clients); // change to be discussed 
 					std::cout	<< "Go gentle its my first time..."	<< std::endl;
 				}
 				else
-					Command::parseMsg(*this->clients[i - 1]);
+					Command::parseMsg(*this->clients[i - 1], this->clients); // change to be discussed 
 				std::cout	<< "Server received:\n"	
 							<< C_ORANGE	<< msg	
 							<< C_RESET	<< std::endl;
