@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/25 20:13:49 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/28 15:42:09 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,23 +32,17 @@
 
 // #define
 
-//join a channel,send and receive private messages using your reference client.
 namespace Command
 {
 
 	void cleanMsg(Client &user);
-	// void parseMsg(Client &user);
 	void parseMsg(Client &user, std::vector<Client*> &clients);
-	// void parseCmd(Client &user, const std::string& cmd, const std::string& params);
-	// void parseCmd(Client &user, const std::string& cmd, const std::string& params, std::vector<Client*>& clients);
 	void parseCmd(Client &user, const std::string &cmd, const std::vector<std::string>& params, std::vector<Client*> &clients);
 	
+	void password(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	// void password(Client &user, const std::string& cmd, const std::string& params, std::vector<Client*>& clients);
-	void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> &clients);
 	void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> &clients);
-	// void nick(Client &user, const std::string& cmd, const std::string& params, std::vector<Client*>& clients);
-	// void nick(Client &user, const std::string& cmd, const std::string& params);
+	void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	
 	std::vector<std::string> ircSplit( const std::string &input, const std::string &delimiter);
 	std::vector<std::string> ircSplitMulti( const std::string &input, const std::string &delimiter);

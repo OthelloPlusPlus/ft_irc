@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 15:13:05 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/25 20:05:16 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/28 14:31:29 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void Command::nick(Client &user, const std::string& cmd, const std::vector<std::
 		}
 			
 		user.setNickName(nickname);
+		user.userRegistration();
 }
 
 /*

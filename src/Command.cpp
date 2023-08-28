@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/25 21:14:49 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/28 15:42:04 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,11 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 	if (cmd == "USER")
 		Command::user(user, cmd, args);
 	else if (cmd == "PASS")
-		Command::password(user, cmd, args, clients);
+		Command::password(user, cmd, args);
 	else if (cmd == "NICK")
 		Command::nick(user, cmd, args, clients);
-		// Command::nick(user, cmd, params);
+	else if (cmd == "PING")
+		Command::ping(user, cmd, args);
 }
 
 // void Command::parseMsg(Client &user){

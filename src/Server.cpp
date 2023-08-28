@@ -221,7 +221,7 @@ void	Server::checkClients(void)
 				std::cout	<< "Server received:\n"	
 							<< C_ORANGE	<< msg	
 							<< C_RESET	<< std::endl;
-				// this->clients[i - 1]->printInfo();
+				this->clients[i - 1]->printInfo();
 				// if (msg == "WHO #WelcomeChannel\r\n")
 				// {
 				// 	Channel	channel;
