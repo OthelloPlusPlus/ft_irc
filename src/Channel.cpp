@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/18 20:21:58 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/08/30 16:25:13 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void	Channel::addClient(Client *newClient)
 	newUser.admin = false;
 	newUser.timestamp = 0;
 	this->users.push_back(newUser);
+	std::cout	<< C_PURPLE	<< "JOIN message"	<< C_RESET	<< std::endl;
 	newClient->sendMsg(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
 	this->sendTopic(newUser.client);
 	this->sendNames(newUser.client);

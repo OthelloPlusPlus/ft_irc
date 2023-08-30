@@ -46,7 +46,7 @@ bool	setSocket(int &socketFd);
 bool	pollThis(t_connect &connection);
 void	acceptPidgin(t_connect &server, t_connect &pidgin);
 void	connectLibera(t_connect &libera);
-void	recvAndSend(t_connect &source, t_connect &destination);
+void	recvAndSend(t_connect &source, t_connect &destination, std::string color);
 
 int	main(void)
 {
@@ -72,9 +72,9 @@ int	main(void)
 		if (!pollThis(pidgin) || !pollThis(libera))
 			break ;
 		if (pidgin.socketFd > 2 && pidgin.pollInfo.revents & POLLIN)
-			recvAndSend(pidgin, libera);
+			recvAndSend(pidgin, libera, C_CYAN);
 		if (libera.socketFd > 2 && libera.pollInfo.revents & POLLIN)
-			recvAndSend(libera, pidgin);
+			recvAndSend(libera, pidgin, C_ORANGE);
 	}
 }
 
@@ -218,7 +218,7 @@ void	connectLibera(t_connect &libera)
 	std::cout	<< "Connected to libera!"	<< std::endl;
 }
 
-void	recvAndSend(t_connect &source, t_connect &destination)
+void	recvAndSend(t_connect &source, t_connect &destination, std::string color)
 {
 	char buffer[4096];
 	ssize_t readLen = recv(source.socketFd, buffer, sizeof(buffer) - 1, 0);
@@ -234,7 +234,7 @@ void	recvAndSend(t_connect &source, t_connect &destination)
 	else
 	{
 		buffer[readLen] = '\0'; // Null-terminate the received data
-		std::cout << "Received:\n" << C_ORANGE	<< buffer << C_RESET	<< std::endl;
+		std::cout << "Received:\n" << color	<< buffer << C_RESET	<< std::endl;
 
 		ssize_t sentLen = send(destination.socketFd, buffer, readLen, 0);
 		if (sentLen < 0)
