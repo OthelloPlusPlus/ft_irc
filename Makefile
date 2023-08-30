@@ -17,8 +17,9 @@ SRC =	$(SRC_MAIN:%.cpp=	$(SRC_DIR)%.cpp)\
 SRC_DIR =	src/
 SRC_MAIN =	main.cpp
 SRC_CLASS =	Server.cpp Client.cpp Channel.cpp
-SRC_FUNC =	nick.cpp pass.cpp user.cpp ping.cpp
-SRC_NMSPC =	Command.cpp
+SRC_FUNC =	
+SRC_NMSPC =	Command.cpp		\
+			CommandNick.cpp CommandPass.cpp CommandUser.cpp CommandPing.cpp
 
 DIRS =	$(OBJ_DIR) $(DEP_DIR)
 OBJ_DIR =	obj/

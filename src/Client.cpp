@@ -123,7 +123,7 @@ std::string	Client::getMsg(void) {
 		this->_buffer.append(buffer);
 		std::string::size_type pos;
 
-		while ((pos = this->_buffer.find("\n")) != std::string::npos)
+		if ((pos = this->_buffer.find("\n")) != std::string::npos)
 		{
 			// Extract the complete message including the delimiter
 			this->_message = this->_buffer.substr(0, pos + 1);
