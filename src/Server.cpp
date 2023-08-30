@@ -201,9 +201,11 @@ void	Server::sendWelcome(Client *client)
 	client->sendMsg(msg + " 372 " + client->getNickName() + ":- We know what we're doing! We swear!\r\n");
 	client->sendMsg(msg + " 376 " + client->getNickName() + ":End of /MOTD command.\r\n");
 	this->joinChannel(client, "#WelcomeChannel");
-	client->sendMsg(":Bot!communicate@localhost NOTICE #WelcomeChannel Welcome to our ft_irc!\r\n");
-	client->sendMsg(":Bot!communicate@localhost NOTICE " + client->getNickName() + " Can I help you?\r\n");
-	client->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
+	// std::cout	<< __func__	<< std::endl;
+	// client->sendMsg(":Bot!communicate@localhost NOTICE #WelcomeChannel Welcome to our ft_irc!\r\n");
+	// client->sendMsg(":Bot!communicate@localhost NOTICE " + client->getNickName() + " Can I help you?\r\n");
+	// std::cout	<< "welcoming user ["	<< client->getNickName()	<< "]"	<< std::endl;
+	// client->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
 }
 
 
@@ -278,6 +280,8 @@ void	Server::joinChannel(Client *client, const std::string channelName)
 	Channel	*newChannel = new Channel(channelName);
 	this->channels.push_back(newChannel);
 	newChannel->addClient(client);
+	// client->sendMsg("JOIN " + channelName + "\r\n");
+	std::cout	<< "user joined channel"	<< std::endl;
 }
 
 std::vector<Client *>	Server::getClientList(void)
