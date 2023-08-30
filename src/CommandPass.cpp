@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 15:54:17 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/30 14:38:46 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/30 17:36:03 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void Command::password(Client &user, const std::string& cmd, const std::vector<s
 }
 
 /*
-
+If wrong password, close and set fd to -1
 PASS message
     Command: PASS
   	Parameters: <password>
