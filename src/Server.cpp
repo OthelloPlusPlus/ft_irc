@@ -229,12 +229,12 @@ void	Server::checkClients(void)
 			{
 				if (this->clients[i - 1]->getNickName().empty())
 				{
-					Command::parseMsg(*this->clients[i - 1]);
+					Command::parseMsg(*this->clients[i - 1], this);
 					if (!this->clients[i - 1]->getNickName().empty())
 						this->sendWelcome(this->clients[i - 1]);
 				}
 				else
-					Command::parseMsg(*this->clients[i - 1]);
+					Command::parseMsg(*this->clients[i - 1], this);
 				std::cout	<< "Server received:\n"	
 							<< C_ORANGE	<< msg	
 							<< C_RESET	<< std::endl;
@@ -270,6 +270,11 @@ void	Server::joinChannel(Client *client, const std::string channelName)
 	Channel	*newChannel = new Channel(channelName);
 	this->channels.push_back(newChannel);
 	newChannel->addClient(client);
+}
+
+std::vector<Client *>	Server::getClientList(void)
+{
+	return (this->clients);
 }
 
 /** ************************************************************************ **\

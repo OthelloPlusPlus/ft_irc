@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Command.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/28 15:42:09 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Command.hpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/08/30 15:04:11 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define COMMAND_HPP
 
 #include "Client.hpp"
+#include "Server.hpp"
 #include <string>
 
 //NICK
@@ -36,8 +37,9 @@ namespace Command
 {
 
 	void cleanMsg(Client &user);
-	void parseMsg(Client &user, std::vector<Client*> &clients);
-	void parseCmd(Client &user, const std::string &cmd, const std::vector<std::string>& params, std::vector<Client*> &clients);
+	// void parseMsg(Client &user, std::vector<Client*> &clients);
+	void parseMsg(Client &user, Server *server);
+	void parseCmd(Client &user, const std::string &cmd, const std::vector<std::string>& params, std::vector<Client*> clients);
 	
 	void password(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);

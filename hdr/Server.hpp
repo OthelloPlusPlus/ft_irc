@@ -56,6 +56,8 @@ class Server
 
 		bool	validatePassword(const std::string password) const;
 
+		std::vector<Client *>	getClientList(void);
+
 		Server	&operator=(const Server &src);
 };
 
