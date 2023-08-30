@@ -55,6 +55,7 @@ class Server
 		void	checkClients(void);
 
 		bool	validatePassword(const std::string password) const;
+		bool	nicknameExists(const std::string nickname) const;
 
 		std::vector<Client *>	getClientList(void);
 

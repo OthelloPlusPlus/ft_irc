@@ -257,6 +257,14 @@ bool	Server::validatePassword(const std::string password) const
 	return (this->password == password);
 }
 
+bool	Server::nicknameExists(const std::string nickname) const
+{
+	for (std::vector<Client *>::const_iterator i = this->clients.begin(); i != this->clients.end(); ++i)
+		if ((*i)->getNickName() == nickname)
+			return (true);
+	return (false);
+}
+
 void	Server::joinChannel(Client *client, const std::string channelName)
 {
 	for (size_t i = this->channels.size(); i > 0; --i)
