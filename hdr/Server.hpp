@@ -42,7 +42,6 @@ class Server
 		void		joinChannel(Client *client, const std::string channelName);
 		void		sendWelcome(Client *client);
 
-
 	protected:
 
 	public:
@@ -58,6 +57,8 @@ class Server
 		bool	nicknameExists(const std::string nickname) const;
 
 		std::vector<Client *>	getClientList(void);
+
+		void	sendPong(Client *client);
 
 		Server	&operator=(const Server &src);
 };

@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/30 16:25:13 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/08/30 20:23:48 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ std::string	Channel::getTopic(void) const
 
 bool	Channel::userIsInChannel(const Client *client) const
 {
-	for (size_t i = this->users.size(); i > 0; --i)
-		if (this->users[i - 1].client == client)
+	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+		if ((*i).client == client)
 			return (true);
 	return (false);
 }
@@ -103,14 +103,15 @@ void	Channel::addClient(Client *newClient)
 	newUser.admin = false;
 	newUser.timestamp = 0;
 	this->users.push_back(newUser);
-	std::cout	<< C_PURPLE	<< "JOIN message"	<< C_RESET	<< std::endl;
-	newClient->sendMsg(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
+	// std::cout	<< C_PURPLE	<< "JOIN message"	<< C_RESET	<< std::endl;
+	this->sendChannelMsg(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
 	this->sendTopic(newUser.client);
 	this->sendNames(newUser.client);
 	std::cout	<< C_LGREEN	<< "User "
 				<< C_RESET	<< newClient->getNickName()
 				<< C_LGREEN	<< " joined "
 				<< C_RESET	<< this->name	<< std::endl;
+	this->sendWho(newUser.client);
 }
 
 // void	Channel::sendMsgToChannel(Client *sender, std::string msg)
@@ -148,25 +149,29 @@ void	Channel::sendNames(Client *client)
 	std::string	msg;
 
 	msg = ": 353 " + client->getNickName() + " = " + this->name + " :";
-	for (size_t i = this->users.size(); i > 0; --i)
+	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	{
-		if (this->users[i - 1].admin == true)
+		if ((*i).admin == true)
 			msg += "@";
-		msg+= this->users[i - 1].client->getNickName() + " ";
+		msg += (*i).client->getNickName() + " ";
 	}
-	msg += "\r\n";
-	client->sendMsg(msg);
+	client->sendMsg(msg + "\r\n");
 	msg = ": 366 " + client->getNickName() + " " + this->name + " :end of /NAMES list.\r\n";
 	client->sendMsg(msg);
+}
+
+void	Channel::sendChannelMsg(const std::string msg) const
+{
+	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+		(*i).client->sendMsg(msg);
 }
 
 void	Channel::sendPrivMsg(Client *sender, std::string msg)
 {
 	msg = ":" + sender->getNickName() + " PRIVMSG " + this->name + " :" + msg + "\r\n";
-	for (size_t i = this->users.size(); i > 0; --i)
-		if (this->users[i - 1].client != sender)
-			this->users[i - 1].client->sendMsg(msg);
-// client->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
+	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+		if ((*i).client != sender)
+			(*i).client->sendMsg(msg);
 }
 
 void	Channel::sendWho(Client *client)
@@ -174,23 +179,28 @@ void	Channel::sendWho(Client *client)
 	std::string	msg;
 
 	msg = ": 352 " + client->getNickName() + " " + this->name + " ";
-	// for (size_t i = this->users.size(); i > 0; --i)
-	// {
-	// 	std::string	msgWho;
-	// 	msgWho = msg +	this->users[i - 1].client->getIdentName() + " " + \
-	// 					this->users[i - 1].client->getHostName() + " " + \
-	// 					this->users[i - 1].client->getServer() + " " + \
-	// 					this->users[i - 1].client->getNick();
-	// 	if (this->users[i - 1].admin == true)
-	// 		msgWho += " H@:0 ";
-	// 	else
-	// 		msgWho += " H:0 ";
-	// 	msgWho +=		this->users[i - 1].client->getRealName() + "\r\n";
-	// 	client->sendMsg(msgWho);
-	// }
+	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+	{
+		std::string	msgWho;
+		msgWho = msg +	(*i).client->getIdentName() + " " + \
+						(*i).client->getIpHostName() + " " + \
+						(*i).client->getServer() + " " + \
+						(*i).client->getNickName();
+		if ((*i).admin == true)
+			msgWho += " H@:0 ";
+		else
+			msgWho += " H:0 ";
+		msgWho +=		(*i).client->getRealName() + "\r\n";
+		client->sendMsg(msgWho);
+	}
 	msg = ": 315 " + client->getNickName() + " " + this->name + " :End of /WHO list.\r\n";
 	client->sendMsg(msg);
 }
+
+// void	Channel::sendWhoIs(Client *client, Client *who)
+// {
+
+// }
 
 void	Channel::inviteClient(Client *client)
 {
@@ -202,15 +212,12 @@ void	Channel::inviteClient(Client *client)
 
 void	Channel::removeUser(const Client *client)
 {
-	for (size_t i = this->users.size(); i > 0; --i)
-		if (this->users[i - 1].client == client)
+	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+		if ((*i).client == client)
 		{
-			this->users[i - 1].client->sendMsg("PART " + this->name);
-			this->users.erase(this->users.begin() + i - 1);
-			std::cout	<< C_LORANGE	<< "User "
-						<< C_RESET	<< this->users[i - 1].client->getNickName()
-						<< C_LORANGE	<< " has left channel "
-						<< C_RESET	<< this->name	<< std::endl;
+			this->users.erase(i);
+			this->sendChannelMsg(":" + client->getNickName() + "!" + client->getIdentName() + "@" + client->getIpHostName() + " QUIT\r\n");
+			std::cout	<< C_PURPLE	<< "triggered"	<< C_RESET	<< std::endl; // NEEDS TESTING!
 			return ;
 		}
 }
