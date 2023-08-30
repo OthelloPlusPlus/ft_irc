@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Command.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/28 15:42:04 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Command.cpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/08/30 15:04:12 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ std::vector<std::string> Command::ircSplit( const std::string& input,
 }
 
 // void Command::parseCmd(Client &user, const std::string& cmd, const std::string& params){
-void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, std::vector<Client*>& clients){
+void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, std::vector<Client*> clients){
 
 	if (cmd == "USER")
 		Command::user(user, cmd, args);
@@ -65,7 +65,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 }
 
 // void Command::parseMsg(Client &user){
-void Command::parseMsg(Client &user, std::vector<Client*>& clients){
+void Command::parseMsg(Client &user, Server *server){
 	// Command::cleanMsg(user);
 	std::vector<std::string>	cmd;
 	cmd = ircSplitMulti(user.getBuff(), "\r\n");
@@ -78,11 +78,31 @@ void Command::parseMsg(Client &user, std::vector<Client*>& clients){
 			// parseCmd(user, command, params);
 			std::vector<std::string>	args;
 			args = ircSplit(params, " ");
-			parseCmd(user, command, args, clients);
+			parseCmd(user, command, args, server->getClientList());
 		}
 		//change!! no more cmd and args, if I pass only cmd and no space, if condition spacePos != std::string::npos fails and nothing happens
 	}
 }
+
+// // void Command::parseMsg(Client &user){
+// void Command::parseMsg(Client &user, std::vector<Client*>& clients){
+// 	// Command::cleanMsg(user);
+// 	std::vector<std::string>	cmd;
+// 	cmd = ircSplitMulti(user.getBuff(), "\r\n");
+// 	for (std::vector<std::string>::const_iterator it = cmd.begin(); it != cmd.end(); ++it) {
+// 		const std::string& element = *it;
+// 		size_t spacePos = element.find(' ');
+// 		if (spacePos != std::string::npos) {
+// 			std::string command = element.substr(0, spacePos);
+// 	   	 	std::string params = element.substr(spacePos + 1);
+// 			// parseCmd(user, command, params);
+// 			std::vector<std::string>	args;
+// 			args = ircSplit(params, " ");
+// 			parseCmd(user, command, args, clients);
+// 		}
+// 		//change!! no more cmd and args, if I pass only cmd and no space, if condition spacePos != std::string::npos fails and nothing happens
+// 	}
+// }
 
 
 // void Command::user(Client &user, const std::string& cmd, const std::string &params) {

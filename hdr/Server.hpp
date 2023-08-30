@@ -40,6 +40,8 @@ class Server
 		void		bootUpServer(void);
 		void		acceptClient(void);
 		void		joinChannel(Client *client, const std::string channelName);
+		void		sendWelcome(Client *client);
+
 
 	protected:
 
@@ -53,6 +55,9 @@ class Server
 		void	checkClients(void);
 
 		bool	validatePassword(const std::string password) const;
+		bool	nicknameExists(const std::string nickname) const;
+
+		std::vector<Client *>	getClientList(void);
 
 		Server	&operator=(const Server &src);
 };

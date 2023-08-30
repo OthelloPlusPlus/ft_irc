@@ -176,11 +176,11 @@ void	Server::acceptClient(void)
 		// newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
 		// newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 		this->clients.push_back(newClient);
-		std::cout	<< "Trying to get info from client"	<< std::endl;
+		// std::cout	<< "Trying to get info from client"	<< std::endl;
 		newClient->getMsg();
-		if (newClient->getNickName().empty())
-			std::cout	<< "no info from client yet!"	<< std::endl;
-		std::cout	<< "Trying to get info from client"	<< std::endl;
+		// if (newClient->getNickName().empty())
+		// 	std::cout	<< "no info from client yet!"	<< std::endl;
+		// std::cout	<< "Trying to get info from client"	<< std::endl;
 		// this->joinChannel(newClient, "#WelcomeChannel");
 		// this->joinChannel(newClient, "#WelcomeChannel");
 	}
@@ -190,6 +190,22 @@ void	Server::acceptClient(void)
 					<< e.what() << std::endl;
 	}
 }
+
+
+void	Server::sendWelcome(Client *client)
+{
+	std::string	msg;
+
+	msg = client->getNickName() + ":" + client->getIpHostName();
+	client->sendMsg(msg + " 375 " + client->getNickName() + ":- ft_irc Message of the Day - \r\n");
+	client->sendMsg(msg + " 372 " + client->getNickName() + ":- We know what we're doing! We swear!\r\n");
+	client->sendMsg(msg + " 376 " + client->getNickName() + ":End of /MOTD command.\r\n");
+	this->joinChannel(client, "#WelcomeChannel");
+	client->sendMsg(":Bot!communicate@localhost NOTICE #WelcomeChannel Welcome to our ft_irc!\r\n");
+	client->sendMsg(":Bot!communicate@localhost NOTICE " + client->getNickName() + " Can I help you?\r\n");
+	client->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
+}
+
 
 void	Server::checkClients(void)
 {
@@ -213,11 +229,12 @@ void	Server::checkClients(void)
 			{
 				if (this->clients[i - 1]->getNickName().empty())
 				{
-					Command::parseMsg(*this->clients[i - 1]);
-					std::cout	<< "Go gentle its my first time..."	<< std::endl;
+					Command::parseMsg(*this->clients[i - 1], this);
+					if (!this->clients[i - 1]->getNickName().empty())
+						this->sendWelcome(this->clients[i - 1]);
 				}
 				else
-					Command::parseMsg(*this->clients[i - 1]);
+					Command::parseMsg(*this->clients[i - 1], this);
 				std::cout	<< "Server received:\n"	
 							<< C_ORANGE	<< msg	
 							<< C_RESET	<< std::endl;
@@ -240,6 +257,14 @@ bool	Server::validatePassword(const std::string password) const
 	return (this->password == password);
 }
 
+bool	Server::nicknameExists(const std::string nickname) const
+{
+	for (std::vector<Client *>::const_iterator i = this->clients.begin(); i != this->clients.end(); ++i)
+		if ((*i)->getNickName() == nickname)
+			return (true);
+	return (false);
+}
+
 void	Server::joinChannel(Client *client, const std::string channelName)
 {
 	for (size_t i = this->channels.size(); i > 0; --i)
@@ -253,6 +278,11 @@ void	Server::joinChannel(Client *client, const std::string channelName)
 	Channel	*newChannel = new Channel(channelName);
 	this->channels.push_back(newChannel);
 	newChannel->addClient(client);
+}
+
+std::vector<Client *>	Server::getClientList(void)
+{
+	return (this->clients);
 }
 
 /** ************************************************************************ **\
