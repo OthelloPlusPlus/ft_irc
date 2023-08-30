@@ -55,6 +55,7 @@ class Client
 
 		void		sendMsg(std::string msg);
 		std::string	getMsg(void);
+		bool		readReceive(int sockfd);
 
 		std::string	const &getBuff(void) const;
 		std::string const &getUserName(void) const; 

@@ -89,44 +89,50 @@ void	Client::sendMsg(std::string msg) {
 				<< "]\t"	<< msg	<< std::endl;
 }
 
-std::string	Client::getMsg(void) {
-	if (poll(&this->pollInfo, 1, 0) < 0) {
-		return "";
-	}
-	if (this->pollInfo.revents & POLLIN) {	
-		char	buffer[10];
-		// char	buffer[4096];
+bool	Client::readReceive(int sockfd){
+		char	buffer[4096];
 		ssize_t	recvLen;
 
 		bzero(buffer, sizeof(buffer));
 		recvLen = recv(this->pollInfo.fd, buffer, sizeof(buffer) - 1, 0);
 		if (recvLen < 0) {
 			if (errno == EWOULDBLOCK || errno == EAGAIN) {
-				return "";	
+				return false;	
 			} else {
 			std::cerr	<< "Error recv(): "	<< strerror(errno)	<< std::endl;
-			return "";
+			return false;
 			}
 		}
 		if (recvLen == 0) {
 			close(this->pollInfo.fd);
 			this->pollInfo.fd = -1;
 			std::cout	<< "Client " << getNickName() << " disconnected from server."	<< std::endl;
-			return "";
+			return false;
 		}
 
 		this->_buffer.append(buffer);
-		std::string::size_type pos;
+		return true;
 
-		while ((pos = this->_buffer.find("\n")) != std::string::npos)
-		{
-			// Extract the complete message including the delimiter
-			this->_message = this->_buffer.substr(0, pos + 1);
-			this->_buffer.erase(0, pos + 1);
-			this->sendMsg(":Bot!communicate@localhost NOTICE Othello Message received\r\n");
-			return this->_message;
-		}
+}
+
+std::string	Client::getMsg(void) {
+	if (poll(&this->pollInfo, 1, 0) < 0) {
+		return "";
 	}
+	if (this->pollInfo.revents & POLLIN) {
+		if(!readReceive(this->pollInfo.fd))
+			return "";
+	}
+	std::string::size_type pos;
+	if (!this->_buffer.empty() && (pos = this->_buffer.find("\n")) != std::string::npos)
+	{
+		// Extract the complete message including the delimiter
+		this->_message = this->_buffer.substr(0, pos + 1);
+		this->_buffer.erase(0, pos + 1);
+		this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");
+		return this->_message;
+	}
+
 	return "";
 }
 
