@@ -29,18 +29,20 @@ class Client
 		socklen_t			socketAddressLen;
 		struct pollfd		pollInfo;
 
-		std::string			_IpHostName;
-		std::string			_userName;
+		std::string			_nickName;
+		std::string			_userName; //Identity Name???
+		std::string			_password;
 		std::string			_identName;
 		std::string			_realName;
-		std::string			_nickName;
-		std::string			_password;
+		std::string			_IpHostName;
 		std::string			_server;
-		std::string			_hostName;
+		bool				_isRegistered;
+		bool				_hasPassword;
 		// bool				admin;
 
 		std::vector<std::string> _cmd;
 		std::string				_buffer;
+		std::string				_message;
 	protected:
 
 	public:
@@ -56,12 +58,14 @@ class Client
 
 		std::string	const &getBuff(void) const;
 		std::string const &getUserName(void) const; 
-		std::string const &getIdentName(void) const; // Emanuela De la Vega
-		std::string const &getRealName(void) const; //Emanuela Licameli
-		std::string const &getNickName(void) const; //Magic
-		std::string const &getPassword(void) const; //Gatto
-		std::string const &getServer(void) const; //computer of server
-		std::string const &getIpHostName(void) const; //computer of client
+		std::string const &getIdentName(void) const;	// Emanuela De la Vega
+		std::string const &getRealName(void) const; 	// Emanuela Licameli
+		std::string const &getNickName(void) const; 	// Magic
+		std::string const &getPassword(void) const; 	// Gatto
+		std::string const &getServer(void) const; 		// computer of server
+		std::string const &getIpHostName(void) const; 	// computer of client
+		bool getIsRegistered( void ) const;
+		bool hasPassword( void ) const;
 
 		void setBuff(std::string buffer);
 		void setUserName(std::string username);
@@ -71,9 +75,33 @@ class Client
 		void setPassword(std::string password);
 		void setServer(std::string server);
 		void setIpHostName(std::string ipAddress);
+		void setIsRegistered(bool val);
+		void setHasPassword(bool val);
+		void userRegistration( void );
 
 		Client	&operator=(const Client &src);
 		void	printInfo(void) const;
 };
 
 #endif
+
+/*
+
+
+Othello 1
+Othello 2
+Othello 3
+Othello 4
+Othello 5
+Othello 6
+Othello 7
+Othello 8
+Othello 9
+Othello 10
+Othello 11
+Othello 12
+Othello 13
+Othello 14
+Othello 15
+
+*/
