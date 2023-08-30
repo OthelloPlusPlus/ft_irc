@@ -82,10 +82,6 @@ void	Client::initialize(int serverFD) {
 		throw (std::runtime_error("accept(): "));
 	this->pollInfo.events = POLLIN;
 	setIpHostName(ipAddress(this->socketAddress));
-	this->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
-	this->sendMsg(":localhost 375 Othello :- ft_irc Message of the Day - \r\n");
-	this->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
-	this->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 }
 
 void	Client::sendMsg(std::string msg) {
@@ -95,7 +91,6 @@ void	Client::sendMsg(std::string msg) {
 
 std::string	Client::getMsg(void) {
 	if (poll(&this->pollInfo, 1, 0) < 0) {
-		std::cerr	<< "Error poll(): "	<< strerror(errno)	<< std::endl;
 		return "";
 	}
 	if (this->pollInfo.revents & POLLIN) {	
@@ -123,7 +118,7 @@ std::string	Client::getMsg(void) {
 		this->_buffer.append(buffer);
 		std::string::size_type pos;
 
-		if ((pos = this->_buffer.find("\n")) != std::string::npos)
+		while ((pos = this->_buffer.find("\n")) != std::string::npos)
 		{
 			// Extract the complete message including the delimiter
 			this->_message = this->_buffer.substr(0, pos + 1);
