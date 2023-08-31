@@ -13,6 +13,7 @@
 #include "Server.hpp"
 #include "colors.hpp"
 #include "Command.hpp"
+#include "IRCReplyCodes.hpp"
 
 #include <iostream>
 // std::
@@ -177,7 +178,7 @@ void	Server::acceptClient(void)
 		// newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 		this->clients.push_back(newClient);
 		// std::cout	<< "Trying to get info from client"	<< std::endl;
-		newClient->getMsg();
+		// newClient->getMsg();
 		// if (newClient->getNickName().empty())
 		// 	std::cout	<< "no info from client yet!"	<< std::endl;
 		// std::cout	<< "Trying to get info from client"	<< std::endl;
@@ -191,66 +192,59 @@ void	Server::acceptClient(void)
 	}
 }
 
-
+#include <chrono>
 void	Server::sendWelcome(Client *client)
 {
 	std::string	msg;
 
-	msg = client->getNickName() + ":" + client->getIpHostName();
-	client->sendMsg(msg + " 375 " + client->getNickName() + ":- ft_irc Message of the Day - \r\n");
-	client->sendMsg(msg + " 372 " + client->getNickName() + ":- We know what we're doing! We swear!\r\n");
-	client->sendMsg(msg + " 376 " + client->getNickName() + ":End of /MOTD command.\r\n");
+	msg = ":" + this->ip;
+	client->sendMsg(msg + " 375 " + client->getNickName() + " :- ft_irc Message of the Day - \r\n");
+	client->sendMsg(msg + " 372 " + client->getNickName() + " :- We know what we're doing! We swear!\r\n");
+	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
 	this->joinChannel(client, "#WelcomeChannel");
-	// std::cout	<< __func__	<< std::endl;
-	// client->sendMsg(":Bot!communicate@localhost NOTICE #WelcomeChannel Welcome to our ft_irc!\r\n");
-	// client->sendMsg(":Bot!communicate@localhost NOTICE " + client->getNickName() + " Can I help you?\r\n");
-	// std::cout	<< "welcoming user ["	<< client->getNickName()	<< "]"	<< std::endl;
-	// client->sendMsg(":Bot!communicate@localhost PRIVMSG #WelcomeChannel :Welcome to our ft_irc!\r\n");
+}
+
+void	Server::sendPong(Client *client)
+{
+	std::string	time;
+
+	time = std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+	client->sendMsg(":" + this->ip + " PONG " + this->ip + " :" + time + "\r\n");
 }
 
 
 void	Server::checkClients(void)
 {
-	size_t	i;
-
-	i = this->clients.size();
-	while (i > 0)
+	for (std::vector<Client *>::const_iterator client = this->clients.begin(); client != this->clients.end();)
 	{
-		if (!this->clients[i - 1]->stillActive())
+		if ((*client)->stillActive())
 		{
-			for (size_t j = this->channels.size(); j > 0; --j)
-				if (this->channels[j - 1]->userIsInChannel(this->clients[i - 1]))
-					this->channels[j - 1]->removeUser(this->clients[i - 1]);
-			delete this->clients[i - 1];
-			this->clients.erase(this->clients.begin() + i - 1);
-		}
-		else
-		{
-			std::string	msg = this->clients[i - 1]->getMsg();
+			std::string	msg = (*client)->getMsg();
 			if (!msg.empty())
 			{
-				if (this->clients[i - 1]->getNickName().empty())
+				if ((*client)->getNickName().empty())
 				{
-					Command::parseMsg(*this->clients[i - 1], this);
-					if (!this->clients[i - 1]->getNickName().empty())
-						this->sendWelcome(this->clients[i - 1]);
+					Command::parseMsg(**client, this);
+					if (!(*client)->getNickName().empty())
+						this->sendWelcome(*client);
+					(*client)->printInfo();
 				}
 				else
-					Command::parseMsg(*this->clients[i - 1], this);
+					Command::parseMsg(**client, this);
 				std::cout	<< "Server received:\n"	
 							<< C_ORANGE	<< msg	
 							<< C_RESET	<< std::endl;
-				// this->clients[i - 1]->printInfo();
-				// if (msg == "WHO #WelcomeChannel\r\n")
-				// {
-				// 	Channel	channel;
-				// 	channel.sendWhoToClient(this->clients[i - 1]);
-				// }
-				// else
-				// 	std::cout	<< "diff message!"	<< std::endl;
 			}
+			++client;
 		}
-		--i;
+		else
+		{
+			for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
+				if ((*channel)->userIsInChannel(*client))
+					(*channel)->removeUser(*client);
+			delete *client;
+			client = this->clients.erase(client);
+		}
 	}
 }
 
@@ -269,19 +263,15 @@ bool	Server::nicknameExists(const std::string nickname) const
 
 void	Server::joinChannel(Client *client, const std::string channelName)
 {
-	for (size_t i = this->channels.size(); i > 0; --i)
-	{
-		if (this->channels[i - 1]->getName() == channelName)
+	for (std::vector<Channel *>::const_iterator i = this->channels.begin(); i != this->channels.end(); ++i)
+		if ((*i)->getName() == channelName)
 		{
-			this->channels[i - 1]->addClient(client);
+			(*i)->addClient(client);
 			return ;
 		}
-	}
 	Channel	*newChannel = new Channel(channelName);
 	this->channels.push_back(newChannel);
 	newChannel->addClient(client);
-	// client->sendMsg("JOIN " + channelName + "\r\n");
-	std::cout	<< "user joined channel"	<< std::endl;
 }
 
 std::vector<Client *>	Server::getClientList(void)
