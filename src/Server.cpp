@@ -276,6 +276,11 @@ void	Server::sendPong(const Client *client) const
 	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + time + "\r\n");
 }
 
+void	Server::sendPong(const Client *client, const std::string token) const
+{
+	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
+}
+
 
 void	Server::checkClients(void)
 {
@@ -338,6 +343,17 @@ void	Server::joinChannel(Client *client, const std::string channelName)
 	newChannel->addClient(client);
 }
 
+void	Server::partChannel(Client *client, const std::string channelName)
+{
+	Channel	*channel;
+
+	channel = this->getChannel(channelName);
+	if (channel)
+	{
+		channel->removeUser(client);
+	}
+}
+
 std::vector<Client *>	Server::getClientList(void)
 {
 	return (this->clients);
@@ -345,9 +361,17 @@ std::vector<Client *>	Server::getClientList(void)
 
 Client	*Server::getClient(std::string name) const
 {
-	for (std::vector<Client *>::const_iterator	client = this->clients.begin(); client != this->clients.end(); ++client)
+	for (std::vector<Client *>::const_iterator client = this->clients.begin(); client != this->clients.end(); ++client)
 		if ((*client)->getNickName() == name)
 			return (*client);
+	return (nullptr);
+}
+
+Channel	*Server::getChannel(std::string name) const
+{
+	for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
+		if ((*channel)->getName() == name)
+			return (*channel);
 	return (nullptr);
 }
 

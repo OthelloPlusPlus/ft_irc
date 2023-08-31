@@ -59,11 +59,14 @@ class Server
 
 		std::vector<Client *>	getClientList(void);
 		Client	*getClient(std::string name) const;
+		Channel	*getChannel(std::string channel) const;
 
 		void	joinChannel(Client *client, const std::string channelName);
+		void	partChannel(Client *client, const std::string channelName);
 		void	sendChannelList(const Client *client) const;
 		void	sendWhoIs(const Client *client, const std::string who) const;
 		void	sendPong(const Client *client) const;
+		void	sendPong(const Client *client, const std::string token) const;
 
 		Server	&operator=(const Server &src);
 };
