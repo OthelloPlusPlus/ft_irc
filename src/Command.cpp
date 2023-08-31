@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 15:56:24 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 16:54:36 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,13 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		Command::ping(user, cmd, args, server);
 	else if (cmd == "QUIT")
 		Command::ping(user, cmd, args, server);
+	else if (cmd == "LIST"){
+		server->sendChannelList(&user);
+	}
+
 }
 
 void Command::parseMsg(Client &user, Server *server){
-	// Command::cleanMsg(user);
 	std::vector<std::string>	cmd;
 	cmd = ircSplitMulti(user.getBuff(), "\r\n");
 	for (std::vector<std::string>::const_iterator it = cmd.begin(); it != cmd.end(); ++it) {
@@ -75,22 +78,15 @@ void Command::parseMsg(Client &user, Server *server){
 		if (spacePos != std::string::npos) {
 			std::string command = element.substr(0, spacePos);
 	   	 	std::string params = element.substr(spacePos + 1);
-			// parseCmd(user, command, params);
+			std::cout << "with space " << command << " and args " << params << std::endl;
 			std::vector<std::string>	args;
 			args = ircSplit(params, " ");
 			parseCmd(user, command, args, server);
 		}
-		//change!! no more cmd and args, if I pass only cmd and no space, if condition spacePos != std::string::npos fails and nothing happens
+		else {
+			std::string command = element;
+			std::vector<std::string>	args;
+			parseCmd(user, command, args, server);
+		}			
 	}
 }
-
-/*
-PASS :Gatto !!! compare with server pass
-USER Emanuela_De_La_Vega * 10.11.1.15 :Marylin vos Savant
-NICK Magic
-PRIVMSG Bot :a
-PING 1692972425
-find out what is required from a PONG 
-
-nc 10.11.2.7 6667
-*/

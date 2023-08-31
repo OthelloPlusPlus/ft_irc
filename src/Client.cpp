@@ -129,7 +129,7 @@ std::string	Client::getMsg(void) {
 		// Extract the complete message including the delimiter
 		this->_message = this->_buffer.substr(0, pos + 1);
 		this->_buffer.erase(0, pos + 1);
-		this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");
+		// this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");
 		return this->_message;
 	}
 
