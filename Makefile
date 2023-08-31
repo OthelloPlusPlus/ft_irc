@@ -45,12 +45,18 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 subject: all
 	./$(NAME) 6667 password
 
+eaves:#remove (also in fclean)
+	@$(CC) ./functiontesting/poll/eavesdrop.cpp -o eavesdrop
+	@printf	"Running eavesdrop:\n"
+	@./eavesdrop
+
 clean:
 	@rm -f $(OBJ)
 	@rm -f $(DEP)
 
 fclean: clean
 	@rm -f $(NAME)
+	@rm -f eavesdrop
 	@rm -f ._*
 	@rmdir $(DIRS) 2> /dev/null || true
 
