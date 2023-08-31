@@ -291,6 +291,9 @@ void	Server::checkClients(void)
 			std::string	msg = (*client)->getMsg();
 			if (!msg.empty())
 			{
+				std::cout	<< "Recv ["	<< msg.length()	<< "]\t"
+							<< C_ORANGE	<< msg
+							<< C_RESET	<< std::flush;
 				if ((*client)->getNickName().empty())
 				{
 					Command::parseMsg(**client, this);
@@ -300,9 +303,6 @@ void	Server::checkClients(void)
 				}
 				else
 					Command::parseMsg(**client, this);
-				std::cout	<< "Server received:\n"	
-							<< C_ORANGE	<< msg	
-							<< C_RESET	<< std::endl;
 			}
 			++client;
 		}
