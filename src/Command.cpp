@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 18:43:14 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 18:44:45 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 	else if (cmd == "QUIT")
 		Command::ping(user, cmd, args, server);
 	else if (cmd == "WHOIS")
-		server->sendWhoIs(args[0]);
+		server->sendWhoIs(&user, args[0]);
 	else if (cmd == "LIST"){
 		server->sendChannelList(&user);
 	}
