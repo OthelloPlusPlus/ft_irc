@@ -60,14 +60,16 @@ Server::Server(int argc, char **argv)
 		throw (std::range_error("Too many arguments passed."));
 	this->port = std::stoi(argv[1]);
 	this->password = argv[2];
-	this->ip = this->getHostIp();
+	this->setLocalIP();
 	this->bootUpServer();
 	
 	std::cout	<< "\n"
 				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
-				<< std::setw(16)	<< " - IP address: "	<< this->ip	<< "\n"
-				<< std::setw(16)	<< " - Port: "	<< this->port	<< "\n"
-				<< " - Ready to receive incoming users!"
+				<< std::setw(23)	<< " - Hostname: "	<< this->publicIP	<< "\n"
+				<< std::setw(23)	<< " - Local IP address: "	<< this->localIP	<< "\n"
+				<< std::setw(23)	<< " - Port: "	<< this->port	<< "\n"
+				<< " - Ready to receive incoming users!"	<< "\n"
+				<< C_HEADER	<< std::setw(76)	<< "Server running"	<< C_RESET
 				<< std::right	<< std::endl;
 }
 
@@ -122,7 +124,7 @@ void	Server::bootUpServer(void)
 	std::cout	<< "Binding socket to port "	<< this->port	<< "...\n";
 	this->socketAddress.sin_family = AF_INET;
 	this->socketAddress.sin_port = htons(this->port);
-	this->socketAddress.sin_addr.s_addr = inet_addr(this->ip.c_str());
+	this->socketAddress.sin_addr.s_addr = inet_addr(this->localIP.c_str());
 	if (bind(this->pollInfo.fd, (struct sockaddr *)&this->socketAddress, sizeof(this->socketAddress)))
 	{
 		close(this->pollInfo.fd);
@@ -137,19 +139,41 @@ void	Server::bootUpServer(void)
 	this->pollInfo.events = POLLIN;
 }
 
-std::string	Server::getHostIp(void) const
+void	Server::setLocalIP(void)
 {
-	std::string		ip;
+	char	hostname[4096];
 	struct ifaddrs	*ifap0, *ifap;
 
+	if (gethostname(hostname, sizeof(hostname)) == 0)
+		this->publicIP = hostname;
+	else
+		this->publicIP = "";
 	if (getifaddrs(&ifap0))
 		throw(std::runtime_error("getifaddrs(): "));
 	for (ifap = ifap0; ifap != nullptr; ifap = ifap->ifa_next)
 		if (ifap->ifa_addr && ifap->ifa_addr->sa_family == AF_INET)
-			ip = inet_ntoa(((struct sockaddr_in *)ifap->ifa_addr)->sin_addr);
+			this->localIP = inet_ntoa(((struct sockaddr_in *)ifap->ifa_addr)->sin_addr);
 	freeifaddrs(ifap);
-	return (ip);
 }
+
+// void	Server::setPublicIP(void)
+// {
+
+// }
+
+// std::string	Server::getHostIp(void)
+// {
+// 	// std::string		ip;
+// 	struct ifaddrs	*ifap0, *ifap;
+
+// 	if (getifaddrs(&ifap0))
+// 		throw(std::runtime_error("getifaddrs(): "));
+// 	for (ifap = ifap0; ifap != nullptr; ifap = ifap->ifa_next)
+// 		if (ifap->ifa_addr && ifap->ifa_addr->sa_family == AF_INET)
+// 			this->localIP = inet_ntoa(((struct sockaddr_in *)ifap->ifa_addr)->sin_addr);
+// 	freeifaddrs(ifap);
+// 	return (this->localIP);
+// }
 
 void	Server::checkNewClient(void)
 {
@@ -197,19 +221,27 @@ void	Server::sendWelcome(Client *client)
 {
 	std::string	msg;
 
-	msg = ":" + this->ip;
+	msg = ":" + this->localIP;
 	client->sendMsg(msg + " 375 " + client->getNickName() + " :- ft_irc Message of the Day - \r\n");
 	client->sendMsg(msg + " 372 " + client->getNickName() + " :- We know what we're doing! We swear!\r\n");
 	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
 	this->joinChannel(client, "#WelcomeChannel");
 }
 
-void	Server::sendPong(Client *client)
+void	Server::sendChannelList(const Client *client) const
+{
+	std::string	msg;
+
+	for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
+		std::cout	<< (*channel)->getName()	<< std::endl;
+}
+
+void	Server::sendPong(const Client *client) const
 {
 	std::string	time;
 
 	time = std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
-	client->sendMsg(":" + this->ip + " PONG " + this->ip + " :" + time + "\r\n");
+	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + time + "\r\n");
 }
 
 
@@ -294,6 +326,6 @@ Server	&Server::operator=(const Server &src)
 	this->clients = src.clients;
 	this->port = src.port;
 	this->password = src.password;
-	this->ip = src.ip;
+	this->localIP = src.localIP;
 	return (*this);
 }
