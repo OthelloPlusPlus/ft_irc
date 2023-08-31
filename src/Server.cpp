@@ -232,8 +232,15 @@ void	Server::sendChannelList(const Client *client) const
 {
 	std::string	msg;
 
+	msg = ":" + this->publicIP + " 321 " + client->getNickName() + " ";
+	client->sendMsg(msg + "Channel :Users  Name \r\n");
+
+	msg.replace(msg.find_first_of(" 321 "), 5, " 322 ");
 	for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
-		std::cout	<< (*channel)->getName()	<< std::endl;
+		client->sendMsg(msg + (*channel)->getName() + " 0 :\r\n");
+
+	msg.replace(msg.find_first_of(" 322 "), 5, " 323 ");
+	client->sendMsg(msg + ":END of /LIST\r\n");
 }
 
 void	Server::sendPong(const Client *client) const
