@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 16:54:36 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 17:02:32 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ void Command::parseMsg(Client &user, Server *server){
 		if (spacePos != std::string::npos) {
 			std::string command = element.substr(0, spacePos);
 	   	 	std::string params = element.substr(spacePos + 1);
-			std::cout << "with space " << command << " and args " << params << std::endl;
 			std::vector<std::string>	args;
 			args = ircSplit(params, " ");
 			parseCmd(user, command, args, server);
