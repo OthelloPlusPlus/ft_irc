@@ -73,6 +73,7 @@ class Channel
 
 		std::string	getName(void) const;
 		std::string	getTopic(void) const;
+		size_t		getSize(void) const;
 
 		Channel	&operator=(const Channel &src);
 };

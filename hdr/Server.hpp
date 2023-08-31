@@ -56,11 +56,13 @@ class Server
 		void	checkClients(void);
 
 		bool	validatePassword(const std::string password) const;
-		bool	nicknameExists(const std::string nickname) const;
+		// bool	nicknameExists(const std::string nickname) const;
 
 		std::vector<Client *>	getClientList(void);
+		Client	*getClient(std::string name) const;
 
 		void	sendChannelList(const Client *client) const;
+		void	sendWhoIs(const Client *client, const std::string who) const;
 		void	sendPong(const Client *client) const;
 
 		Server	&operator=(const Server &src);

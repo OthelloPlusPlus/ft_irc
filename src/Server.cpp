@@ -226,6 +226,7 @@ void	Server::sendWelcome(Client *client)
 	client->sendMsg(msg + " 372 " + client->getNickName() + " :- We know what we're doing! We swear!\r\n");
 	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
 	this->joinChannel(client, "#WelcomeChannel");
+	this->joinChannel(client, "#Hello");
 }
 
 void	Server::sendChannelList(const Client *client) const
@@ -235,12 +236,36 @@ void	Server::sendChannelList(const Client *client) const
 	msg = ":" + this->publicIP + " 321 " + client->getNickName() + " ";
 	client->sendMsg(msg + "Channel :Users  Name \r\n");
 
-	msg.replace(msg.find_first_of(" 321 "), 5, " 322 ");
+	msg.replace(msg.find(" 321 "), 5, " 322 ");
 	for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
-		client->sendMsg(msg + (*channel)->getName() + " 0 :\r\n");
+		client->sendMsg(msg + (*channel)->getName() + " " + std::to_string((*channel)->getSize()) + " :Lorem ipsum\r\n");
 
-	msg.replace(msg.find_first_of(" 322 "), 5, " 323 ");
+	msg.replace(msg.find(" 322 "), 5, " 323 ");
 	client->sendMsg(msg + ":END of /LIST\r\n");
+}
+
+void	Server::sendWhoIs(const Client *client, const std::string who) const
+{
+	Client		*whoClient;
+	std::string	msg;
+
+	whoClient = this->getClient(who);
+	msg = ":" + this->publicIP + " 000 " + client->getNickName() + " " + whoClient->getNickName() + " ";
+	if (whoClient != nullptr)
+	{
+		msg.replace(msg.find(" 000 "), 5, " 311 ");
+		client->sendMsg(msg + whoClient->getIdentName() + " " + whoClient->getIpHostName() + " * :" + whoClient->getRealName() + "\r\n");
+		msg.replace(msg.find(" 311 "), 5, " 312 ");
+		client->sendMsg(msg + this->publicIP + "\r\n");
+		msg.replace(msg.find(" 331 "), 5, " 318 ");
+	}
+	else
+	{
+		msg.replace(msg.find(" 000 "), 5, " 401 ");
+		client->sendMsg(msg + ":No such nick/channel\r\n");
+		msg.replace(msg.find(" 401 "), 5, " 318 ");
+	}
+	client->sendMsg(msg + ":End of /WHOIS list.\r\n");
 }
 
 void	Server::sendPong(const Client *client) const
@@ -292,13 +317,13 @@ bool	Server::validatePassword(const std::string password) const
 	return (this->password == password);
 }
 
-bool	Server::nicknameExists(const std::string nickname) const
-{
-	for (std::vector<Client *>::const_iterator i = this->clients.begin(); i != this->clients.end(); ++i)
-		if ((*i)->getNickName() == nickname)
-			return (true);
-	return (false);
-}
+// bool	Server::nicknameExists(const std::string nickname) const
+// {
+// 	for (std::vector<Client *>::const_iterator i = this->clients.begin(); i != this->clients.end(); ++i)
+// 		if ((*i)->getNickName() == nickname)
+// 			return (true);
+// 	return (false);
+// }
 
 void	Server::joinChannel(Client *client, const std::string channelName)
 {
@@ -316,6 +341,14 @@ void	Server::joinChannel(Client *client, const std::string channelName)
 std::vector<Client *>	Server::getClientList(void)
 {
 	return (this->clients);
+}
+
+Client	*Server::getClient(std::string name) const
+{
+	for (std::vector<Client *>::const_iterator	client = this->clients.begin(); client != this->clients.end(); ++client)
+		if ((*client)->getNickName() == name)
+			return (*client);
+	return (nullptr);
 }
 
 /** ************************************************************************ **\

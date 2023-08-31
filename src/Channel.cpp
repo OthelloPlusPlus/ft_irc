@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/30 20:23:48 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/08/31 17:15:43 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,11 @@ std::string	Channel::getName(void) const
 std::string	Channel::getTopic(void) const
 {
 	return (this->topic);
+}
+
+size_t	Channel::getSize(void) const
+{
+	return (this->users.size());
 }
 
 bool	Channel::userIsInChannel(const Client *client) const
