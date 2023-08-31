@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 19:10:04 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 15:34:45 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 19:48:23 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,5 +17,5 @@ void Command::ping(Client &user, const std::string &cmd, const std::vector<std::
 		user.sendMsg("<client> " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
 	}
-	server->sendPong(&user);
+	server->sendPong(&user, args[0]);
 }
