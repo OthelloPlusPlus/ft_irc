@@ -227,6 +227,7 @@ void	Server::sendWelcome(Client *client)
 	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
 	this->joinChannel(client, "#WelcomeChannel");
 	this->joinChannel(client, "#Hello");
+	this->partChannel(client, "#Hello");
 }
 
 void	Server::sendChannelList(const Client *client) const
@@ -349,9 +350,7 @@ void	Server::partChannel(Client *client, const std::string channelName)
 
 	channel = this->getChannel(channelName);
 	if (channel)
-	{
 		channel->removeUser(client);
-	}
 }
 
 std::vector<Client *>	Server::getClientList(void)

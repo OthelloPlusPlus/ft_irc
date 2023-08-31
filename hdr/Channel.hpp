@@ -65,8 +65,9 @@ class Channel
 		~Channel(void);
 
 		void	addClient(Client *newClient);
+		void	sendToChannel(const std::string msg) const;
+		void	sendToChannel(const Client *exclude, const std::string msg) const;
 		// void	sendMsgToChannel(Client *sender, std::string msg);
-		void	sendChannelMsg(const std::string msg) const;
 		void	sendWho(Client *client);
 		bool	userIsInChannel(const Client *client) const;
 		void	removeUser(const Client *client);

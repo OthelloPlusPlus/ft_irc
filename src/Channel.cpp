@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/31 17:15:43 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/08/31 20:23:14 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,12 +109,12 @@ void	Channel::addClient(Client *newClient)
 	newUser.timestamp = 0;
 	this->users.push_back(newUser);
 	// std::cout	<< C_PURPLE	<< "JOIN message"	<< C_RESET	<< std::endl;
-	this->sendChannelMsg(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
+	this->sendToChannel(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
 	this->sendTopic(newUser.client);
 	this->sendNames(newUser.client);
 	std::cout	<< C_LGREEN	<< "User "
 				<< C_RESET	<< newClient->getNickName()
-				<< C_LGREEN	<< " joined "
+				<< C_LGREEN	<< " joined channel "
 				<< C_RESET	<< this->name	<< std::endl;
 	this->sendWho(newUser.client);
 }
@@ -165,10 +165,17 @@ void	Channel::sendNames(Client *client)
 	client->sendMsg(msg);
 }
 
-void	Channel::sendChannelMsg(const std::string msg) const
+void	Channel::sendToChannel(const std::string msg) const
 {
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 		(*i).client->sendMsg(msg);
+}
+
+void	Channel::sendToChannel(const Client *exclude, const std::string msg) const
+{
+	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+		if ((*i).client != exclude)
+			(*i).client->sendMsg(msg);
 }
 
 void	Channel::sendPrivMsg(Client *sender, std::string msg)
@@ -217,14 +224,33 @@ void	Channel::inviteClient(Client *client)
 
 void	Channel::removeUser(const Client *client)
 {
-	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
-		if ((*i).client == client)
+	if (this->userIsInChannel(client))
+	{
+		this->sendToChannel(nullptr, ":" + client->getNickName() + "!~" + client->getIdentName() + "@" + client->getIpHostName() + " PART " + this->name + "\r\n");
+		for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end();)
 		{
-			this->users.erase(i);
-			this->sendChannelMsg(":" + client->getNickName() + "!" + client->getIdentName() + "@" + client->getIpHostName() + " QUIT\r\n");
-			std::cout	<< C_PURPLE	<< "triggered"	<< C_RESET	<< std::endl; // NEEDS TESTING!
-			return ;
+std::cout	<< __func__	<< '['	<< __LINE__	<< "]\t"	<< (*i).client->getNickName()	<< std::endl;
+			if ((*i).client == client)
+			{
+				i = this->users.erase(i);
+			}
+			else
+				++i;
+
 		}
+		std::cout	<< C_LMGNT	<< "User "
+					<< C_RESET	<< client->getNickName()
+					<< C_LMGNT	<< " left channel "
+					<< C_RESET	<< this->name	<< std::endl;
+	}
+	// for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+	// 	if ((*i).client == client)
+	// 	{
+	// 		this->users.erase(i);
+	// 		this->sendChannelMsg(":" + client->getNickName() + "!" + client->getIdentName() + "@" + client->getIpHostName() + " QUIT\r\n");
+	// 		std::cout	<< C_PURPLE	<< "triggered"	<< C_RESET	<< std::endl; // NEEDS TESTING!
+	// 		return ;
+	// 	}
 }
 
 // void	Channel::kickClient(Client *client)
