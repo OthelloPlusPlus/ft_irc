@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 13:45:11 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 15:18:09 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ namespace Command
 	void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
-	void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args);
+	void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	
 	std::vector<std::string> ircSplit( const std::string &input, const std::string &delimiter);
 	std::vector<std::string> ircSplitMulti( const std::string &input, const std::string &delimiter);

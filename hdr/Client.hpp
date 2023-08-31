@@ -53,7 +53,7 @@ class Client
 		void		initialize(int serverFd);
 		bool		stillActive(void) const;
 
-		void		sendMsg(std::string msg);
+		void		sendMsg(std::string msg) const;
 		std::string	getMsg(void);
 		bool		readReceive(int sockfd);
 

@@ -84,7 +84,7 @@ void	Client::initialize(int serverFD) {
 	setIpHostName(ipAddress(this->socketAddress));
 }
 
-void	Client::sendMsg(std::string msg) {
+void	Client::sendMsg(std::string msg) const {
 	std::cout	<< "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
 				<< "]\t"	<< msg	<< std::endl;
 }
