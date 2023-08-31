@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/30 17:46:35 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 12:14:13 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ std::vector<std::string> Command::ircSplit( const std::string& input,
 	return tokens;
 }
 
-void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, std::vector<Client*> clients){
+void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server){
 
 	if (cmd == "USER")
 		Command::user(user, cmd, args);
 	else if (cmd == "PASS")
-		Command::password(user, cmd, args);
+		Command::password(user, cmd, args, server->getPassword());
 	else if (cmd == "NICK")
-		Command::nick(user, cmd, args, clients);
+		Command::nick(user, cmd, args, server->getClientList());
 	else if (cmd == "PING")
 		Command::ping(user, cmd, args);
 }
@@ -76,7 +76,8 @@ void Command::parseMsg(Client &user, Server *server){
 			// parseCmd(user, command, params);
 			std::vector<std::string>	args;
 			args = ircSplit(params, " ");
-			parseCmd(user, command, args, server->getClientList());
+			// parseCmd(user, command, args, server->getClientList());
+			parseCmd(user, command, args, server);
 		}
 		//change!! no more cmd and args, if I pass only cmd and no space, if condition spacePos != std::string::npos fails and nothing happens
 	}

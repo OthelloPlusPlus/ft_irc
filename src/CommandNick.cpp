@@ -6,14 +6,14 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 15:13:05 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/30 14:38:50 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 12:07:44 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include "colors.hpp"
 
-void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params, std::vector<Client*>& clients) {
+void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params, std::vector<Client*> clients) {
 		std::string nickname = params[0];
 
 		//NO NICK name

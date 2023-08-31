@@ -6,26 +6,36 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 15:54:17 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/30 17:36:03 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 13:06:43 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include "colors.hpp"
 
-void Command::password(Client &user, const std::string& cmd, const std::vector<std::string>& args) {
+void Command::password(Client &user, const std::string& cmd, const std::vector<std::string>& args, std::string	servPass) {
 	if (args.empty() || args[0].empty()){
 		user.sendMsg("<client> " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
 	}
+	std::cout << C_YELLOW "here\n";
 	if (user.getIsRegistered() == true){
 		user.sendMsg("<client> " + cmd + ERR_ALREADYREGISTERED);
 		return ;
 	}
+	std::string trimmedPass;
+	
+	std::cout << C_YELLOW "here2\n";
 	if (args[0].at(0) == ':')
-		user.setPassword(args[0].substr(1));
+		trimmedPass = args[0].substr(1);
 	else
-		user.setPassword(args[0]);
+		trimmedPass = args[0];
+	std::cout << C_YELLOW "trimmedPass " << trimmedPass << " pass\n" << user.getPassword()  << C_RESET << std::endl;
+	if (trimmedPass != user.getPassword()){
+		user.sendMsg("<client> " + cmd + ERR_PASSWDMISMATCH);
+		return ;
+	}
+	user.setPassword(trimmedPass);
 	user.setHasPassword(true);
 }
 
