@@ -84,7 +84,7 @@ void	Client::initialize(int serverFD) {
 	setIpHostName(ipAddress(this->socketAddress));
 }
 
-void	Client::sendMsg(std::string msg) {
+void	Client::sendMsg(std::string msg) const {
 	std::cout	<< "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
 				<< "]\t"	<< msg	<< std::endl;
 }
@@ -157,6 +157,7 @@ std::string const & Client::getNickName( void ) const  { return _nickName; }
 std::string const & Client::getPassword( void ) const  { return _password; }
 std::string const & Client::getServer( void ) const  { return _server; }
 std::string const & Client::getIpHostName( void ) const  { return _IpHostName; }
+int const & Client::getPollInfofd(void) const { return pollInfo.fd; }
 bool Client::getIsRegistered( void ) const  { return _isRegistered; }
 bool Client::hasPassword( void ) const  { return _hasPassword; }
 
@@ -188,6 +189,10 @@ void Client::setServer(std::string server){
 	this->_server = server;
 }
 
+void Client::setPollInfofd(int val){
+	this->pollInfo.fd = val;
+}
+
 void Client::setIpHostName(std::string ipAddress){
 	this->_IpHostName = ipAddress;
 }
@@ -205,11 +210,6 @@ void Client::userRegistration( void ){
 		setIsRegistered(true);
 }
 
-/*
-PASS :Gatto
-USER Emanuela_De_La_Vega * 10.11.6.15 :Marylin vos Savant
-NICK Magic
-*/
 
 void	Client::printInfo(void) const {
 	std::cout << "this->getNickName()\t" << C_RED << this->getNickName() << C_RESET	<< std::endl;

@@ -6,20 +6,21 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 19:10:04 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/30 14:38:42 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 15:20:32 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 
-void Command::ping(Client &user, const std::string &cmd, const std::vector<std::string> &args){
+void Command::ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (args.empty() || args[0].empty()){
 		user.sendMsg("<client> " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
 	}
-//send PONG message with same token args[1]
+	server->sendPong(&user);
 }
 
+//send PONG message with same token args[1]
 /*
 PING message
      Command: PING
