@@ -85,8 +85,13 @@ void	Client::initialize(int serverFD) {
 }
 
 void	Client::sendMsg(std::string msg) const {
-	std::cout	<< "send [" << send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
-				<< "]\t"	<< msg	<< std::endl;
+	if (true)
+		std::cout	<< "send ["	<< send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
+					<< "]\t"
+					<< C_LORANGE	<< msg
+					<< C_RESET	<< std::flush;
+	else
+		send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
 }
 
 bool	Client::readReceive(int sockfd){
