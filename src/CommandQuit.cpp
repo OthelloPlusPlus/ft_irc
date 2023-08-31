@@ -6,17 +6,64 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 15:37:09 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 15:55:23 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 18:25:42 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 
 void	Command::quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+	if (!args[0].empty())
+		user.sendMsg("<client> " + user.getNickName() + " QUIT :" + args[0]);
+	else
+		user.sendMsg("<client> " + user.getNickName() + " QUIT :Quit: Leaving.");
 	
 }
 
 /*
+Sent: 59 bytes
+Received:
+:Magic1!~Emanuela_@185-61-55-68.185-61-55-ip.fmo-solutions.nl JOIN #!/bin/zsh
+Sent: 79 bytes
+Received:
+:Magic1!~Emanuela_@185-61-55-68.185-61-55-ip.fmo-solutions.nl PART #!/bin/zsh
+Sent: 79 bytes
+Received:
+:Magic1!~Emanuela_@185-61-55-68.185-61-55-ip.fmo-solutions.nl JOIN #!/bin/zsh
+Sent: 79 bytes
+Received:
+:Magic1!~Emanuela_@185-61-55-68.185-61-55-ip.fmo-solutions.nl QUIT :Client Quit
+Sent: 81 bytes
+Received:
+:Magic1!~Emanuela_@185-61-55-68.185-61-55-ip.fmo-solutions.nl JOIN #!/bin/zsh
+Sent: 79 bytes
+Received:
+PING :calcium.libera.chat
+Sent: 27 bytes
+Received:
+PONG :calcium.libera.chat
+Sent: 27 bytes
+Received:
+:Magic1!~Emanuela_@185-61-55-68.185-61-55-ip.fmo-solutions.nl QUIT :Client Quit ++++++++reason?
+Sent: 81 bytes
+Received:
+QUIT :Leaving.
+Sent: 16 bytes
+Connection closed: -1
+Received:
+:Othello!~Othello1@185-61-55-68.185-61-55-ip.fmo-solutions.nl QUIT :Quit: Leaving.+++++++no reason
+Error sending data: Bad file descriptor
+Received:
+ERROR :Closing Link: 185-61-55-68.185-61-55-ip.fmo-solutions.nl (Quit: Leaving.)++++++++++++++++++sent back from server
+Error sending data: Bad file descriptor
+Connection closed: -1
+
+
+
+
+
+
+
 
 QUIT message
 Command: QUIT
