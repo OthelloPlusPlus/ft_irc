@@ -136,15 +136,6 @@ std::string	Client::getMsg(void) {
 	return "";
 }
 
-/*
-EWOULDBLOCK & EAGAIN)typically used to indicate that a non-blocking socket operation 
-would block because there is no data available to read at the moment. 
-In other words, these error codes mean that the recv function didn't receive any data 
-because the socket is non-blocking and no data was immediately available.
-*/
-
-
-
 bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
 }
@@ -256,6 +247,12 @@ Client	&Client::operator=(const Client &src) {
 }
 
 /*
+
+EWOULDBLOCK & EAGAIN)typically used to indicate that a non-blocking socket operation 
+would block because there is no data available to read at the moment. 
+In other words, these error codes mean that the recv function didn't receive any data 
+because the socket is non-blocking and no data was immediately available.
+
 	// if (this->pollInfo.revents & POLLOUT) {
 	//		 // The socket is ready for writing. You can send data here if needed.
 	//		 // Example: send(this->pollInfo.fd, data_to_send, data_length, 0);
