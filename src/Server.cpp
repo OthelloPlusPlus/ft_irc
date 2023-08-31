@@ -246,18 +246,18 @@ void	Server::sendChannelList(const Client *client) const
 
 void	Server::sendWhoIs(const Client *client, const std::string who) const
 {
-	Client		*whoClient;
 	std::string	msg;
+	Client		*whoClient;
 
+	msg = ":" + this->publicIP + " 000 " + client->getNickName() + " " + who + " ";
 	whoClient = this->getClient(who);
-	msg = ":" + this->publicIP + " 000 " + client->getNickName() + " " + whoClient->getNickName() + " ";
-	if (whoClient != nullptr)
+	if (whoClient)
 	{
 		msg.replace(msg.find(" 000 "), 5, " 311 ");
 		client->sendMsg(msg + whoClient->getIdentName() + " " + whoClient->getIpHostName() + " * :" + whoClient->getRealName() + "\r\n");
 		msg.replace(msg.find(" 311 "), 5, " 312 ");
 		client->sendMsg(msg + this->publicIP + "\r\n");
-		msg.replace(msg.find(" 331 "), 5, " 318 ");
+		msg.replace(msg.find(" 312 "), 5, " 318 ");
 	}
 	else
 	{
