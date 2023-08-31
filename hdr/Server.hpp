@@ -41,7 +41,6 @@ class Server
 		void		setLocalIP(void);
 		void		bootUpServer(void);
 		void		acceptClient(void);
-		void		joinChannel(Client *client, const std::string channelName);
 		void		sendWelcome(Client *client);
 
 	protected:
@@ -61,6 +60,7 @@ class Server
 		std::vector<Client *>	getClientList(void);
 		Client	*getClient(std::string name) const;
 
+		void	joinChannel(Client *client, const std::string channelName);
 		void	sendChannelList(const Client *client) const;
 		void	sendWhoIs(const Client *client, const std::string who) const;
 		void	sendPong(const Client *client) const;
