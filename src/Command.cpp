@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 12:14:13 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 13:43:58 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 	if (cmd == "USER")
 		Command::user(user, cmd, args);
 	else if (cmd == "PASS")
-		Command::password(user, cmd, args, server->getPassword());
+		Command::password(user, cmd, args, server);
 	else if (cmd == "NICK")
 		Command::nick(user, cmd, args, server->getClientList());
 	else if (cmd == "PING")
@@ -76,7 +76,6 @@ void Command::parseMsg(Client &user, Server *server){
 			// parseCmd(user, command, params);
 			std::vector<std::string>	args;
 			args = ircSplit(params, " ");
-			// parseCmd(user, command, args, server->getClientList());
 			parseCmd(user, command, args, server);
 		}
 		//change!! no more cmd and args, if I pass only cmd and no space, if condition spacePos != std::string::npos fails and nothing happens

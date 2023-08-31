@@ -59,12 +59,13 @@ class Client
 
 		std::string	const &getBuff(void) const;
 		std::string const &getUserName(void) const; 
-		std::string const &getIdentName(void) const;	// Emanuela De la Vega
-		std::string const &getRealName(void) const; 	// Emanuela Licameli
-		std::string const &getNickName(void) const; 	// Magic
-		std::string const &getPassword(void) const; 	// Gatto
+		std::string const &getIdentName(void) const;
+		std::string const &getRealName(void) const;
+		std::string const &getNickName(void) const;
+		std::string const &getPassword(void) const;
 		std::string const &getServer(void) const; 		// computer of server
 		std::string const &getIpHostName(void) const; 	// computer of client
+		int const &getPollInfofd(void) const; 
 		bool getIsRegistered( void ) const;
 		bool hasPassword( void ) const;
 
@@ -75,6 +76,7 @@ class Client
 		void setNickName(std::string nickname);
 		void setPassword(std::string password);
 		void setServer(std::string server);
+		void setPollInfofd(int val);
 		void setIpHostName(std::string ipAddress);
 		void setIsRegistered(bool val);
 		void setHasPassword(bool val);

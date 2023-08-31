@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 12:12:54 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/08/31 13:45:11 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ namespace Command
 	void parseMsg(Client &user, Server *server);
 	void parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server);
 
-	void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::string servPass);
+	void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
 	void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args);
