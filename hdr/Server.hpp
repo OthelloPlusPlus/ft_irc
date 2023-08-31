@@ -34,9 +34,11 @@ class Server
 		std::vector<Channel *>	channels;
 		int			port;
 		std::string	password;
-		std::string	ip;
+		std::string	localIP;
+		std::string	publicIP;
 
-		std::string	getHostIp(void) const;
+		// std::string	getHostIp(void);
+		void		setLocalIP(void);
 		void		bootUpServer(void);
 		void		acceptClient(void);
 		void		joinChannel(Client *client, const std::string channelName);
@@ -58,7 +60,8 @@ class Server
 
 		std::vector<Client *>	getClientList(void);
 
-		void	sendPong(Client *client);
+		void	sendChannelList(const Client *client) const;
+		void	sendPong(const Client *client) const;
 
 		Server	&operator=(const Server &src);
 };
