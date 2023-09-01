@@ -34,7 +34,6 @@
 #include <arpa/inet.h>
 // char	*inet_ntoa(in_addr)
 
-int Server::verbose = 0;
 
 /** ************************************************************************ **\
  * 
@@ -42,6 +41,7 @@ int Server::verbose = 0;
  * 
 \* ************************************************************************** */
 
+int Server::verbose = 0;
 // Server::Server(void)
 // {
 // 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -68,7 +68,7 @@ Server::Server(int argc, char **argv)
 	Server::verbose = 1;
 	std::cout	<< verbose	<< std::endl;
 	Channel::setVerbose(this->verbose);
-	// Client::setVerbose(this->verbose);
+	Client::setVerbose(this->verbose);
 	
 	std::cout	<< "\n"
 				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
