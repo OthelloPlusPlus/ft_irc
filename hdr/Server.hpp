@@ -38,11 +38,13 @@ class Server
 
 		std::vector<Channel *>	channels;
 		std::vector<Client *>	clients;
-		std::string				password;
+		std::string				passwordUser;
 
 		// std::string	getHostIp(void);
 		void		setLocalIP(void);
 		void		bootUpServer(void);
+		void		setVerbose(char *argv3);
+
 		void		acceptClient(void);
 		void		sendWelcome(Client *client);
 
@@ -57,7 +59,7 @@ class Server
 		void	checkNewClient(void);
 		void	checkClients(void);
 
-		bool	validatePassword(const std::string password) const;
+		int	validatePassword(const std::string password) const;
 		// bool	nicknameExists(const std::string nickname) const;
 
 		std::vector<Client *>	getClientList(void);
