@@ -42,6 +42,7 @@ class Channel
 		bool		modeTopic;
 		std::string	key;
 		int			userLimit;
+		static int		verbose;
 
 		std::vector<ChannelUser>	users;
 
@@ -71,6 +72,8 @@ class Channel
 		void	sendWho(Client *client);
 		bool	userIsInChannel(const Client *client) const;
 		void	removeUser(const Client *client);
+
+		static void		setVerbose(const int verbose);
 
 		std::string	getName(void) const;
 		std::string	getTopic(void) const;

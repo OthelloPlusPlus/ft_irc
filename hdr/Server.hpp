@@ -30,12 +30,15 @@ class Server
 	private:
 		struct pollfd			pollInfo;
 		struct sockaddr_in		socketAddress;
-		std::vector<Client *>	clients;
+		int						port;
+		std::string				publicIP;
+		std::string				localIP;
+
+		static int 				verbose;
+
 		std::vector<Channel *>	channels;
-		int			port;
-		std::string	password;
-		std::string	localIP;
-		std::string	publicIP;
+		std::vector<Client *>	clients;
+		std::string				password;
 
 		// std::string	getHostIp(void);
 		void		setLocalIP(void);
