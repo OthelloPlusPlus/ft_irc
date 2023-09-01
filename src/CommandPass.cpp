@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 15:54:17 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 12:09:32 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/01 15:31:15 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void Command::password(Client &user, const std::string& cmd, const std::vector<s
 	if (trimmedPass.at(0) == ':')
 		trimmedPass.erase(0, 1);
 
-	if (!server->validatePassword(trimmedPass) == true){
+	if (server->validatePassword(trimmedPass) != 1){
 		user.sendMsg("<client> " + cmd + ERR_PASSWDMISMATCH);
 		close (user.getPollInfofd());
 		user.setPollInfofd(-1); 

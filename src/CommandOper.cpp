@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 12:26:31 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 13:45:28 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/01 15:31:52 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (args.size() != 2)
 		user.sendMsg("<client> " + cmd + ERR_NEEDMOREPARAMS);
+		
+		if (server->validatePassword(args[1]) != 2){
+		user.sendMsg("<client> " + cmd + ERR_PASSWDMISMATCH);
+		return ;
+	}
 }
 
 /*
