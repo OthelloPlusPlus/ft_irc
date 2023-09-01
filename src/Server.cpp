@@ -34,6 +34,8 @@
 #include <arpa/inet.h>
 // char	*inet_ntoa(in_addr)
 
+int Server::verbose = 0;
+
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -62,6 +64,11 @@ Server::Server(int argc, char **argv)
 	this->password = argv[2];
 	this->setLocalIP();
 	this->bootUpServer();
+	std::cout	<< verbose	<< std::endl;
+	Server::verbose = 1;
+	std::cout	<< verbose	<< std::endl;
+	Channel::setVerbose(this->verbose);
+	// Client::setVerbose(this->verbose);
 	
 	std::cout	<< "\n"
 				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"

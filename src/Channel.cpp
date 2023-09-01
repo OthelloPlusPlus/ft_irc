@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/31 20:23:14 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/09/01 14:46:41 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 // std::
 #include <unistd.h>
 //	int	close(int fildes);
+
+int	Channel::verbose = 0;
 
 /** ************************************************************************ **\
  * 
@@ -98,10 +100,11 @@ void	Channel::addClient(Client *newClient)
 
 	if (this->userIsInChannel(newClient))
 	{
-		std::cout	<< C_LRED	<< "User "
-					<< C_RESET	<< newClient->getNickName()
-					<< C_LRED	" is already in channel "
-					<< C_RESET	<< this->name	<< std::endl;
+		if (Channel::verbose)
+			std::cout	<< C_LRED	<< "User "
+						<< C_RESET	<< newClient->getNickName()
+						<< C_LRED	" is already in channel "
+						<< C_RESET	<< this->name	<< std::endl;
 		return ;
 	}
 	newUser.client = newClient;
@@ -112,10 +115,11 @@ void	Channel::addClient(Client *newClient)
 	this->sendToChannel(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
 	this->sendTopic(newUser.client);
 	this->sendNames(newUser.client);
-	std::cout	<< C_LGREEN	<< "User "
-				<< C_RESET	<< newClient->getNickName()
-				<< C_LGREEN	<< " joined channel "
-				<< C_RESET	<< this->name	<< std::endl;
+	if (Channel::verbose)
+		std::cout	<< C_LGREEN	<< "User "
+					<< C_RESET	<< newClient->getNickName()
+					<< C_LGREEN	<< " joined channel "
+					<< C_RESET	<< this->name	<< std::endl;
 	this->sendWho(newUser.client);
 }
 
@@ -238,10 +242,11 @@ std::cout	<< __func__	<< '['	<< __LINE__	<< "]\t"	<< (*i).client->getNickName()	
 				++i;
 
 		}
-		std::cout	<< C_LMGNT	<< "User "
-					<< C_RESET	<< client->getNickName()
-					<< C_LMGNT	<< " left channel "
-					<< C_RESET	<< this->name	<< std::endl;
+		if (Channel::verbose)
+			std::cout	<< C_LMGNT	<< "User "
+						<< C_RESET	<< client->getNickName()
+						<< C_LMGNT	<< " left channel "
+						<< C_RESET	<< this->name	<< std::endl;
 	}
 	// for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	// 	if ((*i).client == client)
@@ -265,6 +270,11 @@ std::cout	<< __func__	<< '['	<< __LINE__	<< "]\t"	<< (*i).client->getNickName()	
 // 		}
 // 	}
 // }
+
+void	Channel::setVerbose(const int verbose)
+{
+	Channel::verbose = verbose;
+}
 
 /** ************************************************************************ **\
  * 
