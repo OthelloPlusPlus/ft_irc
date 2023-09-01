@@ -6,11 +6,12 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 15:37:09 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 18:25:42 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/01 12:23:56 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
+#include <unistd.h>
 
 void	Command::quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (!args[0].empty())
@@ -18,6 +19,9 @@ void	Command::quit(Client &user, const std::string &cmd, const std::vector<std::
 	else
 		user.sendMsg("<client> " + user.getNickName() + " QUIT :Quit: Leaving.");
 	
+	close (user.getPollInfofd());
+	user.setPollInfofd(-1); 
+	std::cout << "Client " << user.getNickName() << " disconnected from server." << std::endl;
 }
 
 /*

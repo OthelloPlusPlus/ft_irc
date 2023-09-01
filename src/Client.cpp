@@ -30,7 +30,8 @@
  * 
 \* ************************************************************************** */
 
-//const std::string& ipAddress
+int Client::_verbose = 0;
+
 Client::Client(int serverFD) : _nickName(""), _userName(""), _password(""), _identName(""), 
 								_realName(""), _IpHostName(""), _server(""), _isRegistered(false),
 								_hasPassword(false) {
@@ -143,6 +144,10 @@ std::string	Client::getMsg(void) {
 
 bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
+}
+
+void	Client::setVerbose(const int verbose) {
+	Client::_verbose = verbose;
 }
 
 std::string	const & Client::getBuff( void )const { return _message;}
