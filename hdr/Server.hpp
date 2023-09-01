@@ -41,12 +41,12 @@ class Server
 		std::string				passwordUser;
 
 		// std::string	getHostIp(void);
-		void		setLocalIP(void);
-		void		bootUpServer(void);
-		void		setVerbose(char *argv3);
+		void	setLocalIP(void);
+		void	bootUpServer(void);
+		void	setVerbose(char *argv3);
 
-		void		acceptClient(void);
-		void		sendWelcome(Client *client);
+		void	acceptClient(void);
+		void	sendWelcome(Client *client);
 
 	protected:
 
@@ -58,6 +58,7 @@ class Server
 
 		void	checkNewClient(void);
 		void	checkClients(void);
+		void	checkChannels(void);
 
 		int	validatePassword(const std::string password) const;
 		// bool	nicknameExists(const std::string nickname) const;

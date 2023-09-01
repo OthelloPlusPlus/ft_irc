@@ -241,9 +241,9 @@ void	Server::sendWelcome(Client *client)
 	client->sendMsg(msg + " 375 " + client->getNickName() + " :- ft_irc Message of the Day - \r\n");
 	client->sendMsg(msg + " 372 " + client->getNickName() + " :- We know what we're doing! We swear!\r\n");
 	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
-	this->joinChannel(client, "#WelcomeChannel");
-	this->joinChannel(client, "#Hello");
-	this->partChannel(client, "#Hello");
+	// this->joinChannel(client, "#WelcomeChannel");
+	// this->joinChannel(client, "#Hello");
+	// this->partChannel(client, "#Hello");
 }
 
 void	Server::sendChannelList(const Client *client) const
@@ -298,7 +298,6 @@ void	Server::sendPong(const Client *client, const std::string token) const
 	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
 }
 
-
 void	Server::checkClients(void)
 {
 	for (std::vector<Client *>::const_iterator client = this->clients.begin(); client != this->clients.end();)
@@ -338,7 +337,7 @@ void	Server::checkClients(void)
 
 int	Server::validatePassword(const std::string password) const
 {
-	if (getenv("IRCADMINPSW") == password)
+	if (std::string(getenv("IRCADMINPWD")) == password)
 		return (2);
 	return (this->passwordUser == password);
 }
@@ -356,12 +355,14 @@ void	Server::joinChannel(Client *client, const std::string channelName)
 	for (std::vector<Channel *>::const_iterator i = this->channels.begin(); i != this->channels.end(); ++i)
 		if ((*i)->getName() == channelName)
 		{
-			(*i)->addClient(client);
+			(*i)->addClient(client, false);
+			// (*i)->setAdmin(client, false);
 			return ;
 		}
 	Channel	*newChannel = new Channel(channelName);
 	this->channels.push_back(newChannel);
-	newChannel->addClient(client);
+	newChannel->addClient(client, true);
+	// newChannel->setAdmin(client, true);
 }
 
 void	Server::partChannel(Client *client, const std::string channelName)
@@ -392,6 +393,22 @@ Channel	*Server::getChannel(std::string name) const
 		if ((*channel)->getName() == name)
 			return (*channel);
 	return (nullptr);
+}
+
+void	Server::checkChannels(void)
+{
+	for (std::vector<Channel *>::iterator channel = this->channels.begin(); channel != this->channels.end();)
+	{
+		if ((*channel)->getSize() == 0)
+		{
+			delete (*channel);
+			channel = this->channels.erase(channel);
+			continue ;
+		}
+		if ((*channel)->getAdminSize() == 0)
+			(*channel)->promoteOldestUser();
+		++channel;
+	}
 }
 
 /** ************************************************************************ **\
