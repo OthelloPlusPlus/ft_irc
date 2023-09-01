@@ -18,6 +18,8 @@
 #include <iostream>
 // std::
 // int	stoi(const char *)
+#include <cstdlib>
+// char	*getenv(const char *)
 #include <iomanip>
 #include <sys/socket.h>
 //	int		socket(int domain, int type, int protocol);
@@ -41,14 +43,8 @@
  * 
 \* ************************************************************************** */
 
-int Server::verbose = 0;
-// Server::Server(void)
-// {
-// 	std::cout	<< C_DGREEN	<< "Default constructor "
-// 				<< C_GREEN	<< "Server"
-// 				<< C_DGREEN	<< " called."
-// 				<< C_RESET	<< std::endl;
-// }
+int 		Server::verbose = 0;
+
 Server::Server(int argc, char **argv)
 {
 	std::cout	<< std::left
@@ -60,16 +56,17 @@ Server::Server(int argc, char **argv)
 		throw (std::range_error("Not enough aruments passed."));
 	if (argc > 3)
 		throw (std::range_error("Too many arguments passed."));
+	char	*adminPwd = std::getenv("IRCADMINPWD");
+	if (!adminPwd)
+		throw (std::runtime_error("Admin password not found in env."));
 	this->port = std::stoi(argv[1]);
-	this->password = argv[2];
+	this->passwordUser = argv[2];
+	if (adminPwd == this->passwordUser)
+		throw (std::runtime_error("Invalid password set."));
 	this->setLocalIP();
 	this->bootUpServer();
-	std::cout	<< verbose	<< std::endl;
-	Server::verbose = 1;
-	std::cout	<< verbose	<< std::endl;
-	Channel::setVerbose(this->verbose);
-	Client::setVerbose(this->verbose);
-	
+	this->setVerbose(argv[3]);
+
 	std::cout	<< "\n"
 				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
 				<< std::setw(23)	<< " - Hostname: "	<< this->publicIP	<< "\n"
@@ -161,6 +158,18 @@ void	Server::setLocalIP(void)
 		if (ifap->ifa_addr && ifap->ifa_addr->sa_family == AF_INET)
 			this->localIP = inet_ntoa(((struct sockaddr_in *)ifap->ifa_addr)->sin_addr);
 	freeifaddrs(ifap);
+}
+
+void	Server::setVerbose(char *argv3)
+{
+	if (argv3 == NULL)
+		this->verbose = 1;
+	else
+	{
+		this->verbose = 1;
+	}
+	Client::setVerbose(this->verbose);
+	Channel::setVerbose(this->verbose);
 }
 
 // void	Server::setPublicIP(void)
@@ -299,15 +308,17 @@ void	Server::checkClients(void)
 			std::string	msg = (*client)->getMsg();
 			if (!msg.empty())
 			{
-				std::cout	<< "Recv ["	<< msg.length()	<< "]\t"
-							<< C_ORANGE	<< msg
-							<< C_RESET	<< std::flush;
+				if (Server::verbose)
+					std::cout	<< "Recv ["	<< msg.length()	<< "]\t"
+								<< C_ORANGE	<< msg
+								<< C_RESET	<< std::flush;
 				if ((*client)->getNickName().empty())
 				{
 					Command::parseMsg(**client, this);
 					if (!(*client)->getNickName().empty())
 						this->sendWelcome(*client);
-					(*client)->printInfo();
+					if (this->verbose)
+						(*client)->printInfo();
 				}
 				else
 					Command::parseMsg(**client, this);
@@ -325,9 +336,11 @@ void	Server::checkClients(void)
 	}
 }
 
-bool	Server::validatePassword(const std::string password) const
+int	Server::validatePassword(const std::string password) const
 {
-	return (this->password == password);
+	if (getenv("IRCADMINPSW") == password)
+		return (2);
+	return (this->passwordUser == password);
 }
 
 // bool	Server::nicknameExists(const std::string nickname) const
@@ -395,7 +408,7 @@ Server	&Server::operator=(const Server &src)
 	this->socketAddress = src.socketAddress;
 	this->clients = src.clients;
 	this->port = src.port;
-	this->password = src.password;
+	this->passwordUser = src.passwordUser;
 	this->localIP = src.localIP;
 	return (*this);
 }

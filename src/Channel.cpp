@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/09/01 14:46:41 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/09/01 15:02:32 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
 #include <unistd.h>
 //	int	close(int fildes);
 
-int	Channel::verbose = 0;
-
 /** ************************************************************************ **\
  * 
  * 	Constructors
  * 
 \* ************************************************************************** */
+
+int	Channel::verbose = 0;
 
 Channel::Channel(std::string name): name(name), topic("")
 {
@@ -122,28 +122,6 @@ void	Channel::addClient(Client *newClient)
 					<< C_RESET	<< this->name	<< std::endl;
 	this->sendWho(newUser.client);
 }
-
-// void	Channel::sendMsgToChannel(Client *sender, std::string msg)
-// {
-// 	size_t	i;
-
-// 	i = this->operators.size();
-// 	while (i > 0)
-// 	{
-// 		if (this->operators[i - 1]->stillActive() && \
-// 			this->operators[i - 1] != sender)
-// 			this->operators[i - 1]->sendMsg(msg);
-// 		--i;
-// 	}
-// 	i = this->clients.size();
-// 	while (i > 0)
-// 	{
-// 		if (this->clients[i - 1]->stillActive() && \
-// 			this->clients[i - 1] != sender)
-// 			this->clients[i - 1]->sendMsg(msg);
-// 		--i;
-// 	}
-// }
 
 void	Channel::sendTopic(Client *client)
 {

@@ -17,7 +17,7 @@ SRC =	$(SRC_MAIN:%.cpp=	$(SRC_DIR)%.cpp)\
 SRC_DIR =	src/
 SRC_MAIN =	main.cpp
 SRC_CLASS =	Server.cpp Client.cpp Channel.cpp
-SRC_FUNC =	
+SRC_FUNC =	setEnv.cpp
 SRC_NMSPC =	Command.cpp		\
 			CommandNick.cpp CommandPass.cpp CommandUser.cpp CommandPing.cpp \
 			CommandQuit.cpp CommandOper.cpp
@@ -27,6 +27,9 @@ OBJ_DIR =	obj/
 OBJ =	$(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 DEP_DIR =	dep/
 DEP =	$(SRC:$(SRC_DIR)%.cpp=$(DEP_DIR)%.d)
+
+# -include .env
+# export $(shell sed 's/=.*//' .env)
 
 all: $(DIRS) $(NAME)
 
@@ -39,7 +42,7 @@ $(NAME): $(OBJ)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@printf	"Compiling object file: %s\n"	$@
-	@$(CC) $(CFLAGS) $(DEPFLAGS) $(INCL_HDR) -c $< -o $@
+	@$(CC) $(CFLAGS) $(DEPFLAGS) $(INCL_HDR)  -c $< -o $@
 
 -include $(DEP)
 
