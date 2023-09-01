@@ -57,6 +57,8 @@ class Channel
 
 		void	inviteClient(Client *client);
 		// void	kickClient(Client *client);
+
+		void	printClientList(void) const;
 		
 	protected:
 
@@ -65,19 +67,22 @@ class Channel
 		Channel(const Channel &src);
 		~Channel(void);
 
-		void	addClient(Client *newClient);
+		void	addClient(Client *newClient, bool admin);
 		void	sendToChannel(const std::string msg) const;
 		void	sendToChannel(const Client *exclude, const std::string msg) const;
 		// void	sendMsgToChannel(Client *sender, std::string msg);
 		void	sendWho(Client *client);
 		bool	userIsInChannel(const Client *client) const;
 		void	removeUser(const Client *client);
+		void	promoteOldestUser(void);
 
 		static void		setVerbose(const int verbose);
+		void	setAdmin(Client *target, bool status);
 
 		std::string	getName(void) const;
 		std::string	getTopic(void) const;
 		size_t		getSize(void) const;
+		size_t		getAdminSize(void) const;
 
 		Channel	&operator=(const Channel &src);
 };

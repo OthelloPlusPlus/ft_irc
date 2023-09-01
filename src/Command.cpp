@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Command.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 12:21:21 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Command.cpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/09/01 18:21:57 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		server->sendWhoIs(&user, args[0]);
 	else if (cmd == "JOIN")
 		server->joinChannel(&user, args[0]);
-	else if (cmd == "LIST"){
+	else if (cmd == "LIST")
 		server->sendChannelList(&user);
-	}
-
+	else if (cmd == "PART")
+		server->partChannel(&user, args[0]);
 }
 
 void Command::parseMsg(Client &user, Server *server){

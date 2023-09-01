@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/09/01 15:02:32 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/09/01 19:26:05 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,17 @@ size_t	Channel::getSize(void) const
 	return (this->users.size());
 }
 
+size_t	Channel::getAdminSize(void) const
+{
+	size_t	size;
+
+	size = 0;
+	for (std::vector<ChannelUser>::const_iterator user = this->users.begin(); user != this->users.end(); ++user)
+		if ((*user).admin == true)
+			++size;
+	return (size);
+}
+
 bool	Channel::userIsInChannel(const Client *client) const
 {
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
@@ -94,7 +105,7 @@ void	Channel::setTopic(ChannelUser user, const std::string newTopic)
 	this->topic = newTopic;
 }
 
-void	Channel::addClient(Client *newClient)
+void	Channel::addClient(Client *newClient, bool admin)
 {
 	ChannelUser	newUser;
 
@@ -108,10 +119,9 @@ void	Channel::addClient(Client *newClient)
 		return ;
 	}
 	newUser.client = newClient;
-	newUser.admin = false;
-	newUser.timestamp = 0;
+	newUser.admin = admin;
+	newUser.timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());;
 	this->users.push_back(newUser);
-	// std::cout	<< C_PURPLE	<< "JOIN message"	<< C_RESET	<< std::endl;
 	this->sendToChannel(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
 	this->sendTopic(newUser.client);
 	this->sendNames(newUser.client);
@@ -121,6 +131,17 @@ void	Channel::addClient(Client *newClient)
 					<< C_LGREEN	<< " joined channel "
 					<< C_RESET	<< this->name	<< std::endl;
 	this->sendWho(newUser.client);
+}
+
+void	Channel::setAdmin(Client *target, bool status)
+{
+	for (std::vector<ChannelUser>::iterator user = this->users.begin(); user != this->users.end(); ++user)
+		if ((*user).client == target)
+		{
+			std::cout	<< __func__	<<__LINE__	<< std::endl;
+			(*user).admin = status;
+			break ;
+		}
 }
 
 void	Channel::sendTopic(Client *client)
@@ -191,11 +212,6 @@ void	Channel::sendWho(Client *client)
 	client->sendMsg(msg);
 }
 
-// void	Channel::sendWhoIs(Client *client, Client *who)
-// {
-
-// }
-
 void	Channel::inviteClient(Client *client)
 {
 	std::string	msg;
@@ -208,10 +224,9 @@ void	Channel::removeUser(const Client *client)
 {
 	if (this->userIsInChannel(client))
 	{
-		this->sendToChannel(nullptr, ":" + client->getNickName() + "!~" + client->getIdentName() + "@" + client->getIpHostName() + " PART " + this->name + "\r\n");
+		this->sendToChannel(":" + client->getNickName() + "!~" + client->getIdentName() + "@" + client->getIpHostName() + " PART " + this->name + "\r\n");
 		for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end();)
 		{
-std::cout	<< __func__	<< '['	<< __LINE__	<< "]\t"	<< (*i).client->getNickName()	<< std::endl;
 			if ((*i).client == client)
 			{
 				i = this->users.erase(i);
@@ -226,14 +241,17 @@ std::cout	<< __func__	<< '['	<< __LINE__	<< "]\t"	<< (*i).client->getNickName()	
 						<< C_LMGNT	<< " left channel "
 						<< C_RESET	<< this->name	<< std::endl;
 	}
-	// for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
-	// 	if ((*i).client == client)
-	// 	{
-	// 		this->users.erase(i);
-	// 		this->sendChannelMsg(":" + client->getNickName() + "!" + client->getIdentName() + "@" + client->getIpHostName() + " QUIT\r\n");
-	// 		std::cout	<< C_PURPLE	<< "triggered"	<< C_RESET	<< std::endl; // NEEDS TESTING!
-	// 		return ;
-	// 	}
+}
+
+void	Channel::promoteOldestUser(void)
+{
+	ChannelUser	oldest;
+
+	oldest = this->users[0];
+	for (std::vector<ChannelUser>::const_iterator user = this->users.begin(); user != this->users.end(); ++user)
+		if ((*user).timestamp < oldest.timestamp)
+			oldest = (*user);
+	oldest.admin = true;
 }
 
 // void	Channel::kickClient(Client *client)
@@ -252,6 +270,14 @@ std::cout	<< __func__	<< '['	<< __LINE__	<< "]\t"	<< (*i).client->getNickName()	
 void	Channel::setVerbose(const int verbose)
 {
 	Channel::verbose = verbose;
+}
+
+void	Channel::printClientList(void) const
+{
+	std::cout	<< "--- Channel "	<< this->name	<< ":"	<< std::endl;
+	for (std::vector<ChannelUser>::const_iterator client = this->users.begin(); client != this->users.end(); ++client)
+		std::cout	<<	client->client->getNickName()	<< '\n';
+	std::cout	<< "--- End of list\n"	<< std::endl;
 }
 
 /** ************************************************************************ **\
