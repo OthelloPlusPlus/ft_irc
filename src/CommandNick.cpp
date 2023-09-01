@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 15:13:05 by emlicame          #+#    #+#             */
-/*   Updated: 2023/08/31 12:07:44 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/01 16:54:49 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,25 +16,32 @@
 void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params, std::vector<Client*> clients) {
 		std::string nickname = params[0];
 
-		//NO NICK name
+	//	NO NICK name
 		if (nickname.empty()) {
 			user.sendMsg("<client> " + user.getNickName() + ERR_NONICKNAMEGIVEN);
 			return ;
 		}
-// 		If the nick is already in use ERR_NICKNAMEINUSE (433) and ignore command.
-		for (size_t i = 0; i < clients.size(); ++i) {
-			if ((clients[i]->getNickName() == user.getNickName()) && (clients[i] != &user)){
+	// 	If the nick is already in use ERR_NICKNAMEINUSE (433) and ignore command.
+		for (std::vector<Client *>::const_iterator i = clients.begin(); i != clients.end(); ++i)
+			if ((*i)->getNickName() == nickname && (*i) != &user){
 				user.sendMsg("<client> " + user.getNickName() + ERR_NICKNAMEINUSE);
 				return ;
 			}
-		}
+// for (size_t i = 0; i < clients.size(); ++i) {
+// 	if ((clients[i]->getNickName() == user.getNickName()) && (clients[i] != &user)){
+// 		user.sendMsg("<client> " + user.getNickName() + ERR_NICKNAMEINUSE);
+// 		return ;
+// 	}
+// }
 		if (isdigit(nickname[0])){
 			user.sendMsg("<client> " + user.getNickName() + " :Erroneus nickname\r\n"); //ERR_ERRONEUSNICKNAME (432) 
 			return ;
 		}
 		for (int i = 0; i < nickname.size(); i++){
-			if (!isalpha(nickname[i]))
+			if (!isalpha(nickname[i])){
+				user.sendMsg("<client> " + user.getNickName() + " :Erroneus nickname\r\n"); //ERR_ERRONEUSNICKNAME (432) 
 				return ;
+			}
 		}
 			
 		user.setNickName(nickname);

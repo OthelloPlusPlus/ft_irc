@@ -6,30 +6,50 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 12:26:31 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 15:31:52 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/01 17:45:10 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 
 void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
-	if (args.size() != 2)
+	if (args.size() != 2){
 		user.sendMsg("<client> " + cmd + ERR_NEEDMOREPARAMS);
+		return ;
+	}
 		
-		if (server->validatePassword(args[1]) != 2){
+	if (server->validatePassword(args[1]) != 2){
 		user.sendMsg("<client> " + cmd + ERR_PASSWDMISMATCH);
 		return ;
+	}
+	for (std::vector<Client *>::const_iterator it = server->getClientList().begin(); it != server->getClientList().end(); ++it) {
+		Client *u = *it;
+		std::cout << u->getNickName() << std::endl;
+		if (u->getNickName() == args[0]){
+			u->setIsOperator(true);
+			user.sendMsg("<client> " + cmd + RPL_YOUREOPER); // ??
+			break;
+		}
+		if (it == server->getClientList().end()){
+				user.sendMsg("<client> " + cmd + ERR_NOOPERHOST);
+				return ;
+		}
 	}
 }
 
 /*
-check if 2 parameters else ERR_NEEDMOREPARAMS (461)
-check if password is correct else ERR_PASSWDMISMATCH (464)
+Parameters: <name> <password>
 check if name is coorect and password is correct else ERR_NOOPERHOST (491)
 
 RPL_YOUREOPER (381)
 set as operator, send message 
 set MODE and send message
+
+The following messages are typically reserved to server operators.
+KILL message     Command: KILL   Parameters: <nickname> <comment>
+REHASH message   Command: REHASH Parameters: None
+RESTART message  Command: RESTART Parameters: None
+SQUIT message    Command: SQUIT  Parameters: <server> <comment>
 */
 
 

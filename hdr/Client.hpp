@@ -37,6 +37,7 @@ class Client
 		std::string			_IpHostName;
 		std::string			_server;
 		bool				_isRegistered;
+		bool				_isOperator;
 		bool				_hasPassword;
 		// bool				admin;
 
@@ -69,6 +70,7 @@ class Client
 		std::string const &getIpHostName(void) const; 	// computer of client
 		int const &getPollInfofd(void) const; 
 		bool getIsRegistered( void ) const;
+		bool getIsOperator( void ) const;
 		bool hasPassword( void ) const;
 
 		void setBuff(std::string buffer);
@@ -81,6 +83,7 @@ class Client
 		void setPollInfofd(int val);
 		void setIpHostName(std::string ipAddress);
 		void setIsRegistered(bool val);
+		void setIsOperator(bool val);
 		void setHasPassword(bool val);
 		void userRegistration( void );
 		static void	setVerbose(const int verbose);

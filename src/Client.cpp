@@ -34,7 +34,7 @@ int Client::_verbose = 0;
 
 Client::Client(int serverFD) : _nickName(""), _userName(""), _password(""), _identName(""), 
 								_realName(""), _IpHostName(""), _server(""), _isRegistered(false),
-								_hasPassword(false) {
+								_isOperator("false"), _hasPassword(false) {
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called."
@@ -160,6 +160,7 @@ std::string const & Client::getServer( void ) const  { return _server; }
 std::string const & Client::getIpHostName( void ) const  { return _IpHostName; }
 int const & Client::getPollInfofd(void) const { return pollInfo.fd; }
 bool Client::getIsRegistered( void ) const  { return _isRegistered; }
+bool Client::getIsOperator( void ) const  { return _isOperator; }
 bool Client::hasPassword( void ) const  { return _hasPassword; }
 
 void Client::setBuff(std::string buffer){
@@ -200,6 +201,10 @@ void Client::setIpHostName(std::string ipAddress){
 
 void Client::setIsRegistered(bool val){
 	this->_isRegistered = val;
+}
+
+void Client::setIsOperator(bool val){
+	this->_isOperator = val;
 }
 
 void Client::setHasPassword(bool val){
