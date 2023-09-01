@@ -6,32 +6,41 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 12:26:31 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 17:45:10 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/01 19:31:18 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
+#include "colors.hpp"
+
 
 void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (args.size() != 2){
-		user.sendMsg("<client> " + cmd + ERR_NEEDMOREPARAMS);
+		user.sendMsg(args[0] + " " + ERR_NEEDMOREPARAMS);
 		return ;
 	}
 		
 	if (server->validatePassword(args[1]) != 2){
-		user.sendMsg("<client> " + cmd + ERR_PASSWDMISMATCH);
+		user.sendMsg(args[0] + " " + ERR_PASSWDMISMATCH);
 		return ;
 	}
-	for (std::vector<Client *>::const_iterator it = server->getClientList().begin(); it != server->getClientList().end(); ++it) {
+	if (user.getIsOperator() == false){
+		user.sendMsg(user.getNickName() + " :Admin privileges required");
+		return ;
+	}
+	
+	std::vector<Client *>::const_iterator it = server->getClientList().begin();
+	for (; it != server->getClientList().end(); ++it) {
 		Client *u = *it;
-		std::cout << u->getNickName() << std::endl;
-		if (u->getNickName() == args[0]){
+		std::cout << C_YELLOW << u->getNickName() << std::endl;
+		if (u->getNickName() == args[0] && user.getIsOperator() == true){
 			u->setIsOperator(true);
-			user.sendMsg("<client> " + cmd + RPL_YOUREOPER); // ??
+			user.sendMsg(u->getNickName() + " " + RPL_YOUREOPERM); // ??
 			break;
 		}
+		std::cout << C_RED << u->getNickName() << std::endl;
 		if (it == server->getClientList().end()){
-				user.sendMsg("<client> " + cmd + ERR_NOOPERHOST);
+				user.sendMsg(u->getNickName() + " " + ERR_NOOPERHOSTM);
 				return ;
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 17:19:47 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/01 18:21:22 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@
 #define ERR_NOORIGIN			":No origin specified\r\n"						// (409) "<client> :
 
 //OPER : ERR_NEEDMOREPARAMS + ERR_PASSWDMISMATCH
-#define ERR_NOOPERHOST			":No O-lines for your host\r\n"					// (409) "<client> :
-#define RPL_YOUREOPER 			":You are now an IRC operator\r\n"				// (381) "<client> :
+#define ERR_NOOPERHOSTM			":No O-lines for your host\r\n"					// (409) "<client> :
+#define RPL_YOUREOPERM			":You are now an IRC operator\r\n"				// (381) "<client> :
 
 // #define
 
