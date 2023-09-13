@@ -6,25 +6,58 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 12:26:31 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 13:45:28 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/13 15:36:11 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
+#include "colors.hpp"
 
 void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
-	if (args.size() != 2)
-		user.sendMsg("<client> " + cmd + ERR_NEEDMOREPARAMS);
+	if (args.size() != 2){
+		user.sendMsg("461 client " + user.getIpHostName() + " " + cmd + ERR_NEEDMOREPARAMS);
+		return ;
+	}
+		
+	if (server->validatePassword(args[1]) != 2){
+		user.sendMsg("464 client " + user.getIpHostName() + " " + cmd + ERR_PASSWDMISMATCH);
+		return ;
+	}
+	if (user.getIsOperator() == false){
+		user.sendMsg(user.getNickName() + " :Admin privileges required");
+		return ;
+	}
+	
+	std::vector<Client *>::const_iterator it = server->getClientList().begin();
+	for (; it != server->getClientList().end(); ++it) {
+		Client *u = *it;
+		std::cout << C_YELLOW << u->getNickName() << std::endl;
+		if (u->getNickName() == args[0] && user.getIsOperator() == true){
+			u->setIsOperator(true);
+			user.sendMsg(u->getNickName() + " " + RPL_YOUREOPERM); // ??
+			break;
+		}
+		std::cout << C_RED << u->getNickName() << std::endl;
+		if (it == server->getClientList().end()){
+				user.sendMsg(u->getNickName() + " " + ERR_NOOPERHOSTM);
+				return ;
+		}
+	}
 }
 
 /*
-check if 2 parameters else ERR_NEEDMOREPARAMS (461)
-check if password is correct else ERR_PASSWDMISMATCH (464)
+Parameters: <name> <password>
 check if name is coorect and password is correct else ERR_NOOPERHOST (491)
 
 RPL_YOUREOPER (381)
 set as operator, send message 
 set MODE and send message
+
+The following messages are typically reserved to server operators.
+KILL message     Command: KILL   Parameters: <nickname> <comment>
+REHASH message   Command: REHASH Parameters: None
+RESTART message  Command: RESTART Parameters: None
+SQUIT message    Command: SQUIT  Parameters: <server> <comment>
 */
 
 

@@ -14,6 +14,8 @@
 #include "colors.hpp"
 
 #include <iostream>
+
+#include <iomanip>
 #include <string>
 // std::
 #include <unistd.h>
@@ -32,18 +34,19 @@
 
 int Client::_verbose = 0;
 
-Client::Client(int serverFD) : _nickName(""), _userName(""), _password(""), _identName(""), 
+Client::Client(int serverFD) : _nickName(""), _userName(""), _identName(""), 
 								_realName(""), _IpHostName(""), _server(""), _isRegistered(false),
-								_hasPassword(false) {
+								_isOperator(false), _hasPassword(false) {
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
-				<< C_DGREEN	<< " called."
+				<< C_DGREEN	<< " called.\n"
+				<< C_LMGNT	<< "IRC OMS: To register please use commands PASS - NICK - USER(user_name * host realname)."
 				<< C_RESET	<< std::endl;
 	initialize(serverFD);
 }
 
 Client::Client(const Client &src) : _nickName(src._nickName), _userName(src._userName),
-								_password(src._password), _identName(src._identName), _realName(src._realName),
+								_identName(src._identName), _realName(src._realName),
 								_IpHostName(src._IpHostName), _server(src._server), _isRegistered(src._isRegistered),
 								_hasPassword(src._hasPassword) {
 	*this = src;
@@ -155,12 +158,20 @@ std::string const & Client::getUserName( void ) const  { return _userName; }
 std::string const & Client::getIdentName ( void ) const { return _identName; }
 std::string const & Client::getRealName( void ) const  { return _realName; }
 std::string const & Client::getNickName( void ) const  { return _nickName; }
-std::string const & Client::getPassword( void ) const  { return _password; }
 std::string const & Client::getServer( void ) const  { return _server; }
 std::string const & Client::getIpHostName( void ) const  { return _IpHostName; }
 int const & Client::getPollInfofd(void) const { return pollInfo.fd; }
 bool Client::getIsRegistered( void ) const  { return _isRegistered; }
+bool Client::getIsOperator( void ) const  { return _isOperator; }
 bool Client::hasPassword( void ) const  { return _hasPassword; }
+
+std::string	Client::getBestName( void ) const {
+	if (!this->_nickName.empty())
+		return this->_nickName;
+	else if (!this->_IpHostName.empty())
+		return _IpHostName;
+	return "";
+}
 
 void Client::setBuff(std::string buffer){
 	this->_message = buffer;
@@ -182,10 +193,6 @@ void Client::setNickName(std::string nickname){
 	this->_nickName = nickname;
 }
 
-void Client::setPassword(std::string password){
-	this->_password = password;
-}
-
 void Client::setServer(std::string server){
 	this->_server = server;
 }
@@ -202,25 +209,38 @@ void Client::setIsRegistered(bool val){
 	this->_isRegistered = val;
 }
 
+void Client::setIsOperator(bool val){
+	this->_isOperator = val;
+}
+
 void Client::setHasPassword(bool val){
 	this->_hasPassword = val;
 }
 
 void Client::userRegistration( void ){
-	if (hasPassword() == true && !getNickName().empty() && !getIdentName().empty())
+	if (hasPassword() == true && !getNickName().empty() && !getIdentName().empty()){
 		setIsRegistered(true);
+		std::cout	<< "User " C_CYAN << this->getBestName() << C_RESET " is registered by "  << std::endl;
+		std::cout	<< std::left
+					<< C_HEADER	 
+					<< getNickName() << " is now registered in the IRC Othello Magic Server"
+					<< std::setw(76)
+					<< C_RESET	<< std::endl;;
+		printInfo();
+	}
 }
 
 
 void	Client::printInfo(void) const {
-	std::cout << "this->getNickName()\t" << C_RED << this->getNickName() << C_RESET	<< std::endl;
-	std::cout << "this->getIdentName()\t" << C_RED << this->getIdentName() << C_RESET	<< std::endl;
-	std::cout << "this->getRealName()\t" << C_RED << this->getRealName() << C_RESET	<< std::endl;
-	std::cout << "this->getPassword()\t" << C_RED << this->getPassword() << C_RESET	<< std::endl;
-	std::cout << "this->getServer()\t" << C_RED << this->getServer() << C_RESET	<< std::endl;
-	std::cout << "this->getIpHostName()\t" << C_RED << this->getIpHostName() << C_RESET	<< std::endl;
-	std::cout << "this->getIsRegistered()\t" << C_RED << this->getIsRegistered() << C_RESET	<< std::endl;
-	std::cout << "this->hasPassword()\t" << C_RED << this->hasPassword() << C_RESET	<< std::endl;
+	std::cout << "this->getNickName()\t" << C_BLUE << this->getNickName() << C_RESET	<< std::endl;
+	std::cout << "this->getIdentName()\t" << C_BLUE << this->getIdentName() << C_RESET	<< std::endl;
+	std::cout << "this->getRealName()\t" << C_BLUE << this->getRealName() << C_RESET	<< std::endl;
+	std::cout << "this->getPassword()\t" << C_BLUE << this->getPassword() << C_RESET	<< std::endl;
+	std::cout << "this->getServer()\t" << C_BLUE << this->getServer() << C_RESET	<< std::endl;
+	std::cout << "this->getIpHostName()\t" << C_BLUE << this->getIpHostName() << C_RESET	<< std::endl;
+	std::cout << "this->getIsRegistered()\t" << C_BLUE << this->getIsRegistered() << C_RESET	<< std::endl;
+	std::cout << "this->hasPassword()\t" << C_BLUE << this->hasPassword() << C_RESET	<< std::endl;
+	std::cout << "this->getIsOperator\t" << C_BLUE << this->getIsOperator() << C_RESET	<< std::endl;
 	std::cout << std::endl;
 	// std::cout	<< "socketAddress.sin_addr.s_addr\t"	
 	//				<< this->socketAddress.sin_addr.s_addr	<< "\n"
@@ -243,7 +263,6 @@ Client	&Client::operator=(const Client &src) {
 	this->pollInfo = src.pollInfo;
 	this->_nickName = src._nickName;
 	this->_userName = src._userName;
-	this->_password = src._password;
 	this->_identName = src._identName;
 	this->_realName = src._realName;
 	this->_IpHostName = src._IpHostName;
