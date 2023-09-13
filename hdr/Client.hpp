@@ -30,8 +30,7 @@ class Client
 		struct pollfd		pollInfo;
 
 		std::string			_nickName;
-		std::string			_userName; //Identity Name???
-		std::string			_password;
+		std::string			_userName; //Ident Name
 		std::string			_identName;
 		std::string			_realName;
 		std::string			_IpHostName;
@@ -51,27 +50,28 @@ class Client
 	public:
 		Client(int serverFD);
 		Client(const Client &src);
-		~Client(void);
+		~Client( void );
 
 		void		initialize(int serverFd);
-		bool		stillActive(void) const;
+		bool		stillActive( void ) const;
 
 		void		sendMsg(std::string msg) const;
-		std::string	getMsg(void);
+		std::string	getMsg( void );
 		bool		readReceive(int sockfd);
 
-		std::string	const &getBuff(void) const;
-		std::string const &getUserName(void) const; 
-		std::string const &getIdentName(void) const;
-		std::string const &getRealName(void) const;
-		std::string const &getNickName(void) const;
-		std::string const &getPassword(void) const;
-		std::string const &getServer(void) const; 		// computer of server
-		std::string const &getIpHostName(void) const; 	// computer of client
-		int const &getPollInfofd(void) const; 
+		std::string	const &getBuff( void ) const;
+		std::string const &getUserName( void ) const; 
+		std::string const &getIdentName( void ) const;
+		std::string const &getRealName( void ) const;
+		std::string const &getNickName( void ) const;
+		std::string const &getPassword( void ) const;
+		std::string const &getServer( void ) const; 		// server IP
+		std::string const &getIpHostName( void ) const; 	// client IP
+		int const &getPollInfofd( void ) const; 
 		bool getIsRegistered( void ) const;
 		bool getIsOperator( void ) const;
 		bool hasPassword( void ) const;
+		std::string getBestName ( void ) const;
 
 		void setBuff(std::string buffer);
 		void setUserName(std::string username);
@@ -89,7 +89,7 @@ class Client
 		static void	setVerbose(const int verbose);
 
 		Client	&operator=(const Client &src);
-		void	printInfo(void) const;
+		void	printInfo( void ) const;
 };
 
 #endif
