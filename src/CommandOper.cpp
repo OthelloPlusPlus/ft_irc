@@ -6,22 +6,21 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 12:26:31 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 19:31:18 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/13 15:36:11 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include "colors.hpp"
 
-
 void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (args.size() != 2){
-		user.sendMsg(args[0] + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg("461 client " + user.getIpHostName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
 	}
 		
 	if (server->validatePassword(args[1]) != 2){
-		user.sendMsg(args[0] + " " + ERR_PASSWDMISMATCH);
+		user.sendMsg("464 client " + user.getIpHostName() + " " + cmd + ERR_PASSWDMISMATCH);
 		return ;
 	}
 	if (user.getIsOperator() == false){
