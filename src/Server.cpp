@@ -36,7 +36,6 @@
 #include <arpa/inet.h>
 // char	*inet_ntoa(in_addr)
 
-
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -56,19 +55,16 @@ Server::Server(int argc, char **argv)
 		throw (std::range_error("Not enough aruments passed."));
 	if (argc > 3)
 		throw (std::range_error("Too many arguments passed."));
-	char	*adminPwd = std::getenv("IRCADMINPWD");
-	if (!adminPwd)
-		throw (std::runtime_error("Admin password not found in env."));
 	this->port = std::stoi(argv[1]);
 	this->passwordUser = argv[2];
-	if (adminPwd == this->passwordUser)
-		throw (std::runtime_error("Invalid password set."));
+	this->readEnv();
 	this->setLocalIP();
 	this->bootUpServer();
 	this->setVerbose(argv[3]);
 
 	std::cout	<< "\n"
 				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
+				<< std::setw(23)	<< " - Server name: "	<< this->serverName	<< "\n"
 				<< std::setw(23)	<< " - Hostname: "	<< this->publicIP	<< "\n"
 				<< std::setw(23)	<< " - Local IP address: "	<< this->localIP	<< "\n"
 				<< std::setw(23)	<< " - Port: "	<< this->port	<< "\n"
@@ -172,6 +168,23 @@ void	Server::setVerbose(char *argv3)
 	Channel::setVerbose(this->verbose);
 }
 
+void	Server::readEnv(void)
+{
+	char	*env;
+
+	std::cout	<< "Reading .env file for crucial information...\n";
+	env = std::getenv("IRCADMINPWD");
+	if (!env)
+		throw (std::runtime_error("Admin password not found in env."));
+	if (this->passwordUser == env)
+		throw (std::runtime_error("Invalid password set."));
+	env = std::getenv("IRC_SERVNAME");
+	if (env)
+		this->serverName = env;
+	else
+		this->serverName = "OMS";
+}
+
 // void	Server::setPublicIP(void)
 // {
 
@@ -241,7 +254,7 @@ void	Server::sendWelcome(Client *client)
 	client->sendMsg(msg + " 375 " + client->getNickName() + " :- ft_irc Message of the Day - \r\n");
 	client->sendMsg(msg + " 372 " + client->getNickName() + " :- We know what we're doing! We swear!\r\n");
 	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
-	// this->joinChannel(client, "#WelcomeChannel");
+	this->joinChannel(client, "#WelcomeChannel");
 	// this->joinChannel(client, "#Hello");
 	// this->partChannel(client, "#Hello");
 }
@@ -259,6 +272,26 @@ void	Server::sendChannelList(const Client *client) const
 
 	msg.replace(msg.find(" 322 "), 5, " 323 ");
 	client->sendMsg(msg + ":END of /LIST\r\n");
+}
+
+void	Server::sendWho(Client *client, const std::string who) const
+{
+	{
+		Client	*whoClient = this->getClient(who);
+
+		if (whoClient != nullptr)
+		{
+			whoClient->sendMsg(":" + this->serverName + " 352 " + client->getNickName() + "~" + whoClient->getNickName() + "\r\n");
+			client->sendMsg(":" + this->serverName + " 315 " + client->getNickName() + + " " + who + " :End of /WHO list\r\n");
+			return ;
+		}
+	}
+	{
+		Channel	*channel = this->getChannel(who);
+
+		if (channel != nullptr)
+			channel->sendWho(client);
+	}
 }
 
 void	Server::sendWhoIs(const Client *client, const std::string who) const
@@ -296,6 +329,29 @@ void	Server::sendPong(const Client *client) const
 void	Server::sendPong(const Client *client, const std::string token) const
 {
 	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
+}
+
+void	Server::sendPrivMsg(const Client *client)
+{
+	std::string	name = "#WelcomeChannel";
+
+	if (name.at(0) == '#')
+	{
+		Channel *channel = getChannel(name);
+
+		if (channel != nullptr)
+			channel->sendToChannel(client, ":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
+								" PRIVMSG " + channel->getName() + " Hello there\r\n");
+	}
+	else
+	{
+		Client	*user = getClient(name);
+
+		if (user != nullptr)
+			user->sendMsg(":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
+						" PRIVMSG " + user->getNickName() + " Hello there\r\n");
+		
+	}
 }
 
 void	Server::checkClients(void)
@@ -359,7 +415,7 @@ void	Server::joinChannel(Client *client, const std::string channelName)
 			// (*i)->setAdmin(client, false);
 			return ;
 		}
-	Channel	*newChannel = new Channel(channelName);
+	Channel	*newChannel = new Channel(channelName, this);
 	this->channels.push_back(newChannel);
 	newChannel->addClient(client, true);
 	// newChannel->setAdmin(client, true);
@@ -393,6 +449,11 @@ Channel	*Server::getChannel(std::string name) const
 		if ((*channel)->getName() == name)
 			return (*channel);
 	return (nullptr);
+}
+
+std::string	Server::getName(void) const
+{
+	return (this->serverName);
 }
 
 void	Server::checkChannels(void)

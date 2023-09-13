@@ -13,8 +13,16 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "Client.hpp"
-# include "Channel.hpp"
+# ifndef CLIENT_HPP
+#  include "Client.hpp"
+# else
+class Client;
+# endif
+# ifndef CHANNEL_HPP
+#  include "Channel.hpp"
+# else
+class Channel;
+# endif
 
 # include <iostream>
 // std::
@@ -28,6 +36,7 @@
 class Server
 {
 	private:
+		std::string				serverName;
 		struct pollfd			pollInfo;
 		struct sockaddr_in		socketAddress;
 		int						port;
@@ -44,6 +53,7 @@ class Server
 		void	setLocalIP(void);
 		void	bootUpServer(void);
 		void	setVerbose(char *argv3);
+		void	readEnv(void);
 
 		void	acceptClient(void);
 		void	sendWelcome(Client *client);
@@ -66,13 +76,16 @@ class Server
 		std::vector<Client *>	getClientList(void);
 		Client	*getClient(std::string name) const;
 		Channel	*getChannel(std::string channel) const;
+		std::string	getName(void) const;
 
 		void	joinChannel(Client *client, const std::string channelName);
 		void	partChannel(Client *client, const std::string channelName);
 		void	sendChannelList(const Client *client) const;
+		void	sendWho(Client *client, const std::string who) const;
 		void	sendWhoIs(const Client *client, const std::string who) const;
 		void	sendPong(const Client *client) const;
 		void	sendPong(const Client *client, const std::string token) const;
+		void	sendPrivMsg(const Client *client);
 
 		Server	&operator=(const Server &src);
 };

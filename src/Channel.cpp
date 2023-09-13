@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/09/01 20:04:16 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/09/13 19:08:49 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 int	Channel::verbose = 0;
 
-Channel::Channel(std::string name): name(name), topic("")
+Channel::Channel(std::string name, Server *server): name(name), topic(""), server(server)
 {
 	this->topic = "This topic is brought to you by HardCoded++";
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -171,7 +171,10 @@ void	Channel::sendNames(Client *client)
 void	Channel::sendToChannel(const std::string msg) const
 {
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+	// {
+	// 	std::cout	<<(*i).client->getNickName() << std::endl;
 		(*i).client->sendMsg(msg);
+	// }
 }
 
 void	Channel::sendToChannel(const Client *exclude, const std::string msg) const
@@ -193,7 +196,7 @@ void	Channel::sendWho(Client *client)
 {
 	std::string	msg;
 
-	msg = ": 352 " + client->getNickName() + " " + this->name + " ";
+	msg = ":" + this->server->getName() + " 352 " + client->getNickName() + " " + this->name + " ";
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	{
 		std::string	msgWho;
@@ -208,7 +211,7 @@ void	Channel::sendWho(Client *client)
 		msgWho +=		(*i).client->getRealName() + "\r\n";
 		client->sendMsg(msgWho);
 	}
-	msg = ": 315 " + client->getNickName() + " " + this->name + " :End of /WHO list.\r\n";
+	msg = ":" + this->server->getName() + " 315 " + client->getNickName() + " " + this->name + " :End of /WHO list.\r\n";
 	client->sendMsg(msg);
 }
 
@@ -250,7 +253,7 @@ void	Channel::promoteOldestUser(void)
 		if ((*user).timestamp < (*oldest).timestamp)
 			oldest = user;
 	(*oldest).admin = true;
-
+	this->sendToChannel(":" + this->server->getName() + " MODE " + this->name + " +o " + (*oldest).client->getNickName() + "\r\n");
 }
 
 // void	Channel::kickClient(Client *client)
