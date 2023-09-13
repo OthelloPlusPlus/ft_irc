@@ -235,7 +235,6 @@ void	Client::printInfo(void) const {
 	std::cout << "this->getNickName()\t" << C_BLUE << this->getNickName() << C_RESET	<< std::endl;
 	std::cout << "this->getIdentName()\t" << C_BLUE << this->getIdentName() << C_RESET	<< std::endl;
 	std::cout << "this->getRealName()\t" << C_BLUE << this->getRealName() << C_RESET	<< std::endl;
-	std::cout << "this->getPassword()\t" << C_BLUE << this->getPassword() << C_RESET	<< std::endl;
 	std::cout << "this->getServer()\t" << C_BLUE << this->getServer() << C_RESET	<< std::endl;
 	std::cout << "this->getIpHostName()\t" << C_BLUE << this->getIpHostName() << C_RESET	<< std::endl;
 	std::cout << "this->getIsRegistered()\t" << C_BLUE << this->getIsRegistered() << C_RESET	<< std::endl;

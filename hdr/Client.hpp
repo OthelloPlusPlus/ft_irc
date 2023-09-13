@@ -64,7 +64,6 @@ class Client
 		std::string const &getIdentName( void ) const;
 		std::string const &getRealName( void ) const;
 		std::string const &getNickName( void ) const;
-		std::string const &getPassword( void ) const;
 		std::string const &getServer( void ) const; 		// server IP
 		std::string const &getIpHostName( void ) const; 	// client IP
 		int const &getPollInfofd( void ) const; 
