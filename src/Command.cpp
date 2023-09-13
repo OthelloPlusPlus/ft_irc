@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 19:39:30 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/13 18:27:33 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		Command::oper(user, cmd, args, server);
 	else if (cmd == "WHOIS")
 		server->sendWhoIs(&user, args[0]);
+	else if (cmd == "WHO")
+		server->sendWho(&user, args[0]);
 	else if (cmd == "JOIN")
 		server->joinChannel(&user, args[0]);
 	else if (cmd == "LIST")

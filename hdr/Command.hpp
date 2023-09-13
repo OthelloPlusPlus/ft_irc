@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/01 18:21:22 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/13 13:44:59 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,22 +18,22 @@
 #include <string>
 
 //NICK
-#define ERR_NONICKNAMEGIVEN		":No nickname given\r\n"						// (431) "<client> :
-#define ERR_ERRONEUSNICKNAME	":Erroneus nickname\r\n"						// (432) "<client> <nick> :
-#define ERR_NICKNAMEINUSE		":Nickname is already in use\r\n"				// (433) "<client> <nick> :
-#define ERR_NICKCOLLISION		":Nickname collision KILL from <user>@<host>\r\n" //(433) "<client> <nick>  :
+#define ERR_NONICKNAMEGIVEN		" :No nickname given\r\n"						// (431) "<client> :
+#define ERR_ERRONEUSNICKNAME	" :Erroneus nickname\r\n"						// (432) "<client> <nick> :
+#define ERR_NICKNAMEINUSE		" :Nickname is already in use\r\n"				// (433) "<client> <nick> :
+#define ERR_NICKCOLLISION		" :Nickname collision KILL from <user>@<host>\r\n" //(433) "<client> <nick>  :
 
 //PASS
-#define ERR_NEEDMOREPARAMS		":Not enough parameters\r\n"					// (461) "<client> <command> :
-#define ERR_ALREADYREGISTERED	":You may not reregister\r\n"					// (462) "<client> :
-#define ERR_PASSWDMISMATCH		":Password incorrect\r\n"						// (464) "<client> :
+#define ERR_NEEDMOREPARAMS		" :Not enough parameters\r\n"					// (461) "<client> <command> :
+#define ERR_ALREADYREGISTERED	" :You may not reregister again\r\n"			// (462) "<client> :
+#define ERR_PASSWDMISMATCH		" :Password incorrect\r\n"						// (464) "<client> :
 
 //PING : ERR_NEEDMOREPARAMS 
-#define ERR_NOORIGIN			":No origin specified\r\n"						// (409) "<client> :
+#define ERR_NOORIGIN			" :No origin specified\r\n"						// (409) "<client> :
 
 //OPER : ERR_NEEDMOREPARAMS + ERR_PASSWDMISMATCH
-#define ERR_NOOPERHOSTM			":No O-lines for your host\r\n"					// (409) "<client> :
-#define RPL_YOUREOPERM			":You are now an IRC operator\r\n"				// (381) "<client> :
+#define ERR_NOOPERHOSTM			" :No O-lines for your host\r\n"					// (409) "<client> :
+#define RPL_YOUREOPERM			" :You are now an IRC operator\r\n"				// (381) "<client> :
 
 // #define
 
