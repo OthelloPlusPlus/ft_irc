@@ -58,8 +58,6 @@ class Channel
 		void	inviteClient(Client *client);
 		// void	kickClient(Client *client);
 
-		void	printClientList(void) const;
-		
 	protected:
 
 	public:
@@ -83,6 +81,8 @@ class Channel
 		std::string	getTopic(void) const;
 		size_t		getSize(void) const;
 		size_t		getAdminSize(void) const;
+
+		void	printClientList(void) const;
 
 		Channel	&operator=(const Channel &src);
 };

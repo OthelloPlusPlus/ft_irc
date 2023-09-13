@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/09/01 19:26:05 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/09/01 20:04:16 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,13 +245,12 @@ void	Channel::removeUser(const Client *client)
 
 void	Channel::promoteOldestUser(void)
 {
-	ChannelUser	oldest;
+	std::vector<ChannelUser>::iterator	oldest = this->users.begin();
+	for (std::vector<ChannelUser>::iterator user = oldest; user != this->users.end(); ++user)
+		if ((*user).timestamp < (*oldest).timestamp)
+			oldest = user;
+	(*oldest).admin = true;
 
-	oldest = this->users[0];
-	for (std::vector<ChannelUser>::const_iterator user = this->users.begin(); user != this->users.end(); ++user)
-		if ((*user).timestamp < oldest.timestamp)
-			oldest = (*user);
-	oldest.admin = true;
 }
 
 // void	Channel::kickClient(Client *client)
@@ -276,7 +275,7 @@ void	Channel::printClientList(void) const
 {
 	std::cout	<< "--- Channel "	<< this->name	<< ":"	<< std::endl;
 	for (std::vector<ChannelUser>::const_iterator client = this->users.begin(); client != this->users.end(); ++client)
-		std::cout	<<	client->client->getNickName()	<< '\n';
+		std::cout	<<	client->client->getNickName()	<<'t'	<< (*client).admin	<< '\n';
 	std::cout	<< "--- End of list\n"	<< std::endl;
 }
 
