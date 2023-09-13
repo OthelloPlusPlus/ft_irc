@@ -36,7 +36,6 @@
 #include <arpa/inet.h>
 // char	*inet_ntoa(in_addr)
 
-
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -63,12 +62,14 @@ Server::Server(int argc, char **argv)
 	this->passwordUser = argv[2];
 	if (adminPwd == this->passwordUser)
 		throw (std::runtime_error("Invalid password set."));
+	this->serverName = "OthelloMagicServer";
 	this->setLocalIP();
 	this->bootUpServer();
 	this->setVerbose(argv[3]);
 
 	std::cout	<< "\n"
 				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
+				<< std::setw(23)	<< " - Server name: "	<< this->serverName	<< "\n"
 				<< std::setw(23)	<< " - Hostname: "	<< this->publicIP	<< "\n"
 				<< std::setw(23)	<< " - Local IP address: "	<< this->localIP	<< "\n"
 				<< std::setw(23)	<< " - Port: "	<< this->port	<< "\n"
@@ -241,7 +242,7 @@ void	Server::sendWelcome(Client *client)
 	client->sendMsg(msg + " 375 " + client->getNickName() + " :- ft_irc Message of the Day - \r\n");
 	client->sendMsg(msg + " 372 " + client->getNickName() + " :- We know what we're doing! We swear!\r\n");
 	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
-	// this->joinChannel(client, "#WelcomeChannel");
+	this->joinChannel(client, "#WelcomeChannel");
 	// this->joinChannel(client, "#Hello");
 	// this->partChannel(client, "#Hello");
 }
@@ -259,6 +260,26 @@ void	Server::sendChannelList(const Client *client) const
 
 	msg.replace(msg.find(" 322 "), 5, " 323 ");
 	client->sendMsg(msg + ":END of /LIST\r\n");
+}
+
+void	Server::sendWho(Client *client, const std::string who) const
+{
+	{
+		Client	*whoClient = this->getClient(who);
+
+		if (whoClient != nullptr)
+		{
+			whoClient->sendMsg(":" + this->serverName + " 352 " + client->getNickName() + "~" + whoClient->getNickName() + "\r\n");
+			client->sendMsg(":" + this->serverName + " 315 " + client->getNickName() + + " " + who + " :End of /WHO list\r\n");
+			return ;
+		}
+	}
+	{
+		Channel	*channel = this->getChannel(who);
+
+		if (channel != nullptr)
+			channel->sendWho(client);
+	}
 }
 
 void	Server::sendWhoIs(const Client *client, const std::string who) const
@@ -296,6 +317,27 @@ void	Server::sendPong(const Client *client) const
 void	Server::sendPong(const Client *client, const std::string token) const
 {
 	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
+}
+
+void	Server::sendPrivMsg(const Client *client)
+{
+	Client	*target = this->getClient("Othello");
+	if (target != nullptr)
+	{
+		target->sendMsg(":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
+						" PRIVMSG " + target->getNickName() + " Hello there\r\n");
+		return ;
+	}
+
+	{
+		Channel	*target = this->getChannel("#WelcomeChannel");
+		if (target != nullptr)
+		{
+			target->sendToChannel(client, ":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
+								" PRIVMSG " + target->getName() + " Hello there\r\n");
+			return ;
+		}
+	}
 }
 
 void	Server::checkClients(void)
@@ -359,7 +401,7 @@ void	Server::joinChannel(Client *client, const std::string channelName)
 			// (*i)->setAdmin(client, false);
 			return ;
 		}
-	Channel	*newChannel = new Channel(channelName);
+	Channel	*newChannel = new Channel(channelName, this);
 	this->channels.push_back(newChannel);
 	newChannel->addClient(client, true);
 	// newChannel->setAdmin(client, true);
@@ -393,6 +435,11 @@ Channel	*Server::getChannel(std::string name) const
 		if ((*channel)->getName() == name)
 			return (*channel);
 	return (nullptr);
+}
+
+std::string	Server::getName(void) const
+{
+	return (this->serverName);
 }
 
 void	Server::checkChannels(void)

@@ -10,11 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-# include "Client.hpp"
+# ifndef CLIENT_HPP
+#  include "Client.hpp"
+# else
+class Client;
+# endif
+# ifndef SERVER_HPP
+#  include "Server.hpp"
+# else
+class Server;
+# endif
 
 # include <netinet/in.h>
 // struct sockaddr_in
@@ -44,10 +52,12 @@ class Channel
 		int			userLimit;
 		static int		verbose;
 
+		Server	*server;
 		std::vector<ChannelUser>	users;
 
 		// std::vector<Client *>	operators;
 		// std::vector<Client *>	clients;
+		
 
 		void	sendTopic(Client *client);
 		void	sendNames(Client *client);
@@ -61,7 +71,7 @@ class Channel
 	protected:
 
 	public:
-		Channel(std::string name);
+		Channel(std::string name, Server *server);
 		Channel(const Channel &src);
 		~Channel(void);
 
