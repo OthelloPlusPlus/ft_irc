@@ -53,6 +53,7 @@ class Server
 		void	setLocalIP(void);
 		void	bootUpServer(void);
 		void	setVerbose(char *argv3);
+		void	readEnv(void);
 
 		void	acceptClient(void);
 		void	sendWelcome(Client *client);

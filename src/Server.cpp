@@ -55,14 +55,9 @@ Server::Server(int argc, char **argv)
 		throw (std::range_error("Not enough aruments passed."));
 	if (argc > 3)
 		throw (std::range_error("Too many arguments passed."));
-	char	*adminPwd = std::getenv("IRCADMINPWD");
-	if (!adminPwd)
-		throw (std::runtime_error("Admin password not found in env."));
 	this->port = std::stoi(argv[1]);
 	this->passwordUser = argv[2];
-	if (adminPwd == this->passwordUser)
-		throw (std::runtime_error("Invalid password set."));
-	this->serverName = "OthelloMagicServer";
+	this->readEnv();
 	this->setLocalIP();
 	this->bootUpServer();
 	this->setVerbose(argv[3]);
@@ -171,6 +166,23 @@ void	Server::setVerbose(char *argv3)
 	}
 	Client::setVerbose(this->verbose);
 	Channel::setVerbose(this->verbose);
+}
+
+void	Server::readEnv(void)
+{
+	char	*env;
+
+	std::cout	<< "Reading .env file for crucial information...\n";
+	env = std::getenv("IRCADMINPWD");
+	if (!env)
+		throw (std::runtime_error("Admin password not found in env."));
+	if (this->passwordUser == env)
+		throw (std::runtime_error("Invalid password set."));
+	env = std::getenv("IRC_SERVNAME");
+	if (env)
+		this->serverName = env;
+	else
+		this->serverName = "OMS";
 }
 
 // void	Server::setPublicIP(void)
@@ -321,22 +333,24 @@ void	Server::sendPong(const Client *client, const std::string token) const
 
 void	Server::sendPrivMsg(const Client *client)
 {
-	Client	*target = this->getClient("Othello");
-	if (target != nullptr)
-	{
-		target->sendMsg(":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
-						" PRIVMSG " + target->getNickName() + " Hello there\r\n");
-		return ;
-	}
+	std::string	name = "#WelcomeChannel";
 
+	if (name.at(0) == '#')
 	{
-		Channel	*target = this->getChannel("#WelcomeChannel");
-		if (target != nullptr)
-		{
-			target->sendToChannel(client, ":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
-								" PRIVMSG " + target->getName() + " Hello there\r\n");
-			return ;
-		}
+		Channel *channel = getChannel(name);
+
+		if (channel != nullptr)
+			channel->sendToChannel(client, ":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
+								" PRIVMSG " + channel->getName() + " Hello there\r\n");
+	}
+	else
+	{
+		Client	*user = getClient(name);
+
+		if (user != nullptr)
+			user->sendMsg(":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
+						" PRIVMSG " + user->getNickName() + " Hello there\r\n");
+		
 	}
 }
 
