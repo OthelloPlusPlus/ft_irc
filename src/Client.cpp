@@ -16,6 +16,9 @@
 #include <iostream>
 
 #include <iomanip>
+#include <string.h>
+// void bzero(void *s, size_t n);
+// char *strerror(int errnum);
 #include <string>
 // std::
 #include <unistd.h>
