@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 19:40:13 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/13 17:40:15 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/14 14:17:45 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,13 @@ void Command::user(Client &user, const std::string& cmd, const std::vector<std::
 		return ;
 	}
 	user.setServer(args[2]);
+	
 	std::string temp = args[3].substr(0);
-	if (args[3].at(0) == ':')
-		temp = args[3].substr(1);
 	if (args.size() > 4){
 		for (int i = 4; i < args.size(); i++)
 			temp.append(" " + args[i]);
 	}
 	user.setRealName(temp);
+	
 	user.userRegistration();
 }
