@@ -17,6 +17,8 @@
 // std::
 #include <unistd.h>
 //	int	close(int fildes);
+#include <chrono>
+// std::chrono
 
 /** ************************************************************************ **\
  * 

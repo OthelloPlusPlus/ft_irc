@@ -9,6 +9,8 @@
 // std::ifstream
 #include <cstdlib>
 // int	setenv(const char *__name, const char *__value, int __overwrite)
+#include <string.h>
+// char *strerror(int errnum);
 
 static void			readAndSet(std::string file);
 static std::string	trimLine(std::string line, std::string trim);

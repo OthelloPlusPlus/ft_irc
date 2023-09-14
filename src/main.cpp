@@ -15,6 +15,8 @@
 
 #include <iostream>
 // std::
+#include <string.h>
+// char *strerror(int errnum);
 
 bool	setEnv(void);
 
