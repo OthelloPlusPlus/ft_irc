@@ -220,12 +220,14 @@ void Client::setHasPassword(bool val){
 void Client::userRegistration( void ){
 	if (hasPassword() == true && !getNickName().empty() && !getIdentName().empty()){
 		setIsRegistered(true);
-		std::cout	<< "User " C_CYAN << this->getBestName() << C_RESET " is registered by "  << std::endl;
-		std::cout	<< std::left
-					<< C_HEADER	 
-					<< getNickName() << " is now registered in the IRC Othello Magic Server"
-					<< std::setw(76)
-					<< C_RESET	<< std::endl;;
+		if (_verbose){
+			std::cout	<< std::left 		<< C_HEADER	 
+						<< getNickName() 	<< " is now registered in the IRC Othello Magic Server"
+						<< std::setw(76) 	<< C_RESET		<< std::endl;;
+		} else {
+			std::cout	<< "User " C_CYAN 	<< this->getBestName()
+											<< C_RESET " is registered by IRC Othello Magic Server"  << std::endl;
+		}
 		printInfo();
 	}
 }

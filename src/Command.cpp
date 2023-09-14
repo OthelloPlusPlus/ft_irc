@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/13 18:27:33 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/14 14:27:09 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 //removed the trailing "\r\n"
 void Command::cleanMsg(Client &user){
 	std::string del = "\r\n";
-	int end = user.getBuff().rfind(del);
+	int end = user.getBuff().find_first_of(del, 0); 
 	user.setBuff(user.getBuff().substr(0, end)); 
 }
 
@@ -67,8 +67,8 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		Command::oper(user, cmd, args, server);
 	else if (cmd == "WHOIS")
 		server->sendWhoIs(&user, args[0]);
-	else if (cmd == "WHO")
-		server->sendWho(&user, args[0]);
+	// else if (cmd == "WHO")
+	// 	server->sendWho(&user, args[0]);
 	else if (cmd == "JOIN")
 		server->joinChannel(&user, args[0]);
 	else if (cmd == "LIST")
@@ -77,23 +77,33 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		server->partChannel(&user, args[0]);
 }
 
+
 void Command::parseMsg(Client &user, Server *server){
-	std::vector<std::string>	cmd;
-	cmd = ircSplitMulti(user.getBuff(), "\r\n");
-	for (std::vector<std::string>::const_iterator it = cmd.begin(); it != cmd.end(); ++it) {
-		const std::string& element = *it;
-		size_t spacePos = element.find(' ');
-		if (spacePos != std::string::npos) {
-			std::string command = element.substr(0, spacePos);
-	   	 	std::string params = element.substr(spacePos + 1);
-			std::vector<std::string>	args;
-			args = ircSplit(params, " ");
-			parseCmd(user, command, args, server);
+	std::string cmd;
+	std::string arguments;
+	std::vector<std::string>	args;
+	
+	cleanMsg(user);
+	size_t spacePos = user.getBuff().find(' ');
+	if (spacePos != std::string::npos) {
+		cmd = user.getBuff().substr(0, spacePos);
+		arguments = user.getBuff().substr(spacePos + 1);
+	}
+	size_t colPos = arguments.find(':');
+	if (colPos != std::string::npos) {
+		std::string firstPart = arguments.substr(0, colPos);
+		args = ircSplit(firstPart, " ");
+		std::string secondPart = arguments.substr(colPos + 1);
+        args.push_back(secondPart);
+    }
+	else {
+		size_t space = arguments.find(' ');
+		if (space != std::string::npos) {
+			args = ircSplit(arguments, " ");
 		}
 		else {
-			std::string command = element;
-			std::vector<std::string>	args;
-			parseCmd(user, command, args, server);
-		}			
+			args.push_back(arguments);
+		}				
 	}
+	parseCmd(user, cmd, args, server);
 }
