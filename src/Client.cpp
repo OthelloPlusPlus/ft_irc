@@ -43,7 +43,7 @@ Client::Client(int serverFD) : _nickName(""), _userName(""), _identName(""),
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called.\n"
-				<< C_LMGNT	<< "IRC OMS: To register please use commands PASS - NICK - USER(user_name * host realname)."
+				<< C_LMGNT	<< "IRC OMS: To register please use commands PASS - NICK - USER(user_name * host :realname)."
 				<< C_RESET	<< std::endl;
 	initialize(serverFD);
 }
@@ -225,7 +225,7 @@ void Client::userRegistration( void ){
 		setIsRegistered(true);
 		if (_verbose){
 			std::cout	<< std::left 		<< C_HEADER	 
-						<< getNickName() 	<< " is now registered in the IRC Othello Magic Server"
+						<< getNickName() 	<< " is now registered in the IRC Othello Magic Server" // getEnv("IRC_SERVNAME")?????
 						<< std::setw(76) 	<< C_RESET		<< std::endl;;
 		} else {
 			std::cout	<< "User " C_CYAN 	<< this->getBestName()

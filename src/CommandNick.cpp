@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 15:13:05 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/14 13:20:45 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/14 17:53:02 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void Command::nick(Client &user, const std::string& cmd, const std::vector<std::
 				return ;
 			}
 		if (isdigit(nickname[0])){
-			user.sendMsg("432 * client " + user.getBestName() + " " + cmd  + ERR_ERRONEUSNICKNAME);
+			user.sendMsg(": 432 * client " + user.getBestName() + " " + cmd  + ERR_ERRONEUSNICKNAME + " ");
 			return ;
 		}
 		for (int i = 0; i < nickname.size(); i++){

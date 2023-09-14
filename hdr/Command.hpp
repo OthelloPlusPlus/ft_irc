@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/13 13:44:59 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/14 17:52:13 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "Client.hpp"
 #include "Server.hpp"
 #include <string>
+#include "IRCReplyCodes.hpp"
 
 //NICK
 #define ERR_NONICKNAMEGIVEN		" :No nickname given\r\n"						// (431) "<client> :
