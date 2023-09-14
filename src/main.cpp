@@ -33,6 +33,7 @@ int	main(int argc, char **argv)
 			server.checkNewClient();
 			server.checkClients();
 			server.checkChannels();
+			setEnv();
 		}
 	}
 	catch(const std::exception& e)

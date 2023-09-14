@@ -12,6 +12,7 @@
 #include <string.h>
 // char *strerror(int errnum);
 
+static bool			newInfo(std::string file);
 static void			readAndSet(std::string file);
 static std::string	trimLine(std::string line, std::string trim);
 
@@ -19,7 +20,8 @@ bool	setEnv(void)
 {
 	try
 	{
-		readAndSet(".env");
+		if (newInfo(".env"))
+			readAndSet(".env");
 	}
 	catch(const std::exception& e)
 	{
@@ -30,11 +32,30 @@ bool	setEnv(void)
 	}
 	return (true);
 }
+#include <sys/stat.h>
+// struct stat
+// time_t
+
+static bool	newInfo(std::string file)
+{
+	static time_t	last = 0;
+	struct stat	fileInfo;
+
+	if (stat(file.c_str(), &fileInfo) != 0)
+		throw (std::runtime_error("Failed to read meta-data of " + file + "."));
+	if (fileInfo.st_mtime > last)
+	{
+		last = fileInfo.st_mtime;
+		return (true);
+	}
+	return (false);
+}
 
 static void	readAndSet(std::string file)
 {
 	std::ifstream	fd(file);
 
+	std::cout	<< "Updating env by reading .env file..."	<< std::endl;
 	if (!fd.is_open())
 		throw (std::runtime_error("Failed to open " + file + "."));
 
@@ -43,6 +64,13 @@ static void	readAndSet(std::string file)
 	{
 		size_t	delimPos;
 
+		delimPos = line.find('#');
+		if (delimPos != std::string::npos)
+		{
+			line = line.substr(0, delimPos);
+			if (line.empty())
+				continue ;
+		}
 		delimPos = line.find('=');
 		if (delimPos == std::string::npos)
 		{

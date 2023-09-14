@@ -14,6 +14,7 @@
 #include "colors.hpp"
 #include "Command.hpp"
 #include "IRCReplyCodes.hpp"
+#include "verboseCheck.hpp"
 
 #include <iostream>
 // std::
@@ -103,13 +104,19 @@ Server::~Server(void)
  * 	Member Functions
  * 
 \* ************************************************************************** */
-
+#include <sys/types.h>
 void	Server::bootUpServer(void)
 {
 	std::cout	<< "Creating socket for incoming connections...\n";
 	this->pollInfo.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->pollInfo.fd < 0)
 		throw (std::runtime_error("socket(): "));
+	int	reuse = 1;
+	if (setsockopt(pollInfo.fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int)) == -1)
+	{
+		close(this->pollInfo.fd);
+		throw (std::runtime_error("setsockopt(): "));
+	}
 #ifdef __APPLE__
 	std::cout	<< C_LCYAN	<< "(Apple)"	<< C_RESET	<< "Configuring socket for non-blocking mode...\n";
 	if (fcntl(this->pollInfo.fd, F_SETFL, O_NONBLOCK) == -1)
@@ -121,7 +128,8 @@ void	Server::bootUpServer(void)
 	std::cout	<< "Binding socket to port "	<< this->port	<< "...\n";
 	this->socketAddress.sin_family = AF_INET;
 	this->socketAddress.sin_port = htons(this->port);
-	this->socketAddress.sin_addr.s_addr = inet_addr(this->localIP.c_str());
+	// this->socketAddress.sin_addr.s_addr = inet_addr(this->localIP.c_str());
+	this->socketAddress.sin_addr.s_addr = INADDR_ANY;
 	if (bind(this->pollInfo.fd, (struct sockaddr *)&this->socketAddress, sizeof(this->socketAddress)))
 	{
 		close(this->pollInfo.fd);
@@ -176,7 +184,7 @@ void	Server::readEnv(void)
 {
 	char	*env;
 
-	std::cout	<< "Reading .env file for crucial information...\n";
+	std::cout	<< "Reading env for crucial information...\n";
 	env = std::getenv("IRCADMINPWD");
 	if (!env)
 		throw (std::runtime_error("Admin password not found in env."));
@@ -367,7 +375,7 @@ void	Server::checkClients(void)
 			std::string	msg = (*client)->getMsg();
 			if (!msg.empty())
 			{
-				if (Server::verbose)
+				if (verboseCheck() >= 3)
 					std::cout	<< "Recv ["	<< msg.length()	<< "]\t"
 								<< C_ORANGE	<< msg
 								<< C_RESET	<< std::flush;
