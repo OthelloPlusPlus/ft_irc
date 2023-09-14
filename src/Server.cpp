@@ -110,17 +110,14 @@ void	Server::bootUpServer(void)
 	this->pollInfo.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->pollInfo.fd < 0)
 		throw (std::runtime_error("socket(): "));
-	std::cout	<< "Configuring socket for non-blocking mode...\n";
+#ifdef __APPLE__
+	std::cout	<< C_LCYAN	<< "(Apple)"	<< C_RESET	<< "Configuring socket for non-blocking mode...\n";
 	if (fcntl(this->pollInfo.fd, F_SETFL, O_NONBLOCK) == -1)
 	{
 		close(this->pollInfo.fd);
 		throw (std::runtime_error("fcntl(): "));
 	}
-	// if (fcntl(this->pollInfo.fd, F_SETFL, fcntl(this->pollInfo.fd, F_GETFL, 0) | O_NONBLOCK) == -1)
-	// {
-	// 	close(this->pollInfo.fd);
-	// 	throw (std::runtime_error("fcntl(): "));
-	// }
+#endif
 	std::cout	<< "Binding socket to port "	<< this->port	<< "...\n";
 	this->socketAddress.sin_family = AF_INET;
 	this->socketAddress.sin_port = htons(this->port);
@@ -138,6 +135,7 @@ void	Server::bootUpServer(void)
 	}
 	this->pollInfo.events = POLLIN;
 }
+#include <net/if.h>
 
 void	Server::setLocalIP(void)
 {
@@ -151,8 +149,14 @@ void	Server::setLocalIP(void)
 	if (getifaddrs(&ifap0))
 		throw(std::runtime_error("getifaddrs(): "));
 	for (ifap = ifap0; ifap != nullptr; ifap = ifap->ifa_next)
-		if (ifap->ifa_addr && ifap->ifa_addr->sa_family == AF_INET)
+		if (ifap->ifa_addr && ifap->ifa_addr->sa_family == AF_INET && \
+			ifap->ifa_flags & IFF_UP && \
+			ifap->ifa_flags & IFF_BROADCAST && \
+			ifap->ifa_flags & IFF_RUNNING && \
+			ifap->ifa_flags & IFF_MULTICAST)
 			this->localIP = inet_ntoa(((struct sockaddr_in *)ifap->ifa_addr)->sin_addr);
+	if (this->localIP.empty())
+		throw(std::runtime_error("No valid IP found: "));
 	freeifaddrs(ifap);
 }
 

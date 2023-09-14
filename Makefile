@@ -2,7 +2,7 @@ NAME =	ircserv
 
 CC =	c++
 # CFLAGS +=	-Wall -Wextra -Werror
-CFLAGS +=	-std=c++98
+# CFLAGS +=	-std=c++98
 CFLAGS +=	-Wno-unused-variable
 DEPFLAGS +=	-MMD -MF $(DEP_DIR)$*.d
 
