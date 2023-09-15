@@ -55,6 +55,8 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 
 	if (cmd == "USER")
 		Command::user(user, cmd, args);
+	else if (cmd == "PRIVMSG")
+		server->sendPrivMsg(&user, args);
 	else if (cmd == "PASS")
 		Command::password(user, cmd, args, server);
 	else if (cmd == "NICK")
@@ -67,8 +69,8 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		Command::oper(user, cmd, args, server);
 	else if (cmd == "WHOIS")
 		server->sendWhoIs(&user, args[0]);
-	// else if (cmd == "WHO")
-	// 	server->sendWho(&user, args[0]);
+	else if (cmd == "WHO")
+		server->sendWho(&user, args[0]);
 	else if (cmd == "JOIN")
 		server->joinChannel(&user, args[0]);
 	else if (cmd == "LIST")

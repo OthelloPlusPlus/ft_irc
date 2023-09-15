@@ -328,9 +328,10 @@ void	Server::sendPong(const Client *client, const std::string token) const
 	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
 }
 
-void	Server::sendPrivMsg(const Client *client)
+void	Server::sendPrivMsg(const Client *client, const std::vector<std::string> &args)
 {
-	std::string	name = "#WelcomeChannel";
+	std::string	name = args[0];
+	std::string msg = args[args.size() - 1];
 
 	if (name.at(0) == '#')
 	{
@@ -338,7 +339,7 @@ void	Server::sendPrivMsg(const Client *client)
 
 		if (channel != nullptr)
 			channel->sendToChannel(client, ":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
-								" PRIVMSG " + channel->getName() + " Hello there\r\n");
+								" PRIVMSG " + channel->getName() + " " + msg + "\r\n");
 	}
 	else
 	{
@@ -346,7 +347,7 @@ void	Server::sendPrivMsg(const Client *client)
 
 		if (user != nullptr)
 			user->sendMsg(":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
-						" PRIVMSG " + user->getNickName() + " Hello there\r\n");
+						" PRIVMSG " + user->getNickName() + " " + msg + "\r\n");
 		
 	}
 }

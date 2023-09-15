@@ -82,7 +82,7 @@ class Server
 		void	sendWhoIs(const Client *client, const std::string who) const;
 		void	sendPong(const Client *client) const;
 		void	sendPong(const Client *client, const std::string token) const;
-		void	sendPrivMsg(const Client *client);
+		void	sendPrivMsg(const Client *client, const std::vector<std::string> &args);
 
 		Server	&operator=(const Server &src);
 };
