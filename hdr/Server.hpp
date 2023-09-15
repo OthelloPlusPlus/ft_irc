@@ -43,8 +43,6 @@ class Server
 		std::string				publicIP;
 		std::string				localIP;
 
-		static int 				verbose;
-
 		std::vector<Channel *>	channels;
 		std::vector<Client *>	clients;
 		std::string				passwordUser;
@@ -52,7 +50,6 @@ class Server
 		// std::string	getHostIp(void);
 		void	setLocalIP(void);
 		void	bootUpServer(void);
-		void	setVerbose(char *argv3);
 		void	readEnv(void);
 
 		void	acceptClient(void);

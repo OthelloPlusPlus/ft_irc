@@ -43,8 +43,6 @@
  * 
 \* ************************************************************************** */
 
-int 		Server::verbose = 0;
-
 Server::Server(int argc, char **argv)
 {
 	std::cout	<< std::left
@@ -61,7 +59,6 @@ Server::Server(int argc, char **argv)
 	this->readEnv();
 	this->setLocalIP();
 	this->bootUpServer();
-	this->setVerbose(argv[3]);
 
 	std::cout	<< "\n"
 				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
@@ -166,18 +163,6 @@ void	Server::setLocalIP(void)
 	if (this->localIP.empty())
 		throw(std::runtime_error("No valid IP found: "));
 	freeifaddrs(ifap);
-}
-
-void	Server::setVerbose(char *argv3)
-{
-	if (argv3 == NULL)
-		this->verbose = 1;
-	else
-	{
-		this->verbose = 1;
-	}
-	Client::setVerbose(this->verbose);
-	Channel::setVerbose(this->verbose);
 }
 
 void	Server::readEnv(void)
@@ -375,7 +360,7 @@ void	Server::checkClients(void)
 			std::string	msg = (*client)->getMsg();
 			if (!msg.empty())
 			{
-				if (verboseCheck() >= 3)
+				if (verboseCheck() >= V_MSG)
 					std::cout	<< "Recv ["	<< msg.length()	<< "]\t"
 								<< C_ORANGE	<< msg
 								<< C_RESET	<< std::flush;
@@ -384,7 +369,7 @@ void	Server::checkClients(void)
 					Command::parseMsg(**client, this);
 					if (!(*client)->getNickName().empty())
 						this->sendWelcome(*client);
-					if (this->verbose)
+					if (verboseCheck() >= V_USER)
 						(*client)->printInfo();
 				}
 				else
