@@ -28,7 +28,9 @@ void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::
 		return ;
 	}
 	
-	for (std::vector<Client *>::const_iterator it = server->getClientList().begin(); it != server->getClientList().end(); ++it) {
+	const std::vector<Client *> &clientList = server->getClientList();
+
+	for (std::vector<Client *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		std::cout << C_MGNT << (*it)->getNickName() << std::endl;
 		if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
 			(*it)->setIsOperator(true);
