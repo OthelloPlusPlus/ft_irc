@@ -50,13 +50,9 @@ class Channel
 		bool		modeTopic;
 		std::string	key;
 		int			userLimit;
-		static int		verbose;
 
 		Server	*server;
 		std::vector<ChannelUser>	users;
-
-		// std::vector<Client *>	operators;
-		// std::vector<Client *>	clients;
 		
 
 		void	sendTopic(Client *client);
@@ -66,7 +62,6 @@ class Channel
 		void	setTopic(ChannelUser user, const std::string newTopic);
 
 		void	inviteClient(Client *client);
-		// void	kickClient(Client *client);
 
 	protected:
 
@@ -78,13 +73,11 @@ class Channel
 		void	addClient(Client *newClient, bool admin);
 		void	sendToChannel(const std::string msg) const;
 		void	sendToChannel(const Client *exclude, const std::string msg) const;
-		// void	sendMsgToChannel(Client *sender, std::string msg);
 		void	sendWho(Client *client);
 		bool	userIsInChannel(const Client *client) const;
 		void	removeUser(const Client *client);
 		void	promoteOldestUser(void);
 
-		static void		setVerbose(const int verbose);
 		void	setAdmin(Client *target, bool status);
 
 		std::string	getName(void) const;

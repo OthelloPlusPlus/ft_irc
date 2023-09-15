@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Channel.hpp"
+#include "verboseCheck.hpp"
 #include "colors.hpp"
 
 #include <iostream>
@@ -25,8 +26,6 @@
  * 	Constructors
  * 
 \* ************************************************************************** */
-
-int	Channel::verbose = 0;
 
 Channel::Channel(std::string name, Server *server): name(name), topic(""), server(server)
 {
@@ -113,7 +112,7 @@ void	Channel::addClient(Client *newClient, bool admin)
 
 	if (this->userIsInChannel(newClient))
 	{
-		if (Channel::verbose)
+		if (verboseCheck() >= V_CHANNEL)
 			std::cout	<< C_LRED	<< "User "
 						<< C_RESET	<< newClient->getNickName()
 						<< C_LRED	" is already in channel "
@@ -127,7 +126,7 @@ void	Channel::addClient(Client *newClient, bool admin)
 	this->sendToChannel(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
 	this->sendTopic(newUser.client);
 	this->sendNames(newUser.client);
-	if (Channel::verbose)
+	if (verboseCheck() >= V_CHANNEL)
 		std::cout	<< C_LGREEN	<< "User "
 					<< C_RESET	<< newClient->getNickName()
 					<< C_LGREEN	<< " joined channel "
@@ -140,7 +139,8 @@ void	Channel::setAdmin(Client *target, bool status)
 	for (std::vector<ChannelUser>::iterator user = this->users.begin(); user != this->users.end(); ++user)
 		if ((*user).client == target)
 		{
-			std::cout	<< __func__	<<__LINE__	<< std::endl;
+			if (verboseCheck() >= V_ADMIN)
+				std::cout	<< __func__	<<__LINE__	<< std::endl;
 			(*user).admin = status;
 			break ;
 		}
@@ -240,7 +240,7 @@ void	Channel::removeUser(const Client *client)
 				++i;
 
 		}
-		if (Channel::verbose)
+		if (verboseCheck() >= V_CHANNEL)
 			std::cout	<< C_LMGNT	<< "User "
 						<< C_RESET	<< client->getNickName()
 						<< C_LMGNT	<< " left channel "
@@ -271,10 +271,10 @@ void	Channel::promoteOldestUser(void)
 // 	}
 // }
 
-void	Channel::setVerbose(const int verbose)
-{
-	Channel::verbose = verbose;
-}
+// void	Channel::setVerbose(const int verbose)
+// {
+// 	Channel::verbose = verbose;
+// }
 
 void	Channel::printClientList(void) const
 {
