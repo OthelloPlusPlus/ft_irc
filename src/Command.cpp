@@ -54,28 +54,32 @@ std::vector<std::string> Command::ircSplit( const std::string& input,
 void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server){
 	if (cmd == "USER")
 		Command::user(user, cmd, args);
-	else if (cmd == "PASS")
-		Command::password(user, cmd, args, server);
 	else if (cmd == "NICK")
 		Command::nick(user, cmd, args, server->getClientList());
+	else if (cmd == "PASS")
+		Command::password(user, cmd, args, server);
 	else if (cmd == "PING")
 		Command::ping(user, cmd, args, server);
+	else if (cmd == "QUIT")
+		Command::quit(user, cmd, args, server);
+	if (!user.getIsRegistered())
+		return;
 
 	if (cmd == "PRIVMSG")
 		server->sendPrivMsg(&user, args);
-	else if (cmd == "QUIT")
-		Command::quit(user, cmd, args, server);
-	else if (cmd == "WHOIS")
-		server->sendWhoIs(&user, args[0]);
-	else if (cmd == "WHO")
-		server->sendWho(&user, args[0]);
-	else if (cmd == "JOIN")
-		server->joinChannel(&user, args[0]);
 	else if (cmd == "LIST")
 		server->sendChannelList(&user);
+	else if (cmd == "JOIN")
+		server->joinChannel(&user, args[0]);
+	else if (cmd == "WHO")
+		server->sendWho(&user, args[0]);
+	else if (cmd == "WHOIS")
+		server->sendWhoIs(&user, args[0]);
 	else if (cmd == "PART")
 		server->partChannel(&user, args[0]);
-
+	if (!user.getIsOperator())
+		return;
+		
 	if (cmd == "OPER")
 		Command::oper(user, cmd, args, server);
 }
