@@ -13,6 +13,7 @@
 #include "Server.hpp"
 #include "colors.hpp"
 #include "Command.hpp"
+#include "Parse.hpp"
 #include "IRCReplyCodes.hpp"
 #include "verboseCheck.hpp"
 
@@ -367,14 +368,14 @@ void	Server::checkClients(void)
 								<< C_RESET	<< std::flush;
 				if ((*client)->getNickName().empty())
 				{
-					Command::parseMsg(**client, this);
+					Parse::parseMsg(**client, this);
 					if (!(*client)->getNickName().empty())
 						this->sendWelcome(*client);
 					if (verboseCheck() >= V_USER)
 						(*client)->printInfo();
 				}
 				else
-					Command::parseMsg(**client, this);
+					Parse::parseMsg(**client, this);
 			}
 			++client;
 		}

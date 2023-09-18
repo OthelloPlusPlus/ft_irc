@@ -6,14 +6,14 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/01 12:26:31 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/14 16:19:07 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/18 18:54:09 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include "colors.hpp"
 
-void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+void	Command::PrivCommand::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (args.size() != 2){
 		user.sendMsg("461 client " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
@@ -34,12 +34,12 @@ void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::
 		std::cout << C_MGNT << (*it)->getNickName() << std::endl;
 		if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
 			(*it)->setIsOperator(true);
-			user.sendMsg((*it)->getNickName() + " " + RPL_YOUREOPERM);
+			user.sendMsg((*it)->getNickName() + " " + RPL_YOUREOPER);
 			break;
 		}
 		std::cout << C_RED << (*it)->getNickName() << std::endl;
 		if (it == server->getClientList().end()){
-				user.sendMsg((*it)->getNickName() + " " + ERR_NOOPERHOSTM);
+				user.sendMsg((*it)->getNickName() + " " + ERR_NOOPERHOST);
 				return ;
 		}
 	}

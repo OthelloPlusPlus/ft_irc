@@ -6,14 +6,14 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 19:40:13 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/14 14:17:45 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/18 18:51:09 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include "colors.hpp"
 
-void Command::user(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
+void Command::PrivCommand::user(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
 	
 	if (user.getIsRegistered()){
 		user.sendMsg("462 client " + user.getBestName() + " " + cmd + ERR_ALREADYREGISTERED);

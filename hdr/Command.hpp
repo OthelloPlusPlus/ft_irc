@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/14 17:52:13 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/18 18:41:27 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,45 +15,30 @@
 
 #include "Client.hpp"
 #include "Server.hpp"
-#include <string>
 #include "IRCReplyCodes.hpp"
-
-//NICK
-#define ERR_NONICKNAMEGIVEN		" :No nickname given\r\n"						// (431) "<client> :
-#define ERR_ERRONEUSNICKNAME	" :Erroneus nickname\r\n"						// (432) "<client> <nick> :
-#define ERR_NICKNAMEINUSE		" :Nickname is already in use\r\n"				// (433) "<client> <nick> :
-#define ERR_NICKCOLLISION		" :Nickname collision KILL from <user>@<host>\r\n" //(433) "<client> <nick>  :
-
-//PASS
-#define ERR_NEEDMOREPARAMS		" :Not enough parameters\r\n"					// (461) "<client> <command> :
-#define ERR_ALREADYREGISTERED	" :You may not reregister again\r\n"			// (462) "<client> :
-#define ERR_PASSWDMISMATCH		" :Password incorrect\r\n"						// (464) "<client> :
-
-//PING : ERR_NEEDMOREPARAMS 
-#define ERR_NOORIGIN			" :No origin specified\r\n"						// (409) "<client> :
-
-//OPER : ERR_NEEDMOREPARAMS + ERR_PASSWDMISMATCH
-#define ERR_NOOPERHOSTM			" :No O-lines for your host\r\n"					// (409) "<client> :
-#define RPL_YOUREOPERM			" :You are now an IRC operator\r\n"				// (381) "<client> :
-
-// #define
+#include <string>
 
 namespace Command
 {
-
-	void cleanMsg(Client &user);
-	void parseMsg(Client &user, Server *server);
 	void parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server);
-
-	void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-	void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
-	void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-	void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-	void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	
-	std::vector<std::string> ircSplit( const std::string &input, const std::string &delimiter);
-	std::vector<std::string> ircSplitMulti( const std::string &input, const std::string &delimiter);
+	 // Nested private namespace
+	namespace PrivCommand
+	{
+		// void cleanMsg(Client &user);
+		// void parseMsg(Client &user, Server *server);
+
+		void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+		void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
+		void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
+		void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+		void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+		void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+		
+		// std::vector<std::string> ircSplit( const std::string &input, const std::string &delimiter);
+		// std::vector<std::string> ircSplitMulti( const std::string &input, const std::string &delimiter);
+	}
+
 }
 
 #endif

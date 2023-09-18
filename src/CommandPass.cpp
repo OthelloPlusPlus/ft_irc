@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 15:54:17 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/14 15:16:10 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/09/18 18:50:52 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include "colors.hpp"
 
-void Command::password(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server) {
+void Command::PrivCommand::password(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server) {
 	if (args.empty() || args[0].empty()){
 		user.sendMsg("461 client " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
