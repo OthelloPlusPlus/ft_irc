@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Client.hpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/03/11 13:37:13 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/03/11 13:39:19 by ohengelm      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Client.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/18 19:24:50 by emlicame          #+#    #+#             */
+/*   Updated: 2023/09/18 19:24:53 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,22 @@ class Client
 		bool				_isRegistered;
 		bool				_isOperator;
 		bool				_hasPassword;
-		// bool				admin;
-
-		std::vector<std::string> _cmd;
-		std::string				_buffer;
-		std::string				_message;
+		std::string			_buffer;
+		std::string			_message;
 
 		static int				_verbose;
+		Client(const Client &src);
+		Client	&operator=(const Client &src);
+
+		void		initialize(int serverFd);
+		bool		readReceive(int sockfd);
+
+
 	protected:
 
 	public:
 		Client(int serverFD);
-		Client(const Client &src);
 		~Client( void );
-
-		void		initialize(int serverFd);
-		bool		stillActive( void ) const;
-
-		void		sendMsg(std::string msg) const;
-		std::string	getMsg( void );
-		bool		readReceive(int sockfd);
-
 		std::string	const &getBuff( void ) const;
 		std::string const &getUserName( void ) const; 
 		std::string const &getIdentName( void ) const;
@@ -66,29 +61,30 @@ class Client
 		std::string const &getNickName( void ) const;
 		std::string const &getServer( void ) const; 		// server IP
 		std::string const &getIpHostName( void ) const; 	// client IP
-		int const &getPollInfofd( void ) const; 
-		bool getIsRegistered( void ) const;
-		bool getIsOperator( void ) const;
-		bool hasPassword( void ) const;
+		int const	&getPollInfofd( void ) const; 
+		bool 		getIsRegistered( void ) const;
+		bool 		getIsOperator( void ) const;
+		bool		hasPassword( void ) const;
 		std::string getBestName ( void ) const;
 
+		void setNickName(std::string nickname);
 		void setBuff(std::string buffer);
+		void userRegistration( void );
 		void setUserName(std::string username);
 		void setIdentName(std::string identname);
 		void setRealName(std::string realname);
-		void setNickName(std::string nickname);
-		void setPassword(std::string password);
 		void setServer(std::string server);
 		void setPollInfofd(int val);
 		void setIpHostName(std::string ipAddress);
 		void setIsRegistered(bool val);
 		void setIsOperator(bool val);
 		void setHasPassword(bool val);
-		void userRegistration( void );
 		static void	setVerbose(const int verbose);
+		bool stillActive( void ) const;
 
-		Client	&operator=(const Client &src);
-		void	printInfo( void ) const;
+		std::string	getMsg( void );
+		void		sendMsg(std::string msg) const;
+		void		printInfo( void ) const;
 };
 
 #endif

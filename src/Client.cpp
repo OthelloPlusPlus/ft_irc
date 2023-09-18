@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Client.cpp                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/03/09 20:45:12 by ohengelm      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/18 19:24:58 by emlicame          #+#    #+#             */
+/*   Updated: 2023/09/18 19:25:01 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ std::string	Client::getMsg(void) {
 		// Extract the complete message including the delimiter
 		this->_message = this->_buffer.substr(0, pos + 1);
 		this->_buffer.erase(0, pos + 1);
-		// this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");
 		return this->_message;
 	}
 
@@ -252,6 +251,8 @@ void	Client::printInfo(void) const {
 	// 				<< std::flush;
 }
 // std::cout	<< __func__	<< " " <<  __LINE__	<< std::endl;
+// this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");
+
 
 /** ************************************************************************ **\
  * 
@@ -275,7 +276,9 @@ Client	&Client::operator=(const Client &src) {
 	this->_hasPassword = src._hasPassword;
 	this->_buffer = src._buffer;
 	this->_message = src._message;
-	// std::vector<std::string> _cmd; ??????
+
+	// this->   = src. ; ????
+
 	return (*this);
 }
 
