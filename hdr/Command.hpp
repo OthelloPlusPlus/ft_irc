@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Command.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/18 14:45:40 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/18 19:08:41 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Command.hpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/09/19 13:50:13 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "Client.hpp"
 #include "Server.hpp"
 #include "IRCReplyCodes.hpp"
+#include "verboseCheck.hpp"
+#include "colors.hpp"
 #include <string>
 
 namespace Command
@@ -30,7 +32,7 @@ namespace Command
 		void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 		void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 		void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-		
+		void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	}
 
 }

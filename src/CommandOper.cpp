@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CommandOper.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/01 12:26:31 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/18 18:54:09 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   CommandOper.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/09/01 12:26:31 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/09/19 14:01:03 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 
 void	Command::PrivCommand::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (args.size() != 2){
-		user.sendMsg("461 client " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
+		user.sendMsg("461 * " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
 	}
 		
 	if (server->validatePassword(args[1]) != 2){
-		user.sendMsg("464 client " + user.getBestName() + " " + cmd + ERR_PASSWDMISMATCH);
+		user.sendMsg("464 * " + user.getBestName() + " " + cmd + ERR_PASSWDMISMATCH);
 		return ;
 	}
 	if (user.getIsOperator() == false){
@@ -34,25 +34,19 @@ void	Command::PrivCommand::oper(Client &user, const std::string &cmd, const std:
 		std::cout << C_MGNT << (*it)->getNickName() << std::endl;
 		if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
 			(*it)->setIsOperator(true);
-			user.sendMsg((*it)->getNickName() + " " + RPL_YOUREOPER);
+			user.sendMsg("381 * " + (*it)->getNickName() + " " + RPL_YOUREOPER);
+			//set Mode +o
 			break;
 		}
-		std::cout << C_RED << (*it)->getNickName() << std::endl;
+		// std::cout << C_RED << (*it)->getNickName() << std::endl;
 		if (it == server->getClientList().end()){
-				user.sendMsg((*it)->getNickName() + " " + ERR_NOOPERHOST);
+				user.sendMsg("491 * " + (*it)->getNickName() + " " + cmd + ERR_NOOPERHOST);
 				return ;
 		}
 	}
 }
 
 /*
-Parameters: <name> <password>
-check if name is coorect and password is correct else ERR_NOOPERHOST (491)
-
-RPL_YOUREOPER (381)
-set as operator, send message 
-set MODE and send message
-
 The following messages are typically reserved to server operators.
 KILL message     Command: KILL   Parameters: <nickname> <comment>
 REHASH message   Command: REHASH Parameters: None

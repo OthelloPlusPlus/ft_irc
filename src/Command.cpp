@@ -46,4 +46,6 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 
 	if (cmd == "OPER")
 		Command::PrivCommand::oper(user, cmd, args, server);
+	else if (cmd == "KILL")
+		Command::PrivCommand::kill(user, cmd, args, server);
 }

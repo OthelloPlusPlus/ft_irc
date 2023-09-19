@@ -18,22 +18,22 @@ void Command::PrivCommand::nick(Client &user, const std::string& cmd, const std:
 
 	//	NO NICK name
 		if (nickname.empty()) {
-			user.sendMsg("431 * client " + user.getBestName() + " " + cmd + ERR_NONICKNAMEGIVEN);
+			user.sendMsg("431 * " + user.getBestName() + " " + cmd + ERR_NONICKNAMEGIVEN);
 			return ;
 		}
 	// 	If the nick is already in use ERR_NICKNAMEINUSE (433) and ignore command.
 		for (std::vector<Client *>::const_iterator i = clients.begin(); i != clients.end(); ++i)
 			if ((*i)->getNickName() == nickname && (*i) != &user){
-				user.sendMsg("433 * client " + user.getBestName() + " " + cmd  + ERR_NICKNAMEINUSE);
+				user.sendMsg("433 * " + nickname + " " + cmd  + ERR_NICKNAMEINUSE);
 				return ;
 			}
-		if (isdigit(nickname[0])){
-			user.sendMsg(": 432 * client " + user.getBestName() + " " + cmd  + ERR_ERRONEUSNICKNAME + " ");
+		if (isdigit(nickname.at(0))){
+			user.sendMsg(": 432 * " + nickname + " " + cmd  + ERR_ERRONEUSNICKNAME + " ");
 			return ;
 		}
-		for (int i = 0; i < nickname.size(); i++){
-			if (!isalpha(nickname[i])){
-				user.sendMsg("432 * client " + user.getBestName() + " " + cmd  + ERR_ERRONEUSNICKNAME);
+		for (int i = 1; i < nickname.size(); i++){
+			if (!isalnum(nickname[i])){
+				user.sendMsg("432 * " + nickname + " " + cmd  + ERR_ERRONEUSNICKNAME);
 				return ;
 			}
 		}

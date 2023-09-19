@@ -14,7 +14,7 @@
 
 void Command::PrivCommand::ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (args.empty() || args[0].empty()){
-		user.sendMsg("461 client " + user.getIpHostName() + " " + cmd + ERR_NEEDMOREPARAMS);
+		user.sendMsg("461 * " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
 	}
 	server->sendPong(&user, args[0]);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/18 19:24:58 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/18 19:25:01 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Client.cpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/09/19 14:07:32 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,7 @@ void Client::userRegistration( void ){
 		setIsRegistered(true);
 		if (_verbose){
 			std::cout	<< std::left 		<< C_HEADER	 
-						<< getNickName() 	<< " is now registered in the IRC Othello Magic Server" // getEnv("IRC_SERVNAME")?????
+						<< getNickName() 	<< " is now registered in the " << std::getenv("IRC_SERVNAME") //IRC Othello Magic Server" // getEnv("IRC_SERVNAME")
 						<< std::setw(76) 	<< C_RESET		<< std::endl;;
 		} else {
 			std::cout	<< "User " C_CYAN 	<< this->getBestName()

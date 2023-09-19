@@ -22,7 +22,8 @@ SRC_NMSPC =	Parse.cpp		\
 			Command.cpp		\
 			CommandNick.cpp CommandPass.cpp \
 			CommandUser.cpp CommandPing.cpp \
-			CommandQuit.cpp CommandOper.cpp
+			CommandQuit.cpp CommandOper.cpp \
+			CommandKill.cpp
 
 DIRS =	$(OBJ_DIR) $(DEP_DIR)
 OBJ_DIR =	obj/
