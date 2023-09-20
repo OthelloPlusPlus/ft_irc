@@ -20,21 +20,33 @@
 #include "colors.hpp"
 #include <string>
 
+// namespace Command
+// {
+// 	void parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server);
+	
+// 	namespace
+// 	{
+// 		void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+// 		void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
+// 		void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
+// 		void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+// 		void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+// 		void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+// 		void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+// 	}
+
+// }
 namespace Command
 {
 	void parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server);
 	
-	namespace
-	{
-		void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-		void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-		void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
-		void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-		void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-		void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-		void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-	}
-
+	static void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+	static void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
+	static void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+	static void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+	static void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+	static void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 }
 
 #endif
