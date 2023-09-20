@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 11:36:52 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 14:33:42 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@
  * 	Constructors
  * 
 \* ************************************************************************** */
-
-int Client::_verbose = 0;
 
 Client::Client(int serverFD) : _nickName(""), _userName(""), _identName(""), 
 								_realName(""), _IpHostName(""), _server(""), _isRegistered(false),
@@ -150,10 +148,6 @@ bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
 }
 
-void	Client::setVerbose(const int verbose) {
-	Client::_verbose = verbose;
-}
-
 std::string	const & Client::getBuff( void )const { return _message;}
 std::string const & Client::getUserName( void ) const  { return _userName; }
 std::string const & Client::getIdentName ( void ) const { return _identName; }
@@ -221,9 +215,9 @@ void Client::setHasPassword(bool val){
 void Client::userRegistration( void ){
 	if (hasPassword() == true && !getNickName().empty() && !getIdentName().empty()){
 		setIsRegistered(true);
-		if (_verbose){
+		if (verboseCheck() >= V_USER){
 			std::cout	<< std::left 		<< C_HEADER	 
-						<< getNickName() 	<< " is now registered in the " << std::getenv("IRC_SERVNAME") //IRC Othello Magic Server" // getEnv("IRC_SERVNAME")
+						<< getNickName() 	<< " is now registered in the " << std::getenv("IRC_SERVNAME")
 						<< std::setw(76) 	<< C_RESET		<< std::endl;;
 		} else {
 			std::cout	<< "User " C_CYAN 	<< this->getBestName()

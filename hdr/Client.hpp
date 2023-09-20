@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/18 19:24:50 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/18 19:24:53 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Client.hpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/09/20 14:32:54 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ class Client
 		std::string			_buffer;
 		std::string			_message;
 
-		static int				_verbose;
 		Client(const Client &src);
 		Client	&operator=(const Client &src);
 
@@ -79,7 +78,6 @@ class Client
 		void setIsRegistered(bool val);
 		void setIsOperator(bool val);
 		void setHasPassword(bool val);
-		static void	setVerbose(const int verbose);
 		bool stillActive( void ) const;
 
 		std::string	getMsg( void );

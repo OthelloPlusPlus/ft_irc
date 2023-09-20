@@ -6,16 +6,16 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/25 15:54:17 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 13:59:31 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 14:36:56 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include <unistd.h>
 
-void Command::PrivCommand::password(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server) {
+void password(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server) {
 	
-	std::string serverName = getenv("IRC_SERVNAME");
+	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.empty() || args[0].empty()){
 		user.sendMsg(":" + serverName + "461 " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		if (verboseCheck() >= V_USER)

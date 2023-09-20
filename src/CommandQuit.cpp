@@ -6,15 +6,15 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/31 15:37:09 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 13:46:54 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 14:37:00 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include <unistd.h>
 
-void	Command::PrivCommand::quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
-	std::string serverName = getenv("IRC_SERVNAME");
+void	quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty())
 		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
 						+ cmd + ":Quit: " + args[0]);

@@ -6,16 +6,16 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/19 13:06:54 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 13:43:57 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 14:37:11 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include <unistd.h>
 
-void	Command::PrivCommand::kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+void	kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	
-	std::string serverName = getenv("IRC_SERVNAME");
+	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
 		user.sendMsg(":" + serverName + " 461 " + user.getNickName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		return ;
