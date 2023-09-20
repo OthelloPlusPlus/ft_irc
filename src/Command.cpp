@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 14:35:12 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 19:30:48 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,6 @@
 #include <string>
 #include <unistd.h>
 
-// static void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-// static void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-// static void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
-// static void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-// static void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-// static void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-// static void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 
 void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server){
 	if (cmd == "USER")
@@ -60,13 +53,16 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 }
 
 /* ************************************************************************** *\
-*
-*
-*				Static Functions
-*
-*
+*																			  *
+*																			  *
+*				Static Functions											  *
+*																			  *
+*																			  *		
 \* ************************************************************************** */
 
+/* ************************************************************************** *\
+*				USER														  *
+\* ************************************************************************** */
 static void	Command::user(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
 
 	if (user.getIsRegistered()){
@@ -104,6 +100,9 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 	user.userRegistration();
 }
 
+/* ************************************************************************** *\
+*				PASS														  *
+\* ************************************************************************** */
 static void Command::password(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server) {
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
@@ -124,12 +123,12 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 	if (server->validatePassword(args[0]) != 1 && \
 		server->validatePassword(args[0]) != 2 ){
 		user.sendMsg(":" + serverName + "464 " + user.getBestName() + " " + cmd + ERR_PASSWDMISMATCH);
-		close (user.getPollInfofd());
-		user.setPollInfofd(-1); 
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "Wrong password " 
 						<< user.getBestName() 
 						<< " disconnected from server"	<< std::endl;
+		close (user.getPollInfofd());
+		user.setPollInfofd(-1); 
 		return ;
 	}
 	if (server->validatePassword(args[0]) == 2)
@@ -138,6 +137,9 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 	user.userRegistration();
 }
 
+/* ************************************************************************** *\
+*				NICK														  *
+\* ************************************************************************** */
 static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params, std::vector<Client*> clients) {
 	
 	std::string nickname = params[0];
@@ -166,6 +168,9 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 	user.userRegistration();
 }
 
+/* ************************************************************************** *\
+*				PING														  *
+\* ************************************************************************** */
 static void Command::ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	if (args.empty() || args[0].empty()){
 		std::string serverName = std::getenv("IRC_SERVNAME");
@@ -175,26 +180,40 @@ static void Command::ping(Client &user, const std::string &cmd, const std::vecto
 	server->sendPong(&user, args[0]);
 }
 
+/* ************************************************************************** *\
+*				QUIT														  *
+\* ************************************************************************** */
+#include <fcntl.h>
 static void	Command::quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+	
 	std::string serverName = std::getenv("IRC_SERVNAME");
-	if (!args[0].empty())
+	if (!args[0].empty()){
 		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
 						+ cmd + ":Quit: " + args[0]);
+		if (verboseCheck() >= V_ADMIN)
+			std::cout	<< C_LORANGE << "ERROR :Closing Link: " << user.getIpHostName() 
+						<< " (Client Quit)" << C_RESET	<< std::endl;
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getBestName() 
 						<< " is exiting the network with the message: " + args[0] << std::endl;
-	else
+	} else {
 		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
 						+ cmd + ":quit: ");
+		if (verboseCheck() >= V_ADMIN)
+			std::cout	<< C_LORANGE << "ERROR :Closing Link: " << user.getIpHostName() 
+						<< " (Client Quit)" << C_RESET	<< std::endl;
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getBestName() 
 						<< " is exiting the network" << std::endl;
+	}
 	
-	user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)");
 	close (user.getPollInfofd());
 	user.setPollInfofd(-1); 
 }
 
+/* ************************************************************************** *\
+*				OPER														  *
+\* ************************************************************************** */
 static void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
@@ -227,7 +246,6 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 			//set Mode +o
 			break;
 		}
-		// std::cout << C_RED << (*it)->getNickName() << std::endl;
 		if (it == server->getClientList().end()){
 				user.sendMsg(":" + serverName + " 491 " + (*it)->getNickName() + " " + cmd + ERR_NOOPERHOST);
 				if (verboseCheck() >= V_USER)
@@ -239,6 +257,9 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 	}
 }
 
+/* ************************************************************************** *\
+*				KILL														  *
+\* ************************************************************************** */
 static void	Command::kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");

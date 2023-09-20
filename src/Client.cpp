@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 14:33:42 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 20:28:53 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 
 #include "Command.hpp"
 // namespace Command
+#include "Parse.hpp"
 
 /** ************************************************************************ **\
  * 
@@ -89,12 +90,16 @@ void	Client::initialize(int serverFD) {
 	setIpHostName(ipAddress(this->socketAddress));
 }
 
-void	Client::sendMsg(std::string msg) const {	
-	if (verboseCheck() >= V_MSG)
+#include <fcntl.h>
+
+void	Client::sendMsg(std::string msg) const {
+	if (this->pollInfo.fd < 1)
+		return ;
+	if (verboseCheck() >= V_ADMIN)
 		std::cout	<< "send ["	<< send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
 					<< "]\t"
-					<< C_LORANGE	<< msg
-					<< C_RESET	<< std::flush;
+					<< C_LORANGE	<< '\n' << msg
+					<< C_RESET	<< '\n' << std::flush;
 	else		send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
 }
 
@@ -113,8 +118,9 @@ bool	Client::readReceive(int sockfd){
 			}
 		}
 		if (recvLen == 0) {
-			close(this->pollInfo.fd);
-			this->pollInfo.fd = -1;
+			if (this->getPollInfofd() != -1){
+				close(this->pollInfo.fd);
+				this->pollInfo.fd = -1;}
 			std::cout	<< "Client " << getNickName() << " disconnected from server."	<< std::endl;
 			return false;
 		}
@@ -229,20 +235,23 @@ void Client::userRegistration( void ){
 
 
 void	Client::printInfo(void) const {
-	std::cout << "this->getNickName()\t" << C_BLUE << this->getNickName() << C_RESET	<< std::endl;
-	std::cout << "this->getIdentName()\t" << C_BLUE << this->getIdentName() << C_RESET	<< std::endl;
-	std::cout << "this->getRealName()\t" << C_BLUE << this->getRealName() << C_RESET	<< std::endl;
-	std::cout << "this->getServer()\t" << C_BLUE << this->getServer() << C_RESET	<< std::endl;
-	std::cout << "this->getIpHostName()\t" << C_BLUE << this->getIpHostName() << C_RESET	<< std::endl;
-	std::cout << "this->getIsRegistered()\t" << C_BLUE << this->getIsRegistered() << C_RESET	<< std::endl;
-	std::cout << "this->hasPassword()\t" << C_BLUE << this->hasPassword() << C_RESET	<< std::endl;
-	std::cout << "this->getIsOperator\t" << C_BLUE << this->getIsOperator() << C_RESET	<< std::endl;
-	std::cout << std::endl;
+
+	if (verboseCheck() >= V_DETAILS){
+		std::cout << "this->getNickName()\t" << C_BLUE << this->getNickName() << C_RESET	<< std::endl;
+		std::cout << "this->getIdentName()\t" << C_BLUE << this->getIdentName() << C_RESET	<< std::endl;
+		std::cout << "this->getRealName()\t" << C_BLUE << this->getRealName() << C_RESET	<< std::endl;
+		std::cout << "this->getServer()\t" << C_BLUE << this->getServer() << C_RESET	<< std::endl;
+		std::cout << "this->getIpHostName()\t" << C_BLUE << this->getIpHostName() << C_RESET	<< std::endl;
+		std::cout << "this->getIsRegistered()\t" << C_BLUE << this->getIsRegistered() << C_RESET	<< std::endl;
+		std::cout << "this->hasPassword()\t" << C_BLUE << this->hasPassword() << C_RESET	<< std::endl;
+		std::cout << "this->getIsOperator\t" << C_BLUE << this->getIsOperator() << C_RESET	<< std::endl;
+		std::cout << std::endl;
+	}	
+}
 	// std::cout	<< "socketAddress.sin_addr.s_addr\t"	
 	//				<< this->socketAddress.sin_addr.s_addr	<< "\n"
 	// 				<< "PollInfo.fd\t"	<< this->pollInfo.fd	<< "\n"
 	// 				<< std::flush;
-}
 // std::cout	<< __func__	<< " " <<  __LINE__	<< std::endl;
 // this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");
 

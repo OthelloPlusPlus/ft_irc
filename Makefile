@@ -18,12 +18,11 @@ SRC_DIR =	src/
 SRC_MAIN =	main.cpp
 SRC_CLASS =	Server.cpp Client.cpp Channel.cpp
 SRC_FUNC =	setEnv.cpp	verboseCheck.cpp
-SRC_NMSPC =	Parse.cpp		\
-			Command.cpp		\
-			CommandNick.cpp CommandPass.cpp \
-			CommandUser.cpp CommandPing.cpp \
-			CommandQuit.cpp CommandOper.cpp \
-			CommandKill.cpp
+SRC_NMSPC =	Parse.cpp Command.cpp
+# CommandNick.cpp CommandPass.cpp \
+# CommandUser.cpp CommandPing.cpp \
+# CommandQuit.cpp CommandOper.cpp \
+# CommandKill.cpp
 
 DIRS =	$(OBJ_DIR) $(DEP_DIR)
 OBJ_DIR =	obj/

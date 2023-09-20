@@ -209,27 +209,6 @@ Received:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Running eavesdrop:
 Pidgin connection accepted!
 Connected to libera!
