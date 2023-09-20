@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/18 19:24:58 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/18 19:25:01 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Client.cpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/09/20 11:36:52 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,14 +91,13 @@ void	Client::initialize(int serverFD) {
 	setIpHostName(ipAddress(this->socketAddress));
 }
 
-void	Client::sendMsg(std::string msg) const {
-	if (true)
+void	Client::sendMsg(std::string msg) const {	
+	if (verboseCheck() >= V_MSG)
 		std::cout	<< "send ["	<< send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
 					<< "]\t"
 					<< C_LORANGE	<< msg
 					<< C_RESET	<< std::flush;
-	else
-		send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
+	else		send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
 }
 
 bool	Client::readReceive(int sockfd){
@@ -224,7 +223,7 @@ void Client::userRegistration( void ){
 		setIsRegistered(true);
 		if (_verbose){
 			std::cout	<< std::left 		<< C_HEADER	 
-						<< getNickName() 	<< " is now registered in the IRC Othello Magic Server" // getEnv("IRC_SERVNAME")?????
+						<< getNickName() 	<< " is now registered in the " << std::getenv("IRC_SERVNAME") //IRC Othello Magic Server" // getEnv("IRC_SERVNAME")
 						<< std::setw(76) 	<< C_RESET		<< std::endl;;
 		} else {
 			std::cout	<< "User " C_CYAN 	<< this->getBestName()

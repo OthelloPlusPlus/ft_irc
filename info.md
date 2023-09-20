@@ -14,3 +14,29 @@ https://datatracker.ietf.org/doc/html/rfc1459
 https://beej.us/guide/bgnet/html/
 
 http://chi.cs.uchicago.edu/chirc/index.html
+
+##  Pidgin
+rm -rf ~/.purple
+rm -rf ~/.config/pidgin
+rm -rf ~/pidgin
+which pidgin (get where is the binary)
+cd /home....
+rm pidgin
+
+mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+echo 'export PATH="$HOME/homebrew/bin:$PATH"' >> ~/.zshrc 
+brew install pidgin
+
+misisng modules
+
+brew install at-spi2-atk
+brew install libcanberra-gtk-module
+brew list
+dpkg -l | grep libgtk   
+
+I still receive the warning on terminal, 
+I also added the new modules in PATH
+
+export PKG_CONFIG_PATH=$HOME/.homebrew/lib/pkgconfig
+export LD_LIBRARY_PATH=$HOME/.homebrew/lib
+export GTK_PATH=$HOME/.homebrew/lib/gtk-2.0

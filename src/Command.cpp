@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Command.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/17 17:27:22 by emlicame          #+#    #+#             */
-/*   Updated: 2023/09/18 18:50:09 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Command.cpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/09/20 14:20:01 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,6 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 
 	if (cmd == "OPER")
 		Command::PrivCommand::oper(user, cmd, args, server);
+	else if (cmd == "KILL")
+		Command::PrivCommand::kill(user, cmd, args, server);
 }
