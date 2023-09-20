@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/25 15:54:17 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/19 13:51:29 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 13:59:31 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,16 @@
 #include <unistd.h>
 
 void Command::PrivCommand::password(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server) {
+	
+	std::string serverName = getenv("IRC_SERVNAME");
 	if (args.empty() || args[0].empty()){
-		user.sendMsg("461 " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + "461 " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "Password not submitted, please provide a password"	<< std::endl;
 		return ;
 	}
 	if (user.getIsRegistered() == true){
-		user.sendMsg("462 " + user.getNickName() + " " + cmd + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + serverName + "462 " + user.getNickName() + " " + cmd + ERR_ALREADYREGISTERED);
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getNickName() 
 						<< " is already registered"	<< std::endl;
@@ -30,7 +32,7 @@ void Command::PrivCommand::password(Client &user, const std::string& cmd, const 
 	
 	if (server->validatePassword(args[0]) != 1 && \
 		server->validatePassword(args[0]) != 2 ){
-		user.sendMsg("464 " + user.getBestName() + " " + cmd + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + serverName + "464 " + user.getBestName() + " " + cmd + ERR_PASSWDMISMATCH);
 		close (user.getPollInfofd());
 		user.setPollInfofd(-1); 
 		if (verboseCheck() >= V_USER)

@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/25 19:40:13 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/19 13:53:44 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 11:41:02 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void Command::PrivCommand::user(Client &user, const std::string& cmd, const std:
 		user.sendMsg("461 " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		if (verboseCheck() >= V_USER)
 			std::cerr 	<< C_RED << "Error" << C_RESET 
-						<< ": format required: USER <user name> * <host> <realname>" << std::endl;
+						<< ": format required: USER <user name> * <host> :<realname>" << std::endl;
 		return ;
 	}
 
@@ -35,7 +35,7 @@ void Command::PrivCommand::user(Client &user, const std::string& cmd, const std:
 	if (args[1] != "*"){
 		if (verboseCheck() >= V_USER)
 			std::cerr 	<< C_RED << "Error" << C_RESET 
-						<< ": format required: USER <user name> * <host> <realname>" << std::endl;
+						<< ": format required: USER <user name> * <host> :<realname>" << std::endl;
 		return ;
 	}
 	user.setServer(args[2]);

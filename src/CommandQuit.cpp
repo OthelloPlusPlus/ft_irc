@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/31 15:37:09 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/19 14:58:49 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 13:46:54 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,21 @@
 #include <unistd.h>
 
 void	Command::PrivCommand::quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+	std::string serverName = getenv("IRC_SERVNAME");
 	if (!args[0].empty())
-		user.sendMsg("client " + user.getBestName() + " QUIT :" + args[0]);
+		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
+						+ cmd + ":Quit: " + args[0]);
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getBestName() 
-						<< " QUIT :	" + args[0] << std::endl;
-		
+						<< " is exiting the network with the message: " + args[0] << std::endl;
 	else
-		user.sendMsg("client " + user.getBestName() + " QUIT :Leaving.");
+		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
+						+ cmd + ":quit: ");
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getBestName() 
-						<< " QUIT :Leaving" << std::endl;
+						<< " is exiting the network" << std::endl;
 	
+	user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)");
 	close (user.getPollInfofd());
 	user.setPollInfofd(-1); 
-	std::cout << "Client " << user.getBestName() << " disconnected from server." << std::endl;
 }

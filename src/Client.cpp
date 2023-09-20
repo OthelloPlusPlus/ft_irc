@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/19 14:07:32 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 11:36:52 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,14 +91,13 @@ void	Client::initialize(int serverFD) {
 	setIpHostName(ipAddress(this->socketAddress));
 }
 
-void	Client::sendMsg(std::string msg) const {
-	if (true)
+void	Client::sendMsg(std::string msg) const {	
+	if (verboseCheck() >= V_MSG)
 		std::cout	<< "send ["	<< send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
 					<< "]\t"
 					<< C_LORANGE	<< msg
 					<< C_RESET	<< std::flush;
-	else
-		send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
+	else		send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
 }
 
 bool	Client::readReceive(int sockfd){
