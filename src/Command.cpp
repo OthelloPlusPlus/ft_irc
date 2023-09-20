@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 14:20:01 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 14:35:12 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,15 @@
 
 void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server){
 	if (cmd == "USER")
-		Command::PrivCommand::user(user, cmd, args);
+		Command::user(user, cmd, args);
 	else if (cmd == "NICK")
-		Command::PrivCommand::nick(user, cmd, args, server->getClientList());
+		Command::nick(user, cmd, args, server->getClientList());
 	else if (cmd == "PASS")
-		Command::PrivCommand::password(user, cmd, args, server);
+		Command::password(user, cmd, args, server);
 	else if (cmd == "PING")
-		Command::PrivCommand::ping(user, cmd, args, server);
+		Command::ping(user, cmd, args, server);
 	else if (cmd == "QUIT")
-		Command::PrivCommand::quit(user, cmd, args, server);
+		Command::quit(user, cmd, args, server);
 	if (!user.getIsRegistered())
 		return;
 
@@ -45,7 +45,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		return;
 
 	if (cmd == "OPER")
-		Command::PrivCommand::oper(user, cmd, args, server);
+		Command::oper(user, cmd, args, server);
 	else if (cmd == "KILL")
-		Command::PrivCommand::kill(user, cmd, args, server);
+		Command::kill(user, cmd, args, server);
 }

@@ -6,16 +6,16 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/01 12:26:31 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 14:13:10 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 14:37:31 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include "colors.hpp"
 
-void	Command::PrivCommand::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+void	oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
 	
-	std::string serverName = getenv("IRC_SERVNAME");
+	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
 		user.sendMsg(":" + serverName + " 461 " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		if (verboseCheck() >= V_ADMIN)
@@ -49,7 +49,7 @@ void	Command::PrivCommand::oper(Client &user, const std::string &cmd, const std:
 		if (it == server->getClientList().end()){
 				user.sendMsg(":" + serverName + " 491 " + (*it)->getNickName() + " " + cmd + ERR_NOOPERHOST);
 				if (verboseCheck() >= V_USER)
-					std::cout 	<< "Request rejected " << getenv("IRC_SERVNAME")
+					std::cout 	<< "Request rejected " << std::getenv("IRC_SERVNAME")
 								<< " doesn’t allow connections from current network of user "
 								<< (*it)->getNickName()	<< std::endl;
 				return ;

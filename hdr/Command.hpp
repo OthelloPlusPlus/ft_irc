@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/19 13:50:13 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/20 14:34:36 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ namespace Command
 {
 	void parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server);
 	
-	namespace PrivCommand
+	namespace
 	{
 		void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 		void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
