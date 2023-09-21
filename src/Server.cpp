@@ -18,18 +18,11 @@
 #include "verboseCheck.hpp"
 
 #include <iostream>
-// std::
-// int	stoi(const char *)
-#include <cstdlib>
-// char	*getenv(const char *)
+// std::cout
 #include <iomanip>
-#include <sys/socket.h>
-//	int		socket(int domain, int type, int protocol);
-//	ssize_t	recv(int socket, void *buffer, size_t length, int flags);
-//	int		bind(int socket, const struct sockaddr *address, socklen_t address_len);
-//	int		listen(int socket, int backlog);
-#include <fcntl.h>
-//	int	fcntl(int fildes, int cmd, ...);
+// std::setw()
+#include <string>
+// int	stoi(const char *)
 #include <unistd.h>
 //	int	close(int fildes);
 #include <ifaddrs.h>
@@ -37,6 +30,16 @@
 // void	freeifaddrs(ifaddrs *)
 #include <arpa/inet.h>
 // char	*inet_ntoa(in_addr)
+
+// #include <cstdlib>
+// // char	*getenv(const char *)
+// #include <sys/socket.h>
+// //	int		socket(int domain, int type, int protocol);
+// //	ssize_t	recv(int socket, void *buffer, size_t length, int flags);
+// //	int		bind(int socket, const struct sockaddr *address, socklen_t address_len);
+// //	int		listen(int socket, int backlog);
+// #include <fcntl.h>
+// //	int	fcntl(int fildes, int cmd, ...);
 
 /** ************************************************************************ **\
  * 
@@ -492,6 +495,11 @@ std::string	Server::getName(void) const
 	return (this->serverName);
 }
 
+const std::string	Server::getIP(void) const
+{
+	return (this->localIP);
+}
+
 void	Server::checkChannels(void)
 {
 	for (std::vector<Channel *>::iterator channel = this->channels.begin(); channel != this->channels.end();)
@@ -506,6 +514,17 @@ void	Server::checkChannels(void)
 			(*channel)->promoteOldestUser();
 		++channel;
 	}
+}
+
+void	Server::setChannelTopic(Client &client, const std::vector<std::string> &args)
+{
+	Channel		*channel = this->getChannel(args[0]);
+	std::string	topic = args[args.size() - 1];
+
+	if (channel == nullptr)
+		return ;
+	channel->setTopic(client, topic);
+	// std::cout	<< "setting " << channel->getName() + "'s topic to ["	<< topic	<< ']'	<< std::endl;
 }
 
 /** ************************************************************************ **\
