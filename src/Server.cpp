@@ -524,7 +524,25 @@ void	Server::setChannelTopic(Client &client, const std::vector<std::string> &arg
 	if (channel == nullptr)
 		return ;
 	channel->setTopic(client, topic);
-	// std::cout	<< "setting " << channel->getName() + "'s topic to ["	<< topic	<< ']'	<< std::endl;
+}
+
+void	Server::setChannelMode(Client &client, const std::vector<std::string> &args)
+{
+	Channel		*channel = this->getChannel(args[0]);
+	std::string	flag;
+	std::string	argument;
+
+	if (args.size() >= 2)
+		flag = args[1];
+	if (args.size() >= 3)
+		argument = args[2];
+
+	if (channel == nullptr)
+	{
+		std::cout	<< "Unknown target "	<< args[0]	<< std::endl;
+		return ;
+	}
+	channel->setMode(client, flag, argument);
 }
 
 /** ************************************************************************ **\

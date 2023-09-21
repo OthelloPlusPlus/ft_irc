@@ -86,6 +86,7 @@ class Server
 		void	sendPrivMsg(const Client *client, const std::vector<std::string> &args);
 		void	sendInvite(Client *client, const std::vector<std::string> &args);
 		void	setChannelTopic(Client &client, const std::vector<std::string> &args);
+		void	setChannelMode(Client &client, const std::vector<std::string> &args);
 
 		Server	&operator=(const Server &src);
 };

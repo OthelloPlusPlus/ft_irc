@@ -63,6 +63,8 @@ class Channel
 		void	promoteOldestUser(void);
 
 		// void	setAdmin(Client *target, bool status);
+		void	setMode(Client &client, std::string flag, std::string arg);
+		void	setModeI(Client &client, std::string flag);
 		void	setTopic(Client &client, const std::string newTopic);
 
 		void	sendTopic(Client *client) const;
@@ -71,8 +73,10 @@ class Channel
 		void	sendToChannel(const std::string msg) const;
 		void	sendToChannel(const Client *exclude, const std::string msg) const;
 		// void	sendPrivMsg(Client *sender, std::string msg);
+		void	sendMode(Client &client) const;
 
 		bool	userIsInChannel(const Client *client) const;
+		bool	userIsAdmin(const Client &client) const;
 
 		std::string	getName(void) const;
 		// std::string	getTopic(void) const;

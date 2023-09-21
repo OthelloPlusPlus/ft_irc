@@ -143,6 +143,52 @@ void	Channel::promoteOldestUser(void)
 // 		}
 // }
 
+void	Channel::setMode(Client &client, std::string flag, std::string arg)
+{
+	if (flag.size() > 2)
+	{
+		std::cout	<< "Flag Error"	<< std::endl;
+		return ;
+	}
+	if (flag.empty())
+		this->sendMode(client);
+	else if (this->userIsAdmin(client))
+	{
+		char	marker = flag.back();
+		if (marker == 'i')
+			this->setModeI(client, flag);
+		else
+			std::cout	<< "Unknown flag "	<< flag	<< std::endl;
+	}
+	else 
+		std::cout	<< "No priveligies"	<< std::endl;
+}
+
+void	Channel::sendMode(Client &client) const
+{
+	std::string	msg = ':' + this->server->getName() + " 324 " + client.getNickName() + ' ' + this->name + " \n";
+	if (this->modeInvite)
+		msg += "Invite(i):\t true\t Invite only channel\n";
+	else
+		msg += "Invite(i):\t false\t Public channel\n";
+	msg += "Topic(t):\t trueish\t Unrestricted topic\n";
+	msg += "Key(k):\t trueish \t Requires password\n";
+	msg += "Operator(o):\t Give or take operator priveliges\n";
+	msg += "\r\n";
+	client.sendMsg(msg);
+}
+
+void	Channel::setModeI(Client &client, std::string flag)
+{
+	if (flag[0] == '-')
+		this->modeInvite = false;
+	else if (flag[0] == '+')
+		this->modeInvite = true;
+	else
+		this->modeInvite = !this->modeInvite;
+	std::cout	<< "I has been set to "	<< this->modeInvite	<< std::endl;
+}
+
 void	Channel::setTopic(Client &client, const std::string newTopic)
 {
 	if (this->topic == newTopic || \
@@ -269,6 +315,14 @@ bool	Channel::userIsInChannel(const Client *client) const
 std::string	Channel::getName(void) const
 {
 	return (this->name);
+}
+
+bool	Channel::userIsAdmin(const Client &client) const
+{
+	for (std::vector<ChannelUser>::const_iterator user = this->users.begin(); user != this->users.end(); ++user)
+		if (&client == (*user).client)
+			return ((*user).admin);
+	return (false);
 }
 
 // std::string	Channel::getTopic(void) const
