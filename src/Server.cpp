@@ -316,6 +316,42 @@ void	Server::sendWhoIs(const Client *client, const std::string who) const
 	client->sendMsg(msg + ":End of /WHOIS list.\r\n");
 }
 
+#include <set>
+void	Server::sendInvite(const Client *client, const std::vector<std::string> &args)
+{
+	std::set<Client *>	name;
+	std::set<Channel *>	channel;
+
+	for (std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i)
+	{
+		if ((*i)[0] == '#')
+		{
+			Channel	*add = this->getChannel(*i);
+			if (add != nullptr)
+				channel.insert(add);
+			else
+				client->sendMsg(':' + this->publicIP + " 401 " + client->getNickName() + ' ' + *i + " :No suck channel\r\n");
+		}
+		else
+		{
+			Client	*add = this->getClient(*i);
+			if (add != nullptr && add != client)
+				name.insert(add);
+			else
+				client->sendMsg(':' + this->publicIP + " 401 " + client->getNickName() + ' ' + *i + " :No suck nick\r\n");
+		}
+	}
+	for (std::set<Channel *>::iterator i = channel.begin(); i != channel.end(); ++i)
+	{
+		for (std::set<Client *>::iterator j = name.begin(); j != name.end(); ++j)
+		{
+			if (!(*i)->userIsInChannel(*j))
+				(*j).sendMsg(':' + client.getNickName() + "!~" + client.getIdentName() + '@' + client.getHostIp() + " INVITE " + (*j).getNickName() + " :" + (*i).getName() + "\r\n");
+			else
+				cclient->sendMsg(':' + this->publicIP + " 443 " + client->getNickName() + ' ' + (*j).getNickName() + ' ' + (*i).getName() + " :is already on channel\r\n");
+	}
+}
+
 void	Server::sendPong(const Client *client) const
 {
 	std::string	time;

@@ -83,6 +83,7 @@ class Server
 		void	sendPong(const Client *client) const;
 		void	sendPong(const Client *client, const std::string token) const;
 		void	sendPrivMsg(const Client *client, const std::vector<std::string> &args);
+		void	sendInvite(const Client *client, const std::vector<std::string> &args);
 
 		Server	&operator=(const Server &src);
 };
