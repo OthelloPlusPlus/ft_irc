@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/21 15:33:15 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/21 17:42:43 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,8 @@ void	Client::initialize(int serverFD) {
 	setIpHostName(ipAddress(this->socketAddress));
 }
 
-
 void	Client::sendMsg(std::string msg) {
+
 	if (pollConnection() == false)
 		return ;
 	if (verboseCheck() >= V_ADMIN)
@@ -231,7 +231,7 @@ void Client::setHasPassword(bool val){
 	this->_hasPassword = val;
 }
 
-void Client::userRegistration( void ){
+void Client::userRegistration(void){
 	if (hasPassword() == true && !getNickName().empty() && !getIdentName().empty()){
 		setIsRegistered(true);
 		if (verboseCheck() >= V_USER){
@@ -246,6 +246,15 @@ void Client::userRegistration( void ){
 	}
 }
 
+void	Client::userNotRegisteredMsg(void){
+	std::string serverName = std::getenv("IRC_SERVNAME");
+	sendMsg(":" + serverName + " * " + this->getBestName() + " User not registered. To register use commands PASS - NICK - USER(user_name * host :realname)");
+	if (verboseCheck() >= V_USER)
+		std::cout 	<< C_LORANGE	<< "User " << this->getBestName() 
+					<< " is not registered. \nTo register to " << serverName
+					<< " is required a password (PASS), user name (USER (user_name * host :realname)) and a nick name"
+					<< std::endl;
+}
 
 void	Client::printInfo(void) const {
 

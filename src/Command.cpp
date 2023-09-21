@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/21 16:09:25 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/21 17:39:14 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,10 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		Command::ping(user, cmd, args, server);
 	else if (cmd == "QUIT")
 		Command::quit(user, cmd, args, server);
-	if (!user.getIsRegistered())
+	if (!user.getIsRegistered()){
+		user.userNotRegisteredMsg();
 		return;
+	}
 
 	if (cmd == "PRIVMSG")
 		server->sendPrivMsg(&user, args);
@@ -45,6 +47,8 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		server->partChannel(&user, args[0]);
 	else if (cmd == "INVITE")
 		server->sendInvite(&user, args);
+	// else if (cmd == "TOPIC")
+	// 	server->setChannelTopic(user, args);
 	if (!user.getIsOperator())
 		return;
 
@@ -111,7 +115,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 	if (args.empty() || args[0].empty()){
 		user.sendMsg(":" + serverName + "461 " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
 		if (verboseCheck() >= V_USER)
-			std::cout 	<< "Password not submitted, please provide a password"	<< std::endl;
+			std::cout 	<< "No imput or empty input. Password not submitted, please provide a password"	<< std::endl;
 		return ;
 	}
 	if (user.getIsRegistered() == true){
