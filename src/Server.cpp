@@ -257,7 +257,7 @@ void	Server::sendWelcome(Client *client)
 	// this->partChannel(client, "#Hello");
 }
 
-void	Server::sendChannelList(const Client *client) const
+void	Server::sendChannelList(Client *client) const
 {
 	std::string	msg;
 
@@ -292,7 +292,7 @@ void	Server::sendWho(Client *client, const std::string who) const
 	}
 }
 
-void	Server::sendWhoIs(const Client *client, const std::string who) const
+void	Server::sendWhoIs(Client *client, const std::string who) const
 {
 	std::string	msg;
 	Client		*whoClient;
@@ -317,7 +317,7 @@ void	Server::sendWhoIs(const Client *client, const std::string who) const
 }
 
 #include <set>
-void	Server::sendInvite(const Client *client, const std::vector<std::string> &args)
+void	Server::sendInvite(Client *client, const std::vector<std::string> &args)
 {
 	std::set<Client *>	name;
 	std::set<Channel *>	channel;
@@ -346,13 +346,14 @@ void	Server::sendInvite(const Client *client, const std::vector<std::string> &ar
 		for (std::set<Client *>::iterator j = name.begin(); j != name.end(); ++j)
 		{
 			if (!(*i)->userIsInChannel(*j))
-				(*j).sendMsg(':' + client.getNickName() + "!~" + client.getIdentName() + '@' + client.getHostIp() + " INVITE " + (*j).getNickName() + " :" + (*i).getName() + "\r\n");
+				(*j)->sendMsg(':' + client->getNickName() + "!~" + client->getIdentName() + '@' + client->getIpHostName() + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName() + "\r\n");
 			else
-				cclient->sendMsg(':' + this->publicIP + " 443 " + client->getNickName() + ' ' + (*j).getNickName() + ' ' + (*i).getName() + " :is already on channel\r\n");
+				client->sendMsg(':' + this->publicIP + " 443 " + client->getNickName() + ' ' + (*j)->getNickName() + ' ' + (*i)->getName() + " :is already on channel\r\n");
+		}
 	}
 }
 
-void	Server::sendPong(const Client *client) const
+void	Server::sendPong(Client *client) const
 {
 	std::string	time;
 
@@ -360,7 +361,7 @@ void	Server::sendPong(const Client *client) const
 	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + time + "\r\n");
 }
 
-void	Server::sendPong(const Client *client, const std::string token) const
+void	Server::sendPong(Client *client, const std::string token) const
 {
 	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
 }

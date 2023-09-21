@@ -77,13 +77,13 @@ class Server
 
 		void	joinChannel(Client *client, const std::string channelName);
 		void	partChannel(Client *client, const std::string channelName);
-		void	sendChannelList(const Client *client) const;
+		void	sendChannelList(Client *client) const;
 		void	sendWho(Client *client, const std::string who) const;
-		void	sendWhoIs(const Client *client, const std::string who) const;
-		void	sendPong(const Client *client) const;
-		void	sendPong(const Client *client, const std::string token) const;
+		void	sendWhoIs(Client *client, const std::string who) const;
+		void	sendPong(Client *client) const;
+		void	sendPong(Client *client, const std::string token) const;
 		void	sendPrivMsg(const Client *client, const std::vector<std::string> &args);
-		void	sendInvite(const Client *client, const std::vector<std::string> &args);
+		void	sendInvite(Client *client, const std::vector<std::string> &args);
 
 		Server	&operator=(const Server &src);
 };
