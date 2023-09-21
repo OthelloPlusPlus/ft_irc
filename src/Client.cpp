@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 20:28:53 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/21 14:48:13 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,10 @@ void	Client::initialize(int serverFD) {
 	setIpHostName(ipAddress(this->socketAddress));
 }
 
-#include <fcntl.h>
 
-void	Client::sendMsg(std::string msg) const {
-	if (this->pollInfo.fd < 1)
-		return ;
+void	Client::sendMsg(std::string msg) {
+	// if (this->pollInfo.revents & (POLLERR | POLLHUP))
+	// 	return ;
 	if (verboseCheck() >= V_ADMIN)
 		std::cout	<< "send ["	<< send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
 					<< "]\t"
@@ -113,14 +112,15 @@ bool	Client::readReceive(int sockfd){
 			if (errno == EWOULDBLOCK || errno == EAGAIN) {
 				return false;	
 			} else {
-			std::cerr	<< "Error recv(): "	<< strerror(errno)	<< std::endl;
-			return false;
+				std::cerr	<< "Error recv(): "	<< strerror(errno)	<< std::endl;
+				return false;
 			}
 		}
 		if (recvLen == 0) {
 			if (this->getPollInfofd() != -1){
 				close(this->pollInfo.fd);
-				this->pollInfo.fd = -1;}
+				this->pollInfo.fd = -1;
+			}
 			std::cout	<< "Client " << getNickName() << " disconnected from server."	<< std::endl;
 			return false;
 		}
@@ -130,10 +130,23 @@ bool	Client::readReceive(int sockfd){
 
 }
 
-std::string	Client::getMsg(void) {
-	if (poll(&this->pollInfo, 1, 0) < 0) {
-		return "";
+bool	Client::pollConnection(void)
+{
+	if (poll(&this->pollInfo, 1, 0) == -1)
+		return (false);
+	if (this->pollInfo.revents & (POLLERR | POLLHUP))
+	{
+		std::cout   << "closing "   << this->_nickName  << "'s FD." << std::endl;
+		close(this->pollInfo.fd);
+		this->pollInfo.fd = -1;
+		return (false);
 	}
+	return (true);
+}
+
+std::string	Client::getMsg(void) {
+	if (pollConnection() == false)
+		return "";
 	if (this->pollInfo.revents & POLLIN) {
 		if(!readReceive(this->pollInfo.fd))
 			return "";

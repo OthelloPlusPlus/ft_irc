@@ -54,35 +54,32 @@ std::vector<std::string> ircSplit( const std::string& input, const std::string& 
 
 }
 
-namespace Parse
-{
-	void parseMsg(Client &user, Server *server){
-		std::string cmd;
-		std::string arguments;
-		std::vector<std::string>	args;
-		
-		cleanMsg(user);
-		size_t spacePos = user.getBuff().find(' ');
-		if (spacePos != std::string::npos) {
-			cmd = user.getBuff().substr(0, spacePos);
-			arguments = user.getBuff().substr(spacePos + 1);
-		}
-		size_t colPos = arguments.find(':');
-		if (colPos != std::string::npos) {
-			std::string firstPart = arguments.substr(0, colPos);
-			args = ircSplit(firstPart, " ");
-			std::string secondPart = arguments.substr(colPos + 1);
-			args.push_back(secondPart);
+void Parse::parseMsg(Client &user, Server *server){
+	std::string cmd;
+	std::string arguments;
+	std::vector<std::string>	args;
+	
+	cleanMsg(user);
+	size_t spacePos = user.getBuff().find(' ');
+	if (spacePos != std::string::npos) {
+		cmd = user.getBuff().substr(0, spacePos);
+		arguments = user.getBuff().substr(spacePos + 1);
+	}
+	size_t colPos = arguments.find(':');
+	if (colPos != std::string::npos) {
+		std::string firstPart = arguments.substr(0, colPos);
+		args = ircSplit(firstPart, " ");
+		std::string secondPart = arguments.substr(colPos + 1);
+		args.push_back(secondPart);
+	}
+	else {
+		size_t space = arguments.find(' ');
+		if (space != std::string::npos) {
+			args = ircSplit(arguments, " ");
 		}
 		else {
-			size_t space = arguments.find(' ');
-			if (space != std::string::npos) {
-				args = ircSplit(arguments, " ");
-			}
-			else {
-				args.push_back(arguments);
-			}				
-		}
-		Command::parseCmd(user, cmd, args, server);
-}
+			args.push_back(arguments);
+		}				
+	}
+	Command::parseCmd(user, cmd, args, server);
 }

@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 18:37:36 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 18:07:13 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/21 14:36:21 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,7 @@
 namespace Parse
 {
     void parseMsg(Client &user, Server *server);
-    // namespace PrivParsing
-    // {
-    //     void cleanMsg(Client &user);
-    //     std::vector<std::string> ircSplit( const std::string &input, const std::string &delimiter);
-	// 	std::vector<std::string> ircSplitMulti( const std::string &input, const std::string &delimiter);
-    // }
+
 }
 
 

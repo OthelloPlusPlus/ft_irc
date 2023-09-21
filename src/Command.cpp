@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/20 19:30:48 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/21 14:30:06 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,7 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 	if (!args[0].empty()){
 		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
 						+ cmd + ":Quit: " + args[0]);
+		// user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)");
 		if (verboseCheck() >= V_ADMIN)
 			std::cout	<< C_LORANGE << "ERROR :Closing Link: " << user.getIpHostName() 
 						<< " (Client Quit)" << C_RESET	<< std::endl;
