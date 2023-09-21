@@ -174,6 +174,7 @@ void	Channel::sendMode(Client &client) const
 	msg += "Topic(t):\t trueish\t Unrestricted topic\n";
 	msg += "Key(k):\t trueish \t Requires password\n";
 	msg += "Operator(o):\t Give or take operator priveliges\n";
+	msg += "User Limit(l):\t Max users\n";
 	msg += "\r\n";
 	client.sendMsg(msg);
 }
