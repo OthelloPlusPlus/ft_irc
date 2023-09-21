@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/21 14:48:13 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/21 15:33:15 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ void	Client::initialize(int serverFD) {
 
 
 void	Client::sendMsg(std::string msg) {
-	// if (this->pollInfo.revents & (POLLERR | POLLHUP))
-	// 	return ;
+	if (pollConnection() == false)
+		return ;
 	if (verboseCheck() >= V_ADMIN)
 		std::cout	<< "send ["	<< send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
 					<< "]\t"

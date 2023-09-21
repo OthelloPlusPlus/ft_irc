@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/21 14:30:06 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/21 16:09:25 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		server->sendWhoIs(&user, args[0]);
 	else if (cmd == "PART")
 		server->partChannel(&user, args[0]);
+	else if (cmd == "INVITE")
+		server->sendInvite(&user, args);
 	if (!user.getIsOperator())
 		return;
 
@@ -189,20 +191,15 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
 		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
-						+ cmd + ":Quit: " + args[0]);
-		// user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)");
-		if (verboseCheck() >= V_ADMIN)
-			std::cout	<< C_LORANGE << "ERROR :Closing Link: " << user.getIpHostName() 
-						<< " (Client Quit)" << C_RESET	<< std::endl;
+						+ cmd + ":Client Quit " + args[0]);
+		user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)");
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getBestName() 
 						<< " is exiting the network with the message: " + args[0] << std::endl;
 	} else {
 		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
-						+ cmd + ":quit: ");
-		if (verboseCheck() >= V_ADMIN)
-			std::cout	<< C_LORANGE << "ERROR :Closing Link: " << user.getIpHostName() 
-						<< " (Client Quit)" << C_RESET	<< std::endl;
+						+ cmd + ":Client Quit");
+		user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)");
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getBestName() 
 						<< " is exiting the network" << std::endl;
