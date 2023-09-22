@@ -24,8 +24,8 @@ class Client;
 class Channel;
 # endif
 
-# include <iostream>
-// std::
+#include <string>
+// std::string
 # include <poll.h>
 // struct pollfd
 # include <netinet/in.h>
@@ -71,9 +71,10 @@ class Server
 		// bool	nicknameExists(const std::string nickname) const;
 
 		std::vector<Client *>	getClientList(void);
-		Client	*getClient(std::string name) const;
-		Channel	*getChannel(std::string channel) const;
-		std::string	getName(void) const;
+		Client					*getClient(std::string name) const;
+		Channel					*getChannel(std::string channel) const;
+		std::string				getName(void) const;
+		const std::string		getIP(void) const;
 
 		void	joinChannel(Client *client, const std::string channelName);
 		void	partChannel(Client *client, const std::string channelName);
@@ -84,6 +85,8 @@ class Server
 		void	sendPong(Client *client, const std::string token) const;
 		void	sendPrivMsg(const Client *client, const std::vector<std::string> &args);
 		void	sendInvite(Client *client, const std::vector<std::string> &args);
+		void	setChannelTopic(Client &client, const std::vector<std::string> &args);
+		void	setChannelMode(Client &client, const std::vector<std::string> &args);
 
 		Server	&operator=(const Server &src);
 };

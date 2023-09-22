@@ -24,14 +24,9 @@ class Client;
 class Server;
 # endif
 
-# include <netinet/in.h>
-// struct sockaddr_in
-// socklen_t
-# include <poll.h>
-// struct pollfd
-# include <iostream>
-// std::
-# include <vector>
+#include <string>
+// std::string
+#include <vector>
 // std::vector
 
 class Channel
@@ -54,15 +49,6 @@ class Channel
 		Server	*server;
 		std::vector<ChannelUser>	users;
 		
-
-		void	sendTopic(Client *client);
-		void	sendNames(Client *client);
-		void	sendPrivMsg(Client *sender, std::string msg);
-
-		void	setTopic(ChannelUser user, const std::string newTopic);
-
-		void	inviteClient(Client *client);
-
 	protected:
 
 	public:
@@ -71,21 +57,33 @@ class Channel
 		~Channel(void);
 
 		void	addClient(Client *newClient, bool admin);
-		void	sendToChannel(const std::string msg) const;
-		void	sendToChannel(const Client *exclude, const std::string msg) const;
-		void	sendWho(Client *client);
-		bool	userIsInChannel(const Client *client) const;
+
+		// void	inviteClient(Client *client);
 		void	removeUser(const Client *client);
 		void	promoteOldestUser(void);
 
-		void	setAdmin(Client *target, bool status);
+		// void	setAdmin(Client *target, bool status);
+		void	setMode(Client &client, std::string flag, std::string arg);
+		void	setModeI(Client &client, std::string flag);
+		void	setTopic(Client &client, const std::string newTopic);
+
+		void	sendTopic(Client *client) const;
+		void	sendNames(Client *client);
+		void	sendWho(Client *client);
+		void	sendToChannel(const std::string msg) const;
+		void	sendToChannel(const Client *exclude, const std::string msg) const;
+		// void	sendPrivMsg(Client *sender, std::string msg);
+		void	sendMode(Client &client) const;
+
+		bool	userIsInChannel(const Client *client) const;
+		bool	userIsAdmin(const Client &client) const;
 
 		std::string	getName(void) const;
-		std::string	getTopic(void) const;
+		// std::string	getTopic(void) const;
 		size_t		getSize(void) const;
 		size_t		getAdminSize(void) const;
 
-		void	printClientList(void) const;
+		// void	printClientList(void) const;
 
 		Channel	&operator=(const Channel &src);
 };
