@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/21 17:39:14 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/22 14:46:35 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,15 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		server->partChannel(&user, args[0]);
 	else if (cmd == "INVITE")
 		server->sendInvite(&user, args);
-	// else if (cmd == "TOPIC")
-	// 	server->setChannelTopic(user, args);
-	if (!user.getIsOperator())
+	else if (cmd == "TOPIC")
+		server->setChannelTopic(user, args);
+	else if (cmd == "MODE")
+		server->setChannelMode(user, args);
+	if (!user.getIsOperator()){
+		user.userNotOperatorMsg();
+		std::cout << C_BLUE << "cmd " << cmd << C_RESET << std::endl;
 		return;
+	}
 
 	if (cmd == "OPER")
 		Command::oper(user, cmd, args, server);
