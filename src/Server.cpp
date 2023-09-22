@@ -381,17 +381,14 @@ void	Server::sendPrivMsg(const Client *client, const std::vector<std::string> &a
 		Channel *channel = getChannel(name);
 
 		if (channel != nullptr)
-			channel->sendToChannel(client, ":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
-								" PRIVMSG " + channel->getName() + " " + msg + "\r\n");
+			channel->sendToChannel(client, ":" + client->getSourceName() + " PRIVMSG " + channel->getName() + " " + msg + "\r\n");
 	}
 	else
 	{
 		Client	*user = getClient(name);
 
 		if (user != nullptr)
-			user->sendMsg(":" + client->getNickName() + "!" + client->getNickName() + "@" + client->getIpHostName() + \
-						" PRIVMSG " + user->getNickName() + " " + msg + "\r\n");
-		
+			user->sendMsg(":" + client->getSourceName() + " PRIVMSG " + user->getNickName() + " " + msg + "\r\n");	
 	}
 }
 

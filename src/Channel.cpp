@@ -73,7 +73,7 @@ void	Channel::addClient(Client *newClient, bool admin, const std::string passwor
 	newUser.admin = admin;
 	newUser.timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());;
 	this->users.push_back(newUser);
-	this->sendToChannel(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
+	this->sendToChannel(":" + newClient->getSourceName() + " JOIN " + this->name + "\r\n");
 	if (newUser.admin)
 		this->sendToChannel(":" + this->server->getIP() + " MODE " + this->name + " +o " + newUser.client->getNickName() + "\r\n");
 	if (!this->topic.empty())
@@ -129,7 +129,7 @@ void	Channel::removeUser(const Client *client)
 {
 	if (this->userIsInChannel(client))
 	{
-		this->sendToChannel(":" + client->getNickName() + "!~" + client->getIdentName() + "@" + client->getIpHostName() + " PART " + this->name + "\r\n");
+		this->sendToChannel(":" + client->getSourceName() + " PART " + this->name + "\r\n");
 		for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end();)
 		{
 			if ((*i).client == client)

@@ -60,7 +60,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		case CMD_QUIT:	Command::quit(user, cmd, args, server);					break;
 		case CMD_PRIVMSG:	server->sendPrivMsg(&user, args);					break;
 		case CMD_LIST:	server->sendChannelList(&user);							break;
-		case CMD_JOIN:	server->joinChannel(&user, args[0]);					break;
+		case CMD_JOIN:	server->joinChannel(user, args);						break;
 		case CMD_WHO:	server->sendWho(&user, args[0]);						break;
 		case CMD_WHOIS:	server->sendWhoIs(&user, args[0]);						break;
 		case CMD_PART:	server->partChannel(&user, args[0]);					break;
