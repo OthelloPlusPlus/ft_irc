@@ -255,7 +255,9 @@ void	Server::sendWelcome(Client *client)
 	client->sendMsg(msg + " 375 " + client->getNickName() + " :- ft_irc Message of the Day - \r\n");
 	client->sendMsg(msg + " 372 " + client->getNickName() + " :- We know what we're doing! We swear!\r\n");
 	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
-	this->joinChannel(client, "#WelcomeChannel");
+	std::vector<std::string>	channel;
+	channel.push_back("#WelcomeChannel");
+	this->joinChannel(*client, channel);
 	// this->joinChannel(client, "#Hello");
 	// this->partChannel(client, "#Hello");
 }
@@ -445,19 +447,23 @@ int	Server::validatePassword(const std::string password) const
 // 	return (false);
 // }
 
-void	Server::joinChannel(Client *client, const std::string channelName)
+void	Server::joinChannel(Client &client, const std::vector<std::string> &args)
 {
-	for (std::vector<Channel *>::const_iterator i = this->channels.begin(); i != this->channels.end(); ++i)
-		if ((*i)->getName() == channelName)
-		{
-			(*i)->addClient(client, false);
-			// (*i)->setAdmin(client, false);
-			return ;
-		}
-	Channel	*newChannel = new Channel(channelName, this);
-	this->channels.push_back(newChannel);
-	newChannel->addClient(client, true);
-	// newChannel->setAdmin(client, true);
+	Channel		*channel = this->getChannel(args[0]);
+	std::string	pass;
+	bool		admin;
+
+	if (channel == nullptr)
+	{
+		channel = new Channel(args[0], this);
+		this->channels.push_back(channel);
+		admin = true;
+	}
+	else
+		admin = client.getIsOperator();
+	if (args.size() >= 2)
+		pass = args[1];
+	channel->addClient(&client, admin, pass);
 }
 
 void	Server::partChannel(Client *client, const std::string channelName)
@@ -529,20 +535,19 @@ void	Server::setChannelTopic(Client &client, const std::vector<std::string> &arg
 void	Server::setChannelMode(Client &client, const std::vector<std::string> &args)
 {
 	Channel		*channel = this->getChannel(args[0]);
-	std::string	flag;
-	std::string	argument;
 
-	if (args.size() >= 2)
-		flag = args[1];
-	if (args.size() >= 3)
-		argument = args[2];
-
+	// std::cout	<< __LINE__	<< __func__	<< "\t args size "	<< args.size()	<< std::endl;
 	if (channel == nullptr)
 	{
 		std::cout	<< "Unknown target "	<< args[0]	<< std::endl;
 		return ;
 	}
-	channel->setMode(client, flag, argument);
+	else if (args.size() == 1)
+		channel->sendMode(client);
+	else if (args.size() == 2)
+		channel->setMode(client, args[1], "");
+	else if (args.size() >= 3)
+		channel->setMode(client, args[1], args[2]);
 }
 
 /** ************************************************************************ **\

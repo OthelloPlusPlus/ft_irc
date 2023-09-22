@@ -76,7 +76,7 @@ class Server
 		std::string				getName(void) const;
 		const std::string		getIP(void) const;
 
-		void	joinChannel(Client *client, const std::string channelName);
+		void	joinChannel(Client &client, const std::vector<std::string> &args);
 		void	partChannel(Client *client, const std::string channelName);
 		void	sendChannelList(Client *client) const;
 		void	sendWho(Client *client, const std::string who) const;
