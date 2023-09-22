@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/21 17:32:16 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/21 17:47:23 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ class Client
 		std::string	getMsg(void);
 		void		sendMsg(std::string msg);
 		void		userNotRegisteredMsg(void);
+		void		userNotOperatorMsg(void);
 		void		printInfo(void) const;
 };
 

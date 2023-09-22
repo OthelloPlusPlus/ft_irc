@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/21 17:42:43 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/22 12:28:39 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,8 +251,17 @@ void	Client::userNotRegisteredMsg(void){
 	sendMsg(":" + serverName + " * " + this->getBestName() + " User not registered. To register use commands PASS - NICK - USER(user_name * host :realname)");
 	if (verboseCheck() >= V_USER)
 		std::cout 	<< C_LORANGE	<< "User " << this->getBestName() 
-					<< " is not registered. \nTo register to " << serverName
-					<< " is required a password (PASS), user name (USER (user_name * host :realname)) and a nick name"
+					<< " is not registered. \nIn order to take action in the the server " << serverName
+					<< " is required registration. Registration needs PASS - NICK - USER"
+					<< std::endl;
+}
+
+void	Client::userNotOperatorMsg(void){
+	std::string serverName = std::getenv("IRC_SERVNAME");
+	sendMsg(":" + serverName + " * " + this->getBestName() + "not IRC Operator :Admin privileges required");
+	if (verboseCheck() >= V_USER)
+		std::cout 	<< C_LORANGE	<< "User " << this->getBestName() 
+					<< " is not a server Operator. \nThe command typed, requires administration priviledges"
 					<< std::endl;
 }
 
