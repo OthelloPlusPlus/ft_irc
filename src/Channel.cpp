@@ -357,14 +357,6 @@ void	Channel::setModeO(Client &client, std::string flag, std::string clientName)
 	this->sendToChannel(':' + client.getNickName() + "!~" + client.getIdentName() + '@' + client.getIpHostName() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
 }
 
-ChannelUser	*Channel::getChannelUser(std::string clientName)
-{
-	for (std::vector<ChannelUser>::iterator user = this->users.begin(); user != this->users.end(); ++user)
-		if ((*user).client->getNickName() == clientName)
-			return (&(*user));
-	return (nullptr);
-}
-
 void	Channel::setModeL(Client &client, std::string flag)
 {
 
@@ -484,6 +476,14 @@ void	Channel::sendToChannel(const Client *exclude, const std::string msg) const
 // 		if ((*i).client != sender)
 // 			(*i).client->sendMsg(msg);
 // }
+
+ChannelUser	*Channel::getChannelUser(std::string clientName)
+{
+	for (std::vector<ChannelUser>::iterator user = this->users.begin(); user != this->users.end(); ++user)
+		if ((*user).client->getNickName() == clientName)
+			return (&(*user));
+	return (nullptr);
+}
 
 bool	Channel::userIsInChannel(const Client *client) const
 {
