@@ -25,7 +25,8 @@
  * 
 \* ************************************************************************** */
 
-Channel::Channel(std::string name, Server *server): name(name), topic(""), server(server)
+Channel::Channel(std::string name, Server *server): name(name), topic(""), server(server),
+modeInvite(false), userLimit(0), modeTopic(false)
 {
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< "Channel"
@@ -62,24 +63,19 @@ Channel::~Channel(void)
  * 
 \* ************************************************************************** */
 
-void	Channel::addClient(Client *newClient, bool admin)
+void	Channel::addClient(Client *newClient, bool admin, const std::string password)
 {
 	ChannelUser	newUser;
 
-	if (this->userIsInChannel(newClient))
-	{
-		if (verboseCheck() >= V_CHANNEL)
-			std::cout	<< C_LRED	<< "User "
-						<< C_RESET	<< newClient->getNickName()
-						<< C_LRED	" is already in channel "
-						<< C_RESET	<< this->name	<< std::endl;
+	if (!this->addClientValidate(*newClient, password))
 		return ;
-	}
 	newUser.client = newClient;
 	newUser.admin = admin;
 	newUser.timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());;
 	this->users.push_back(newUser);
 	this->sendToChannel(":" + newClient->getNickName() + "!~" + newClient->getIdentName() + "@" + newClient->getIpHostName() + " JOIN " + this->name + "\r\n");
+	if (newUser.admin)
+		this->sendToChannel(":" + this->server->getIP() + " MODE " + this->name + " +o " + newUser.client->getNickName() + "\r\n");
 	if (!this->topic.empty())
 		this->sendTopic(newUser.client);
 	this->sendNames(newUser.client);
@@ -89,6 +85,36 @@ void	Channel::addClient(Client *newClient, bool admin)
 					<< C_LGREEN	<< " joined channel "
 					<< C_RESET	<< this->name	<< std::endl;
 	this->sendWho(newUser.client);
+}
+
+bool	Channel::addClientValidate(const Client &newClient, const std::string password)
+{
+	if (this->userIsInChannel(&newClient))
+	{
+		if (verboseCheck() >= V_CHANNEL)
+			std::cout	<< C_LRED	<< "User "
+						<< C_RESET	<< newClient.getNickName()
+						<< C_LRED	" is already in channel "
+						<< C_RESET	<< this->name	<< std::endl;
+		return (false);
+	}
+	if (!this->key.empty() && this->key != password)
+	{
+		if (verboseCheck() >= V_CHANNEL)
+		{
+			std::cout	<< C_LRED	<< "User "
+						<< C_RESET	<< newClient.getNickName()
+						<< C_LRED	<< " tried to access channel "
+						<< C_RESET	<< this->name;
+			if (password.empty())
+				std::cout	<< C_LRED	<< " without a password";
+			else
+				std::cout	<< C_LRED	<< " with an invalid password";
+			std::cout	<< C_RESET	<< std::endl;
+		}
+		return (false);
+	}
+	return (true);
 }
 
 // void	Channel::inviteClient(Client *client)
@@ -142,41 +168,65 @@ void	Channel::promoteOldestUser(void)
 // 			break ;
 // 		}
 // }
+#include <stacktrace>
+void	Channel::sendMode(Client &client) const
+{
+	std::string	msg = ':' + this->server->getName() + " 324 " + client.getNickName() + ' ' + this->name + " \n";
+	if (this->modeInvite)
+		msg += "+i\t Private channel, invite only\n";
+	else
+		msg += "-i\t Public channel\n";
+
+	if (this->modeTopic)
+		msg += "+t\t Topic access is restricted to operators\n";
+	else
+		msg += "-t\t Topic access is unrestricted\n";
+
+	if (this->key.empty())
+		msg += "-k\t No password required\n";
+	else if (this->userIsAdmin(client))
+		msg += "+k\t Password required: " + this->key + '\n';
+	else
+		msg += "+k\t Password required\n";
+
+	if (this->userLimit > 0)
+		msg += "+l\t Channel size limit: " + std::to_string(this->userLimit);
+	else
+		msg += "-l\t Channel has no size limit";
+	client.sendMsg(msg + "\r\n");
+}
 
 void	Channel::setMode(Client &client, std::string flag, std::string arg)
 {
+	if (!this->userIsAdmin(client))
+	{
+		if (verboseCheck() >= V_CHANNEL)
+			std::cout	<< C_LRED	<< "User "
+						<< C_RESET	<< client.getNickName()
+						<< C_LRED	<< " tried to change channel "
+						<< C_RESET	<< this->name
+						<< C_LRED	<< "'s settings without privileges."
+						<< C_RESET	<< std::endl;
+		return ;
+	}
 	if (flag.size() > 2)
 	{
 		std::cout	<< "Flag Error"	<< std::endl;
 		return ;
 	}
-	if (flag.empty())
-		this->sendMode(client);
-	else if (this->userIsAdmin(client))
-	{
-		char	marker = flag.back();
-		if (marker == 'i')
-			this->setModeI(client, flag);
-		else
-			std::cout	<< "Unknown flag "	<< flag	<< std::endl;
-	}
-	else 
-		std::cout	<< "No priveligies"	<< std::endl;
-}
-
-void	Channel::sendMode(Client &client) const
-{
-	std::string	msg = ':' + this->server->getName() + " 324 " + client.getNickName() + ' ' + this->name + " \n";
-	if (this->modeInvite)
-		msg += "Invite(i):\t true\t Invite only channel\n";
+	char	marker = flag.back();
+	if (marker == 'i')
+		this->setModeI(client, flag);
+	else if (marker == 't')
+		this->setModeT(client, flag);
+	else if (marker == 'k')
+		this->setModeK(client, flag, arg);
+	else if (marker == 'o')
+		this->setModeO(client, flag, arg);
+	else if (marker == 'l')
+		this->setModeL(client, flag);
 	else
-		msg += "Invite(i):\t false\t Public channel\n";
-	msg += "Topic(t):\t trueish\t Unrestricted topic\n";
-	msg += "Key(k):\t trueish \t Requires password\n";
-	msg += "Operator(o):\t Give or take operator priveliges\n";
-	msg += "User Limit(l):\t Max users\n";
-	msg += "\r\n";
-	client.sendMsg(msg);
+		std::cout	<< "Unknown flag "	<< flag	<< std::endl;
 }
 
 void	Channel::setModeI(Client &client, std::string flag)
@@ -187,7 +237,137 @@ void	Channel::setModeI(Client &client, std::string flag)
 		this->modeInvite = true;
 	else
 		this->modeInvite = !this->modeInvite;
-	std::cout	<< "I has been set to "	<< this->modeInvite	<< std::endl;
+	if (verboseCheck() >= V_CHANNEL)
+		std::cout	<< C_RESET	<< "User "
+					<< C_LCYAN	<< client.getNickName()
+					<< C_RESET	<< " has set "
+					<< C_LCYAN	<< "mode I"
+					<< C_RESET	<< " to "
+					<< C_LCYAN	<< this->modeInvite
+					<< C_RESET	<< std::endl;
+}
+
+void	Channel::setModeT(Client &client, std::string flag)
+{
+	if (flag[0] == '-')
+		this->modeTopic = false;
+	else if (flag[0] == '+')
+		this->modeTopic = true;
+	else
+		this->modeTopic = !this->modeTopic;
+	if (verboseCheck() >= V_CHANNEL)
+		std::cout	<< C_RESET	<< "User "
+					<< C_LCYAN	<< client.getNickName()
+					<< C_RESET	<< " has set "
+					<< C_LCYAN	<< "mode T"
+					<< C_RESET	<< " to "
+					<< C_LCYAN	<< this->modeInvite
+					<< C_RESET	<< std::endl;
+}
+
+void	Channel::setModeK(Client &client, std::string flag, std::string newPass)
+{
+	std::cout	<< __func__	<< __LINE__	<< std::endl;
+	if (newPass.empty())
+		return ;
+	std::string	clientAdr = ":" + client.getNickName() + "!~" + \
+							client.getIdentName() + '@' + client.getIpHostName();
+	if (flag[0] == '-')
+	{
+		if (this->key == newPass)
+		{
+			this->key.clear();
+			client.sendMsg(clientAdr + " MODE " + this->name + ' ' + flag + " * \r\n");
+			if (verboseCheck() >= V_CHANNEL)
+				std::cout	<< C_RESET	<< "Channel "
+							<< C_LCYAN	<< this->name
+							<< C_RESET	<< "'s password has been unset by "
+							<< C_LCYAN	<< client.getNickName()
+							<< C_RESET	<< std::endl;
+		}
+		else
+		{
+			if (verboseCheck() >= V_CHANNEL)
+				std::cout	<< C_LRED	<< "User "
+							<< C_RESET	<< client.getNickName()
+							<< C_LRED	<< " attempted to unset "
+							<< C_RESET	<< this->name
+							<< C_LRED	<< "'s password"
+							<< C_RESET	<< std::endl;
+		}
+	}
+	else if (flag[0] == '+')
+	{
+		this->key = newPass;
+		client.sendMsg(clientAdr + " MODE " + this->name + ' ' + flag + ' ' + this->key + "\r\n");
+		if (verboseCheck() >= V_CHANNEL)
+			std::cout	<< C_RESET	<< "Channel "
+						<< C_LCYAN	<< this->name
+						<< C_RESET	<< "'s password has been changed by "
+						<< C_LCYAN	<< client.getNickName()
+						<< C_RESET	<< std::endl;
+
+	}
+}
+
+void	Channel::setModeO(Client &client, std::string flag, std::string clientName)
+{
+	if (clientName.empty())
+		return ;
+
+	ChannelUser	*user = this->getChannelUser(clientName);
+	if (user == nullptr)
+		return ;
+	if (flag[0] == '+')
+	{
+		user->admin = true;
+		if (verboseCheck() >= V_CHANNEL)
+			std::cout	<< C_RESET	<< "User "
+						<< C_LCYAN	<< client.getNickName()
+						<< C_RESET	<< " made user "
+						<< C_LCYAN	<< user->client->getNickName()
+						<< C_RESET	<< " operator for channel "
+						<< C_LCYAN	<< this->name
+						<< C_RESET	<< std::endl;
+	}
+	else if (flag[0] == '-' && \
+		client.getIsOperator() && !user->client->getIsOperator())
+	{
+		user->admin = false;
+		if (verboseCheck() >= V_CHANNEL)
+			std::cout	<< C_RESET	<< "Admin "
+						<< C_LCYAN	<< client.getNickName()
+						<< C_RESET	<< " removed operator from user "
+						<< C_LCYAN	<< user->client->getNickName()
+						<< C_RESET	<< " for channel "
+						<< C_LCYAN	<< this->name
+						<< C_RESET	<< std::endl;
+	}
+	else
+	{
+		if (verboseCheck() >= V_CHANNEL)
+			std::cout	<< C_LRED	<< "User "
+						<< C_RESET	<< client.getNickName()
+						<< C_LRED	<< " attempted to remove operator from user "
+						<< C_RESET	<< user->client->getNickName()
+						<< C_LRED	<< " for channel "
+						<< C_RESET	<< this->name
+						<< C_RESET	<< std::endl;
+	}
+	this->sendToChannel(':' + client.getNickName() + "!~" + client.getIdentName() + '@' + client.getIpHostName() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
+}
+
+ChannelUser	*Channel::getChannelUser(std::string clientName)
+{
+	for (std::vector<ChannelUser>::iterator user = this->users.begin(); user != this->users.end(); ++user)
+		if ((*user).client->getNickName() == clientName)
+			return (&(*user));
+	return (nullptr);
+}
+
+void	Channel::setModeL(Client &client, std::string flag)
+{
+
 }
 
 void	Channel::setTopic(Client &client, const std::string newTopic)
@@ -320,6 +500,8 @@ std::string	Channel::getName(void) const
 
 bool	Channel::userIsAdmin(const Client &client) const
 {
+	if (client.getIsOperator())
+		return (true);
 	for (std::vector<ChannelUser>::const_iterator user = this->users.begin(); user != this->users.end(); ++user)
 		if (&client == (*user).client)
 			return ((*user).admin);

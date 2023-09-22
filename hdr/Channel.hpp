@@ -29,22 +29,23 @@ class Server;
 #include <vector>
 // std::vector
 
+struct ChannelUser
+{
+	Client			*client;
+	bool			admin;
+	unsigned int	timestamp;
+};
+
 class Channel
 {
-	struct ChannelUser
-	{
-		Client			*client;
-		bool			admin;
-		unsigned int	timestamp;
-	};
 
 	private:
 		std::string	name;
 		std::string	topic;
 		bool		modeInvite;
-		bool		modeTopic;
-		std::string	key;
 		int			userLimit;
+		std::string	key;
+		bool		modeTopic;
 
 		Server	*server;
 		std::vector<ChannelUser>	users;
@@ -56,7 +57,8 @@ class Channel
 		Channel(const Channel &src);
 		~Channel(void);
 
-		void	addClient(Client *newClient, bool admin);
+		void	addClient(Client *newClient, bool admin, const std::string password);
+		bool	addClientValidate(const Client &newClient, const std::string password);
 
 		// void	inviteClient(Client *client);
 		void	removeUser(const Client *client);
@@ -65,6 +67,10 @@ class Channel
 		// void	setAdmin(Client *target, bool status);
 		void	setMode(Client &client, std::string flag, std::string arg);
 		void	setModeI(Client &client, std::string flag);
+		void	setModeT(Client &client, std::string flag);
+		void	setModeK(Client &client, std::string flag, std::string newPass);
+		void	setModeO(Client &client, std::string flag, std::string targetName);
+		void	setModeL(Client &client, std::string flag);
 		void	setTopic(Client &client, const std::string newTopic);
 
 		void	sendTopic(Client *client) const;
@@ -76,6 +82,7 @@ class Channel
 		void	sendMode(Client &client) const;
 
 		bool	userIsInChannel(const Client *client) const;
+		ChannelUser	*getChannelUser(std::string clientName);
 		bool	userIsAdmin(const Client &client) const;
 
 		std::string	getName(void) const;
