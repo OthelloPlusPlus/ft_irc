@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/22 12:28:39 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/22 20:18:15 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,12 @@ void	Client::sendMsg(std::string msg) {
 
 	if (pollConnection() == false)
 		return ;
-	if (verboseCheck() >= V_ADMIN)
-		std::cout	<< "send ["	<< send(this->pollInfo.fd, msg.c_str(), msg.length(), 0)
-					<< "]\t"
-					<< C_LORANGE	<< '\n' << msg
-					<< C_RESET	<< '\n' << std::flush;
-	else		send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
+
+	ssize_t	size = send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
+	if (verboseCheck() >= V_MSG)
+		std::cout	<< C_RESET	<< "Send ["	<< size	<< "]\t"
+					<< C_LORANGE	<< msg
+					<< C_RESET	<< std::flush;
 }
 
 bool	Client::readReceive(int sockfd){
@@ -121,7 +121,7 @@ bool	Client::readReceive(int sockfd){
 				close(this->pollInfo.fd);
 				this->pollInfo.fd = -1;
 			}
-			std::cout	<< "Client " << getNickName() << " disconnected from server."	<< std::endl;
+			std::cout	<< "Client " << getBestName() << " disconnected from server."	<< std::endl;
 			return false;
 		}
 
@@ -167,17 +167,17 @@ bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
 }
 
-std::string	const & Client::getBuff( void )const { return _message;}
-std::string const & Client::getUserName( void ) const  { return _userName; }
-std::string const & Client::getIdentName ( void ) const { return _identName; }
-std::string const & Client::getRealName( void ) const  { return _realName; }
-std::string const & Client::getNickName( void ) const  { return _nickName; }
-std::string const & Client::getServer( void ) const  { return _server; }
-std::string const & Client::getIpHostName( void ) const  { return _IpHostName; }
+std::string	const & Client::getBuff(void)const { return _message;}
+std::string const & Client::getUserName(void) const  { return _userName; }
+std::string const & Client::getIdentName (void) const { return _identName; }
+std::string const & Client::getRealName(void) const  { return _realName; }
+std::string const & Client::getNickName(void) const  { return _nickName; }
+std::string const & Client::getServer(void) const  { return _server; }
+std::string const & Client::getIpHostName(void) const  { return _IpHostName; }
 int const & Client::getPollInfofd(void) const { return pollInfo.fd; }
-bool Client::getIsRegistered( void ) const  { return _isRegistered; }
-bool Client::getIsOperator( void ) const  { return _isOperator; }
-bool Client::hasPassword( void ) const  { return _hasPassword; }
+bool Client::getIsRegistered(void) const  { return _isRegistered; }
+bool Client::getIsOperator(void) const  { return _isOperator; }
+bool Client::hasPassword(void) const  { return _hasPassword; }
 
 std::string	Client::getBestName( void ) const {
 	if (!this->_nickName.empty())
@@ -185,6 +185,10 @@ std::string	Client::getBestName( void ) const {
 	else if (!this->_IpHostName.empty())
 		return _IpHostName;
 	return "";
+}
+
+std::string Client::getSourceName(void) const {
+	return this->getBestName() + "!~" + this->_userName + "@" + this->_IpHostName;
 }
 
 void Client::setBuff(std::string buffer){
@@ -246,23 +250,21 @@ void Client::userRegistration(void){
 	}
 }
 
-void	Client::userNotRegisteredMsg(void){
+
+void	Client::userNotRegisteredMsg(std::string cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
-	sendMsg(":" + serverName + " * " + this->getBestName() + " User not registered. To register use commands PASS - NICK - USER(user_name * host :realname)");
 	if (verboseCheck() >= V_USER)
-		std::cout 	<< C_LORANGE	<< "User " << this->getBestName() 
-					<< " is not registered. \nIn order to take action in the the server " << serverName
-					<< " is required registration. Registration needs PASS - NICK - USER"
-					<< std::endl;
+		std::cout 	<< C_LRED << serverName << " User " << C_RESET << this->getBestName() 
+					<< C_LRED " needs to be registered for the " << C_RESET << cmd 
+					<< C_LRED " command" << C_RESET << std::endl;
 }
 
-void	Client::userNotOperatorMsg(void){
+void	Client::userNotOperatorMsg(std::string cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
-	sendMsg(":" + serverName + " * " + this->getBestName() + "not IRC Operator :Admin privileges required");
 	if (verboseCheck() >= V_USER)
-		std::cout 	<< C_LORANGE	<< "User " << this->getBestName() 
-					<< " is not a server Operator. \nThe command typed, requires administration priviledges"
-					<< std::endl;
+		std::cout 	<< C_LRED << serverName << "User " << C_RESET << this->getBestName() 
+					<< C_LRED " needs to be operator for the " << C_RESET << cmd 
+					<< C_LRED " command" << C_RESET << std::endl;
 }
 
 void	Client::printInfo(void) const {
@@ -321,27 +323,4 @@ EWOULDBLOCK & EAGAIN)typically used to indicate that a non-blocking socket opera
 would block because there is no data available to read at the moment. 
 In other words, these error codes mean that the recv function didn't receive any data 
 because the socket is non-blocking and no data was immediately available.
-
-	// if (this->pollInfo.revents & POLLOUT) {
-	//		 // The socket is ready for writing. You can send data here if needed.
-	//		 // Example: send(this->pollInfo.fd, data_to_send, data_length, 0);
-	//		 this->sendMsg(":Bot!communicate@localhost NOTICE Othello POLLOUT Message received\r\n");
-	//	 }
-	
- 	// Check for POLLHUP
-	// if (this->pollInfo.revents & POLLHUP) {
-	//	 // The remote end has closed the connection.
-	//	 close(this->pollInfo.fd);
-	//	 this->pollInfo.fd = -1;
-	//	 std::cout << "Client " << getNickName() << " disconnected from server." << std::endl;
-	// }
-
-	// // Check for POLLERR
-	// if (this->pollInfo.revents & POLLERR) {
-	//	 // An error condition occurred on the socket.
-	//	 std::cerr << "Error on socket: " << strerror(errno) << std::endl;
-	//	 close(this->pollInfo.fd);
-	//	 this->pollInfo.fd = -1;
-	// }
-
 */

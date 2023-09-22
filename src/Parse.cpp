@@ -83,3 +83,54 @@ void Parse::parseMsg(Client &user, Server *server){
 	}
 	Command::parseCmd(user, cmd, args, server);
 }
+
+
+
+/*
+void Command::oldparseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server){
+	
+	if (cmd == "USER")
+		Command::user(user, cmd, args);
+	else if (cmd == "NICK")
+		Command::nick(user, cmd, args, server->getClientList());
+	else if (cmd == "PASS")
+		Command::password(user, cmd, args, server);
+	else if (cmd == "PING")
+		Command::ping(user, cmd, args, server);
+	else if (cmd == "QUIT")
+		Command::quit(user, cmd, args, server);
+	if (!user.getIsRegistered()){
+		// user.userNotRegisteredMsg();
+		return;
+	}
+
+	if (cmd == "PRIVMSG")
+		server->sendPrivMsg(&user, args);
+	else if (cmd == "LIST")
+		server->sendChannelList(&user);
+	else if (cmd == "JOIN")
+		server->joinChannel(&user, args[0]);
+	else if (cmd == "WHO")
+		server->sendWho(&user, args[0]);
+	else if (cmd == "WHOIS")
+		server->sendWhoIs(&user, args[0]);
+	else if (cmd == "PART")
+		server->partChannel(&user, args[0]);
+	else if (cmd == "INVITE")
+		server->sendInvite(&user, args);
+	else if (cmd == "TOPIC")
+		server->setChannelTopic(user, args);
+	else if (cmd == "MODE")
+		server->setChannelMode(user, args);
+	if (!user.getIsOperator()){
+		// user.userNotOperatorMsg();
+		return;
+	}
+
+	if (cmd == "OPER")
+		Command::oper(user, cmd, args, server);
+	else if (cmd == "KILL")
+		Command::kill(user, cmd, args, server);
+
+}
+*/

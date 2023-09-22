@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/22 14:46:35 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/22 20:05:19 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,52 +16,75 @@
 #include <string>
 #include <unistd.h>
 
+e_command	mapToEnum(std::string cmd){
+	if (cmd == "USER") return CMD_USER;
+	if (cmd == "NICK") return CMD_NICK;
+	if (cmd == "PASS") return CMD_PASS;
+	if (cmd == "PING") return CMD_PING;
+	if (cmd == "QUIT") return CMD_QUIT;
+	if (cmd == "PRIVMSG") return CMD_PRIVMSG;
+	if (cmd == "LIST") return CMD_LIST;
+	if (cmd == "JOIN") return CMD_JOIN;
+	if (cmd == "WHO") return CMD_WHO;
+	if (cmd == "WHOIS") return CMD_WHOIS;
+	if (cmd == "PART") return CMD_PART;
+	if (cmd == "INVITE") return CMD_INVITE;
+	if (cmd == "TOPIC") return CMD_TOPIC;
+	if (cmd == "MODE") return CMD_MODE;
+	if (cmd == "OPER") return CMD_OPER;
+	if (cmd == "KILL") return CMD_KILL;
+	return CMD_UNKNOWN;
+}
 
 void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server){
-	if (cmd == "USER")
-		Command::user(user, cmd, args);
-	else if (cmd == "NICK")
-		Command::nick(user, cmd, args, server->getClientList());
-	else if (cmd == "PASS")
-		Command::password(user, cmd, args, server);
-	else if (cmd == "PING")
-		Command::ping(user, cmd, args, server);
-	else if (cmd == "QUIT")
-		Command::quit(user, cmd, args, server);
-	if (!user.getIsRegistered()){
-		user.userNotRegisteredMsg();
-		return;
+	e_command command = mapToEnum(cmd);
+	
+	if (command > CMD_SIZE_OPEN_INT && command < CMD_SIZE_REGISTERED_INT){
+		if (!user.getIsRegistered()){
+			user.userNotRegisteredMsg(cmd);
+			return;
+		}
+	}
+	if (command > CMD_SIZE_REGISTERED_INT && command < CMD_SIZE_OPER_INT){
+		if (!user.getIsOperator()){
+			user.userNotOperatorMsg(cmd);
+			return;
+		}
+	}
+	
+	switch (command) {
+		case CMD_USER:	Command::user(user, cmd, args); 						break;
+		case CMD_NICK:	Command::nick(user, cmd, args, server->getClientList());break;
+		case CMD_PASS:	Command::password(user, cmd, args, server); 			break;
+		case CMD_PING:	Command::ping(user, cmd, args, server);					break;
+		case CMD_QUIT:	Command::quit(user, cmd, args, server);					break;
+		case CMD_PRIVMSG:	server->sendPrivMsg(&user, args);					break;
+		case CMD_LIST:	server->sendChannelList(&user);							break;
+		case CMD_JOIN:	server->joinChannel(&user, args[0]);					break;
+		case CMD_WHO:	server->sendWho(&user, args[0]);						break;
+		case CMD_WHOIS:	server->sendWhoIs(&user, args[0]);						break;
+		case CMD_PART:	server->partChannel(&user, args[0]);					break;
+		case CMD_INVITE:server->sendInvite(&user, args);						break;
+		case CMD_TOPIC:	server->setChannelTopic(user, args);					break;
+		case CMD_MODE:	server->setChannelMode(user, args);						break;
+		case CMD_OPER:	Command::oper(user, cmd, args, server);					break;
+		case CMD_KILL:	Command::kill(user, cmd, args, server);					break;
+		case CMD_SIZE_OPEN:														break;
+		case CMD_SIZE_REGISTERED:												break;
+		case CMD_SIZE_OPER:														break;
+		case CMD_UNKNOWN:														break;
 	}
 
-	if (cmd == "PRIVMSG")
-		server->sendPrivMsg(&user, args);
-	else if (cmd == "LIST")
-		server->sendChannelList(&user);
-	else if (cmd == "JOIN")
-		server->joinChannel(&user, args[0]);
-	else if (cmd == "WHO")
-		server->sendWho(&user, args[0]);
-	else if (cmd == "WHOIS")
-		server->sendWhoIs(&user, args[0]);
-	else if (cmd == "PART")
-		server->partChannel(&user, args[0]);
-	else if (cmd == "INVITE")
-		server->sendInvite(&user, args);
-	else if (cmd == "TOPIC")
-		server->setChannelTopic(user, args);
-	else if (cmd == "MODE")
-		server->setChannelMode(user, args);
-	if (!user.getIsOperator()){
-		user.userNotOperatorMsg();
-		std::cout << C_BLUE << "cmd " << cmd << C_RESET << std::endl;
-		return;
-	}
-
-	if (cmd == "OPER")
-		Command::oper(user, cmd, args, server);
-	else if (cmd == "KILL")
-		Command::kill(user, cmd, args, server);
 }
+
+/*
+error 	C_LRED text + C_RESET variables + C_LRED rest of the text
+message C_RESET text + C_LCYAN variables + C_RESET rest of the text
+Joining C_RESET text + C_CYAN variables + C_RESET rest of the text
+leaving C_RED text + C_RESET variables + C_RED rest of the text
+
+sendMsg --> never forget \r\n, or never forgive
+*/
 
 /* ************************************************************************** *\
 *																			  *
@@ -77,26 +100,26 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 static void	Command::user(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
 
 	if (user.getIsRegistered()){
-		user.sendMsg("462 " + user.getBestName() + " " + cmd + ERR_ALREADYREGISTERED);
+		user.sendMsg("462 " + user.getNickName() + " " + ERR_ALREADYREGISTERED);
 		if (verboseCheck() >= V_USER)
-			std::cout 	<< "User " << user.getNickName() 
-						<< " is already registered"	<< std::endl;
+			std::cerr 	<< C_LRED "User " C_RESET << user.getNickName() 
+						<< C_LRED " is already registered"	C_RESET << std::endl;
 		return ;
 	}
 
 	if (args.size() < 4){
-		user.sendMsg("461 " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
+		user.sendMsg("461 " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck() >= V_USER)
-			std::cerr 	<< C_RED << "Error" << C_RESET 
-						<< ": format required: USER <user name> * <host> :<realname>" << std::endl;
+			std::cerr 	<< C_LRED << "Error: format required: USER <user name> * <host> :<realname>" 
+						<< C_RESET << std::endl;
 		return ;
 	}
 
 	user.setIdentName(args[0]);
 	if (args[1] != "*"){
 		if (verboseCheck() >= V_USER)
-			std::cerr 	<< C_RED << "Error" << C_RESET 
-						<< ": format required: USER <user name> * <host> :<realname>" << std::endl;
+			std::cerr 	<< C_LRED << "Error: format required: USER <user name> * <host> :<realname>" 
+						<< C_RESET << std::endl;
 		return ;
 	}
 	user.setServer(args[2]);
@@ -118,26 +141,27 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.empty() || args[0].empty()){
-		user.sendMsg(":" + serverName + "461 " + user.getBestName() + " " + cmd + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + "461 " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck() >= V_USER)
-			std::cout 	<< "No imput or empty input. Password not submitted, please provide a password"	<< std::endl;
+			std::cerr 	<< C_LRED << "No imput or empty input. Password not submitted, please provide a password"
+						<< C_RESET << std::endl;
 		return ;
 	}
 	if (user.getIsRegistered() == true){
-		user.sendMsg(":" + serverName + "462 " + user.getNickName() + " " + cmd + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + serverName + "462 " + user.getNickName() + " " + ERR_ALREADYREGISTERED);
 		if (verboseCheck() >= V_USER)
-			std::cout 	<< "User " << user.getNickName() 
-						<< " is already registered"	<< std::endl;
+			std::cerr 	<< C_LRED << "User " C_RESET << user.getNickName() 
+						<< C_LRED << " is already registered" C_RESET << std::endl;
 		return ;
 	}
 	
 	if (server->validatePassword(args[0]) != 1 && \
 		server->validatePassword(args[0]) != 2 ){
-		user.sendMsg(":" + serverName + "464 " + user.getBestName() + " " + cmd + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + serverName + "464 " + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck() >= V_USER)
-			std::cout 	<< "Wrong password " 
+			std::cerr 	<< C_LRED "Wrong password " C_RESET
 						<< user.getBestName() 
-						<< " disconnected from server"	<< std::endl;
+						<< C_LRED << " disconnected from server" C_RESET << std::endl;
 		close (user.getPollInfofd());
 		user.setPollInfofd(-1); 
 		return ;
@@ -166,12 +190,18 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 			return ;
 		}
 	if (isdigit(nickname.at(0))){
-		user.sendMsg(":" + serverName + " 432 * " + nickname + " " + ERR_ERRONEUSNICKNAME);
+		user.sendMsg(":432 " + serverName + " 432 * " + nickname + " " + ERR_ERRONEUSNICKNAME);
+		if (verboseCheck() >= V_USER)
+			std::cout 	<< "Wrong character in name " << nickname
+						<< " First character in nick name cannot be a digit" << std::endl;
 		return ;
 	}
 	for (int i = 1; i < nickname.size(); i++){
 		if (!isalnum(nickname[i])){
-			user.sendMsg(":" + serverName + "432 * " + nickname + " " + ERR_ERRONEUSNICKNAME);
+			user.sendMsg(":432 " + serverName + "432 * " + nickname + " " + ERR_ERRONEUSNICKNAME);
+			if (verboseCheck() >= V_USER)
+			std::cout 	<< "Wrong character in name " << nickname
+						<< " Only alphanumeric characters are allowed in nick name" << std::endl;
 			return ;
 		}
 	}
@@ -200,15 +230,15 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
 		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
-						+ cmd + ":Client Quit " + args[0]);
-		user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)");
+						+ cmd + ":Client Quit " + args[0] + "\r\n");
+		user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)\r\n");
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getBestName() 
 						<< " is exiting the network with the message: " + args[0] << std::endl;
 	} else {
 		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
-						+ cmd + ":Client Quit");
-		user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)");
+						+ cmd + ":Client Quit\r\n");
+		user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)\r\n");
 		if (verboseCheck() >= V_USER)
 			std::cout 	<< "User " << user.getBestName() 
 						<< " is exiting the network" << std::endl;
@@ -288,7 +318,7 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 	for (std::vector<Client *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickName() == args[0]){
 			user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
-						(*it)->getNickName() + ": " + args[args.size()]);
+						(*it)->getNickName() + ": " + args[args.size()] + "\r\n");
 			close ((*it)->getPollInfofd());
 			(*it)->setPollInfofd(-1);
 			if (verboseCheck() >= V_USER)

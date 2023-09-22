@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/21 17:47:23 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/22 20:14:19 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ class Client
 		bool 		getIsOperator(void) const;
 		bool		hasPassword(void) const;
 		std::string getBestName (void) const;
+		std::string getSourceName(void) const;
 
 		void setNickName(std::string nickname);
 		void setBuff(std::string buffer);
@@ -83,8 +84,8 @@ class Client
 
 		std::string	getMsg(void);
 		void		sendMsg(std::string msg);
-		void		userNotRegisteredMsg(void);
-		void		userNotOperatorMsg(void);
+		void		userNotRegisteredMsg(std::string cmd);
+		void		userNotOperatorMsg(std::string cmd);
 		void		printInfo(void) const;
 };
 
