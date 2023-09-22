@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/22 20:18:15 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/22 20:27:27 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,9 @@ std::string	Client::getBestName( void ) const {
 }
 
 std::string Client::getSourceName(void) const {
-	return this->getBestName() + "!~" + this->_userName + "@" + this->_IpHostName;
+	std::stringstream info;
+    info << getBestName() << "!~" << _userName << "@" << _IpHostName;
+    return info.str();
 }
 
 void Client::setBuff(std::string buffer){
