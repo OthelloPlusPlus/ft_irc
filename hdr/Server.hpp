@@ -42,6 +42,7 @@ class Server
 		int						port;
 		std::string				publicIP;
 		std::string				localIP;
+		uint32_t				transferIP;
 
 		std::vector<Channel *>	channels;
 		std::vector<Client *>	clients;
@@ -75,6 +76,7 @@ class Server
 		Channel					*getChannel(std::string channel) const;
 		std::string				getName(void) const;
 		const std::string		getIP(void) const;
+		uint32_t				getTransferIP(void) const;
 
 		void	joinChannel(Client &client, const std::vector<std::string> &args);
 		void	partChannel(Client *client, const std::string channelName);

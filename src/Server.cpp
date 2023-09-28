@@ -40,7 +40,11 @@
 // //	int		listen(int socket, int backlog);
 // #include <fcntl.h>
 // //	int	fcntl(int fildes, int cmd, ...);
-
+#include <net/if.h>
+#include <sys/socket.h>
+       #include <netinet/in.h>
+       #include <arpa/inet.h>
+	   #include <netdb.h>
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -67,7 +71,7 @@ Server::Server(int argc, char **argv)
 	std::cout	<< "\n"
 				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
 				<< std::setw(23)	<< " - Server name: "	<< this->serverName	<< "\n"
-				<< std::setw(23)	<< " - Hostname: "	<< this->publicIP	<< "\n"
+				<< std::setw(23)	<< " - Hostname: "	<< this->publicIP	<< "\n"//https://www.whatsmyip.org/	185-61-55-68.185-61-55-ip.fmo-solutions.nl
 				<< std::setw(23)	<< " - Local IP address: "	<< this->localIP	<< "\n"
 				<< std::setw(23)	<< " - Port: "	<< this->port	<< "\n"
 				<< " - Ready to receive incoming users!"	<< "\n"
@@ -129,7 +133,6 @@ void	Server::bootUpServer(void)
 	std::cout	<< "Binding socket to port "	<< this->port	<< "...\n";
 	this->socketAddress.sin_family = AF_INET;
 	this->socketAddress.sin_port = htons(this->port);
-	// this->socketAddress.sin_addr.s_addr = inet_addr(this->localIP.c_str());
 	this->socketAddress.sin_addr.s_addr = INADDR_ANY;
 	if (bind(this->pollInfo.fd, (struct sockaddr *)&this->socketAddress, sizeof(this->socketAddress)))
 	{
@@ -144,7 +147,6 @@ void	Server::bootUpServer(void)
 	}
 	this->pollInfo.events = POLLIN;
 }
-#include <net/if.h>
 
 void	Server::setLocalIP(void)
 {
@@ -166,7 +168,8 @@ void	Server::setLocalIP(void)
 			this->localIP = inet_ntoa(((struct sockaddr_in *)ifap->ifa_addr)->sin_addr);
 	if (this->localIP.empty())
 		throw(std::runtime_error("No valid IP found: "));
-	freeifaddrs(ifap);
+	this->transferIP = htonl(inet_addr(this->localIP.c_str()));
+	freeifaddrs(ifap0);
 }
 
 void	Server::readEnv(void)
@@ -376,6 +379,8 @@ void	Server::sendPrivMsg(const Client *client, const std::vector<std::string> &a
 	std::string	name = args[0];
 	std::string msg = args[args.size() - 1];
 
+	if (name.empty())
+		return ;
 	if (name.at(0) == '#')
 	{
 		Channel *channel = getChannel(name);
@@ -450,6 +455,12 @@ void	Server::joinChannel(Client &client, const std::vector<std::string> &args)
 	std::string	pass;
 	bool		admin;
 
+	std::cout	<< args[0];
+	if (channel == nullptr)
+		std::cout	<< "\tempty\t";
+	else
+		std::cout	<< '\t' << channel->getName()	<< '\t';
+	std::cout	<< std::endl;
 	if (channel == nullptr)
 	{
 		channel = new Channel(args[0], this);
@@ -476,20 +487,38 @@ std::vector<Client *>	Server::getClientList(void)
 {
 	return (this->clients);
 }
-
+#include <algorithm>
+// std::transform
 Client	*Server::getClient(std::string name) const
 {
+	std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
 	for (std::vector<Client *>::const_iterator client = this->clients.begin(); client != this->clients.end(); ++client)
-		if ((*client)->getNickName() == name)
+	{
+		std::string	clientName = (*client)->getNickName();
+
+		std::transform(clientName.begin(), clientName.end(), clientName.begin(), ::tolower);
+		if (clientName == name)
 			return (*client);
+	}
 	return (nullptr);
 }
 
 Channel	*Server::getChannel(std::string name) const
 {
+	std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+	if (name.empty() || name.at(0) != '#')
+		name = '#' + name;
+
 	for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
-		if ((*channel)->getName() == name)
+	{
+		std::string	channelName = (*channel)->getName();
+
+		std::transform(channelName.begin(), channelName.end(), channelName.begin(), ::tolower);
+		std::cout	<< "name\t"	<< name	<< "\tchannel\t"	<< channelName	<< std::endl;
+		if (channelName == name)
 			return (*channel);
+	}
 	return (nullptr);
 }
 
@@ -501,6 +530,11 @@ std::string	Server::getName(void) const
 const std::string	Server::getIP(void) const
 {
 	return (this->localIP);
+}
+
+uint32_t	Server::getTransferIP(void) const
+{
+	return (this->transferIP);
 }
 
 void	Server::checkChannels(void)
