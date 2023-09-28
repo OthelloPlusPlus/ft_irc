@@ -31,20 +31,16 @@
 #include <arpa/inet.h>
 // char	*inet_ntoa(in_addr)
 
-// #include <cstdlib>
-// // char	*getenv(const char *)
-// #include <sys/socket.h>
-// //	int		socket(int domain, int type, int protocol);
-// //	ssize_t	recv(int socket, void *buffer, size_t length, int flags);
-// //	int		bind(int socket, const struct sockaddr *address, socklen_t address_len);
-// //	int		listen(int socket, int backlog);
-// #include <fcntl.h>
-// //	int	fcntl(int fildes, int cmd, ...);
 #include <net/if.h>
-#include <sys/socket.h>
-       #include <netinet/in.h>
-       #include <arpa/inet.h>
-	   #include <netdb.h>
+// ifaddrs FLAGS
+#include <set>
+// std::set
+#include <chrono>
+// std::chrono
+#include <algorithm>
+// std::transform
+
+
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -109,7 +105,7 @@ Server::~Server(void)
  * 	Member Functions
  * 
 \* ************************************************************************** */
-#include <sys/types.h>
+
 void	Server::bootUpServer(void)
 {
 	std::cout	<< "Creating socket for incoming connections...\n";
@@ -189,11 +185,6 @@ void	Server::readEnv(void)
 		this->serverName = "OMS";
 }
 
-// void	Server::setPublicIP(void)
-// {
-
-// }
-
 // std::string	Server::getHostIp(void)
 // {
 // 	// std::string		ip;
@@ -224,23 +215,8 @@ void	Server::acceptClient(void)
 
 	try
 	{
-		// newClient = new Client;
-		// // *newClient = new Client(this->pollInfo.fd);//when magicemy is ready
-		// std::cout	<< "Creating new client!"	<< std::endl;
 		Client	*newClient = new Client(this->pollInfo.fd);
-		// newClient->initialize(this->pollInfo.fd);
-		// ipAddressFromSocketAddress(this->socketAddress)
-		// newClient->sendMsg(":localhost 375 Othello :- ft_irc Message of the Day - \r\n");
-		// newClient->sendMsg(":localhost 372 Othello :- We know what we're doing! We swear!\r\n");
-		// newClient->sendMsg(":localhost 376 Othello :End of /MOTD command.\r\n");
 		this->clients.push_back(newClient);
-		// std::cout	<< "Trying to get info from client"	<< std::endl;
-		// newClient->getMsg();
-		// if (newClient->getNickName().empty())
-		// 	std::cout	<< "no info from client yet!"	<< std::endl;
-		// std::cout	<< "Trying to get info from client"	<< std::endl;
-		// this->joinChannel(newClient, "#WelcomeChannel");
-		// this->joinChannel(newClient, "#WelcomeChannel");
 	}
 	catch(const std::exception& e)
 	{
@@ -249,46 +225,41 @@ void	Server::acceptClient(void)
 	}
 }
 
-#include <chrono>
-void	Server::sendWelcome(Client *client)
+void	Server::sendWelcome(Client &client)
 {
 	std::string	msg;
 
 	msg = ":" + this->localIP;
-	client->sendMsg(msg + " 375 " + client->getNickName() + " :- ft_irc Message of the Day - \r\n");
-	client->sendMsg(msg + " 372 " + client->getNickName() + " :- We know what we're doing! We swear!\r\n");
-	client->sendMsg(msg + " 376 " + client->getNickName() + " :End of /MOTD command.\r\n");
-	std::vector<std::string>	channel;
-	channel.push_back("#WelcomeChannel");
-	this->joinChannel(*client, channel);
-	// this->joinChannel(client, "#Hello");
-	// this->partChannel(client, "#Hello");
+	client.sendMsg(msg + " 375 " + client.getNickName() + " :- ft_irc Message of the Day - \r\n");
+	client.sendMsg(msg + " 372 " + client.getNickName() + " :- We know what we're doing! We swear!\r\n");
+	client.sendMsg(msg + " 376 " + client.getNickName() + " :End of /MOTD command.\r\n");
+	this->joinChannel(client, "#WelcomeChannel");
 }
 
-void	Server::sendChannelList(Client *client) const
+void	Server::sendChannelList(Client &client) const
 {
 	std::string	msg;
 
-	msg = ":" + this->publicIP + " 321 " + client->getNickName() + " ";
-	client->sendMsg(msg + "Channel :Users  Name \r\n");
+	msg = ":" + this->publicIP + " 321 " + client.getNickName() + " ";
+	client.sendMsg(msg + "Channel :Users  Name \r\n");
 
 	msg.replace(msg.find(" 321 "), 5, " 322 ");
 	for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
-		client->sendMsg(msg + (*channel)->getName() + " " + std::to_string((*channel)->getSize()) + " :Lorem ipsum\r\n");
+		client.sendMsg(msg + (*channel)->getName() + " " + std::to_string((*channel)->getSize()) + " :Lorem ipsum\r\n");
 
 	msg.replace(msg.find(" 322 "), 5, " 323 ");
-	client->sendMsg(msg + ":END of /LIST\r\n");
+	client.sendMsg(msg + ":END of /LIST\r\n");
 }
 
-void	Server::sendWho(Client *client, const std::string who) const
+void	Server::sendWho(Client &client, const std::string who) const
 {
 	{
 		Client	*whoClient = this->getClient(who);
 
 		if (whoClient != nullptr)
 		{
-			whoClient->sendMsg(":" + this->serverName + " 352 " + client->getNickName() + "~" + whoClient->getNickName() + "\r\n");
-			client->sendMsg(":" + this->serverName + " 315 " + client->getNickName() + + " " + who + " :End of /WHO list\r\n");
+			whoClient->sendMsg(":" + this->serverName + " 352 " + client.getNickName() + "~" + whoClient->getNickName() + "\r\n");
+			client.sendMsg(":" + this->serverName + " 315 " + client.getNickName() + + " " + who + " :End of /WHO list\r\n");
 			return ;
 		}
 	}
@@ -300,32 +271,31 @@ void	Server::sendWho(Client *client, const std::string who) const
 	}
 }
 
-void	Server::sendWhoIs(Client *client, const std::string who) const
+void	Server::sendWhoIs(Client &client, const std::string who) const
 {
 	std::string	msg;
 	Client		*whoClient;
 
-	msg = ":" + this->publicIP + " 000 " + client->getNickName() + " " + who + " ";
+	msg = ":" + this->publicIP + " 000 " + client.getNickName() + " " + who + " ";
 	whoClient = this->getClient(who);
 	if (whoClient)
 	{
 		msg.replace(msg.find(" 000 "), 5, " 311 ");
-		client->sendMsg(msg + whoClient->getIdentName() + " " + whoClient->getIpHostName() + " * :" + whoClient->getRealName() + "\r\n");
+		client.sendMsg(msg + whoClient->getIdentName() + " " + whoClient->getIpHostName() + " * :" + whoClient->getRealName() + "\r\n");
 		msg.replace(msg.find(" 311 "), 5, " 312 ");
-		client->sendMsg(msg + this->publicIP + "\r\n");
+		client.sendMsg(msg + this->publicIP + "\r\n");
 		msg.replace(msg.find(" 312 "), 5, " 318 ");
 	}
 	else
 	{
 		msg.replace(msg.find(" 000 "), 5, " 401 ");
-		client->sendMsg(msg + ":No such nick/channel\r\n");
+		client.sendMsg(msg + ":No such nick/channel\r\n");
 		msg.replace(msg.find(" 401 "), 5, " 318 ");
 	}
-	client->sendMsg(msg + ":End of /WHOIS list.\r\n");
+	client.sendMsg(msg + ":End of /WHOIS list.\r\n");
 }
 
-#include <set>
-void	Server::sendInvite(Client *client, const std::vector<std::string> &args)
+void	Server::sendInvite(Client &client, const std::vector<std::string> &args)
 {
 	std::set<Client *>	name;
 	std::set<Channel *>	channel;
@@ -338,43 +308,43 @@ void	Server::sendInvite(Client *client, const std::vector<std::string> &args)
 			if (add != nullptr)
 				channel.insert(add);
 			else
-				client->sendMsg(':' + this->publicIP + " 401 " + client->getNickName() + ' ' + *i + " :No suck channel\r\n");
+				client.sendMsg(':' + this->publicIP + " 401 " + client.getNickName() + ' ' + *i + " :No such channel\r\n");
 		}
 		else
 		{
 			Client	*add = this->getClient(*i);
-			if (add != nullptr && add != client)
+			if (add != nullptr && add != &client)
 				name.insert(add);
 			else
-				client->sendMsg(':' + this->publicIP + " 401 " + client->getNickName() + ' ' + *i + " :No suck nick\r\n");
+				client.sendMsg(':' + this->publicIP + " 401 " + client.getNickName() + ' ' + *i + " :No such nick\r\n");
 		}
 	}
 	for (std::set<Channel *>::iterator i = channel.begin(); i != channel.end(); ++i)
 	{
 		for (std::set<Client *>::iterator j = name.begin(); j != name.end(); ++j)
 		{
-			if (!(*i)->userIsInChannel(*j))
-				(*j)->sendMsg(':' + client->getNickName() + "!~" + client->getIdentName() + '@' + client->getIpHostName() + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName() + "\r\n");
+			if (!(*i)->userIsInChannel(**j))
+				(*j)->sendMsg(':' + client.getNickName() + "!~" + client.getIdentName() + '@' + client.getIpHostName() + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName() + "\r\n");
 			else
-				client->sendMsg(':' + this->publicIP + " 443 " + client->getNickName() + ' ' + (*j)->getNickName() + ' ' + (*i)->getName() + " :is already on channel\r\n");
+				client.sendMsg(':' + this->publicIP + " 443 " + client.getNickName() + ' ' + (*j)->getNickName() + ' ' + (*i)->getName() + " :is already on channel\r\n");
 		}
 	}
 }
 
-void	Server::sendPong(Client *client) const
+void	Server::sendPong(Client &client) const
 {
 	std::string	time;
 
 	time = std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
-	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + time + "\r\n");
+	client.sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + time + "\r\n");
 }
 
-void	Server::sendPong(Client *client, const std::string token) const
+void	Server::sendPong(Client &client, const std::string token) const
 {
-	client->sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
+	client.sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
 }
 
-void	Server::sendPrivMsg(const Client *client, const std::vector<std::string> &args)
+void	Server::sendPrivMsg(const Client &client, const std::vector<std::string> &args)
 {
 	std::string	name = args[0];
 	std::string msg = args[args.size() - 1];
@@ -386,20 +356,20 @@ void	Server::sendPrivMsg(const Client *client, const std::vector<std::string> &a
 		Channel *channel = getChannel(name);
 
 		if (channel != nullptr)
-			channel->sendToChannel(client, ":" + client->getSourceName() + " PRIVMSG " + channel->getName() + " " + msg + "\r\n");
+			channel->sendToChannel(client, ":" + client.getSourceName() + " PRIVMSG " + channel->getName() + " " + msg + "\r\n");
 	}
 	else
 	{
 		Client	*user = getClient(name);
 
 		if (user != nullptr)
-			user->sendMsg(":" + client->getSourceName() + " PRIVMSG " + user->getNickName() + " " + msg + "\r\n");	
+			user->sendMsg(":" + client.getSourceName() + " PRIVMSG " + user->getNickName() + " " + msg + "\r\n");	
 	}
 }
 
 void	Server::checkClients(void)
 {
-	for (std::vector<Client *>::const_iterator client = this->clients.begin(); client != this->clients.end();)
+	for (std::vector<Client *>::iterator client = this->clients.begin(); client != this->clients.end();)
 	{
 		if ((*client)->stillActive())
 		{
@@ -414,7 +384,7 @@ void	Server::checkClients(void)
 				{
 					Parse::parseMsg(**client, this);
 					if (!(*client)->getNickName().empty())
-						this->sendWelcome(*client);
+						this->sendWelcome(**client);
 					if (verboseCheck() >= V_USER)
 						(*client)->printInfo();
 				}
@@ -426,8 +396,8 @@ void	Server::checkClients(void)
 		else
 		{
 			for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
-				if ((*channel)->userIsInChannel(*client))
-					(*channel)->removeUser(*client);
+				if ((*channel)->userIsInChannel(**client))
+					(*channel)->removeUser(**client);
 			delete *client;
 			client = this->clients.erase(client);
 		}
@@ -441,26 +411,22 @@ int	Server::validatePassword(const std::string password) const
 	return (this->passwordUser == password);
 }
 
-// bool	Server::nicknameExists(const std::string nickname) const
-// {
-// 	for (std::vector<Client *>::const_iterator i = this->clients.begin(); i != this->clients.end(); ++i)
-// 		if ((*i)->getNickName() == nickname)
-// 			return (true);
-// 	return (false);
-// }
+void	Server::joinChannel(Client &client, const std::string channelName)
+{
+	std::vector<std::string>	channel = {channelName};
+
+	this->joinChannel(client, channel);
+}
 
 void	Server::joinChannel(Client &client, const std::vector<std::string> &args)
 {
-	Channel		*channel = this->getChannel(args[0]);
+	Channel		*channel;
 	std::string	pass;
 	bool		admin;
 
-	std::cout	<< args[0];
-	if (channel == nullptr)
-		std::cout	<< "\tempty\t";
-	else
-		std::cout	<< '\t' << channel->getName()	<< '\t';
-	std::cout	<< std::endl;
+	if (args.size() <= 0)
+		return ;
+	channel = this->getChannel(args[0]);
 	if (channel == nullptr)
 	{
 		channel = new Channel(args[0], this);
@@ -471,10 +437,10 @@ void	Server::joinChannel(Client &client, const std::vector<std::string> &args)
 		admin = client.getIsOperator();
 	if (args.size() >= 2)
 		pass = args[1];
-	channel->addClient(&client, admin, pass);
+	channel->addClient(client, admin, pass);
 }
 
-void	Server::partChannel(Client *client, const std::string channelName)
+void	Server::partChannel(Client &client, const std::string channelName)
 {
 	Channel	*channel;
 
@@ -487,8 +453,7 @@ std::vector<Client *>	Server::getClientList(void)
 {
 	return (this->clients);
 }
-#include <algorithm>
-// std::transform
+
 Client	*Server::getClient(std::string name) const
 {
 	std::transform(name.begin(), name.end(), name.begin(), ::tolower);
@@ -515,7 +480,6 @@ Channel	*Server::getChannel(std::string name) const
 		std::string	channelName = (*channel)->getName();
 
 		std::transform(channelName.begin(), channelName.end(), channelName.begin(), ::tolower);
-		std::cout	<< "name\t"	<< name	<< "\tchannel\t"	<< channelName	<< std::endl;
 		if (channelName == name)
 			return (*channel);
 	}
@@ -567,10 +531,9 @@ void	Server::setChannelMode(Client &client, const std::vector<std::string> &args
 {
 	Channel		*channel = this->getChannel(args[0]);
 
-	// std::cout	<< __LINE__	<< __func__	<< "\t args size "	<< args.size()	<< std::endl;
 	if (channel == nullptr)
 	{
-		std::cout	<< "Unknown target "	<< args[0]	<< std::endl;
+		client.sendMsg(':' + this->localIP + " 403 " + client.getNickName() + ' ' + args[0] + " :No such channel\r\n");
 		return ;
 	}
 	else if (args.size() == 1)

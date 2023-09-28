@@ -18,6 +18,8 @@
 // std::
 #include <chrono>
 // std::chrono
+#include <algorithm>
+// std::transform
 
 /** ************************************************************************ **\
  * 
@@ -28,7 +30,7 @@
 Channel::Channel(std::string name, Server *server): name(name), topic(""), server(server),
 modeInvite(false), userLimit(0), modeTopic(false)
 {
-	if (!this->name.empty() && this->name.at(0) != '#')
+	if (this->name.empty() || this->name.at(0) != '#')
 		this->name = '#' + this->name;
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< "Channel"
@@ -65,39 +67,52 @@ Channel::~Channel(void)
  * 
 \* ************************************************************************** */
 
-void	Channel::addClient(Client *newClient, bool admin, const std::string password)
+void	Channel::addClient(Client &newClient, bool admin, const std::string password)
 {
 	ChannelUser	newUser;
 
-	if (!this->addClientValidate(*newClient, password))
+	if (!this->addClientValidate(newClient, password))
 		return ;
-	newUser.client = newClient;
+	newUser.client = &newClient;
 	newUser.admin = admin;
 	newUser.timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());;
 	this->users.push_back(newUser);
-	this->sendToChannel(":" + newClient->getSourceName() + " JOIN " + this->name + "\r\n");
+	this->sendToChannel(":" + newClient.getSourceName() + " JOIN " + this->name + "\r\n");
 	if (newUser.admin)
 		this->sendToChannel(":" + this->server->getIP() + " MODE " + this->name + " +o " + newUser.client->getNickName() + "\r\n");
 	if (!this->topic.empty())
-		this->sendTopic(newUser.client);
-	this->sendNames(newUser.client);
+		this->sendTopic(*newUser.client);
+	this->sendNames(*newUser.client);
 	if (verboseCheck() >= V_CHANNEL)
 		std::cout	<< C_LGREEN	<< "User "
-					<< C_RESET	<< newClient->getNickName()
+					<< C_RESET	<< newClient.getNickName()
 					<< C_LGREEN	<< " joined channel "
 					<< C_RESET	<< this->name	<< std::endl;
-	this->sendWho(newUser.client);
+	this->sendWho(*newUser.client);
 }
 
 bool	Channel::addClientValidate(const Client &newClient, const std::string password)
 {
-	if (this->userIsInChannel(&newClient))
+	if (this->userIsInChannel(newClient))
 	{
 		if (verboseCheck() >= V_CHANNEL)
 			std::cout	<< C_LRED	<< "User "
 						<< C_RESET	<< newClient.getNickName()
 						<< C_LRED	" is already in channel "
 						<< C_RESET	<< this->name	<< std::endl;
+		return (false);
+	}
+	if (this->userLimit > 0 && \
+		users.size() >= this->userLimit && \
+		!newClient.getIsOperator())
+	{
+		if (verboseCheck() >= V_CHANNEL)
+			std::cout	<< C_LRED	<< "User "
+						<< C_RESET	<< newClient.getNickName()
+						<< C_LRED	<< " tried to access channel "
+						<< C_RESET	<< this->name
+						<< C_LRED	<< " but it was full"
+						<< C_RESET	<< std::endl;
 		return (false);
 	}
 	if (!this->key.empty() && this->key != password)
@@ -119,31 +134,21 @@ bool	Channel::addClientValidate(const Client &newClient, const std::string passw
 	return (true);
 }
 
-// void	Channel::inviteClient(Client *client)
-// {
-// 	std::string	msg;
-
-// 	msg = client->getNickName() + "!" + client->getUserName() + "JOIN" + this->name + "\r\n";
-// 	client->sendMsg(msg);
-// }
-
-void	Channel::removeUser(const Client *client)
+void	Channel::removeUser(const Client &client)
 {
 	if (this->userIsInChannel(client))
 	{
-		this->sendToChannel(":" + client->getSourceName() + " PART " + this->name + "\r\n");
+		this->sendToChannel(":" + client.getSourceName() + " PART " + this->name + "\r\n");
 		for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end();)
 		{
-			if ((*i).client == client)
-			{
+			if ((*i).client == &client)
 				i = this->users.erase(i);
-			}
 			else
 				++i;
 		}
 		if (verboseCheck() >= V_CHANNEL)
 			std::cout	<< C_LMGNT	<< "User "
-						<< C_RESET	<< client->getNickName()
+						<< C_RESET	<< client.getNickName()
 						<< C_LMGNT	<< " left channel "
 						<< C_RESET	<< this->name	<< std::endl;
 	}
@@ -159,18 +164,6 @@ void	Channel::promoteOldestUser(void)
 	this->sendToChannel(":" + this->server->getName() + " MODE " + this->name + " +o " + (*oldest).client->getNickName() + "\r\n");
 }
 
-// void	Channel::setAdmin(Client *target, bool status)
-// {
-// 	for (std::vector<ChannelUser>::iterator user = this->users.begin(); user != this->users.end(); ++user)
-// 		if ((*user).client == target)
-// 		{
-// 			if (verboseCheck() >= V_ADMIN)
-// 				std::cout	<< __func__	<<__LINE__	<< std::endl;
-// 			(*user).admin = status;
-// 			break ;
-// 		}
-// }
-#include <stacktrace>
 void	Channel::sendMode(Client &client) const
 {
 	std::string	msg = ':' + this->server->getName() + " 324 " + client.getNickName() + ' ' + this->name + " \n";
@@ -226,7 +219,7 @@ void	Channel::setMode(Client &client, std::string flag, std::string arg)
 	else if (marker == 'o')
 		this->setModeO(client, flag, arg);
 	else if (marker == 'l')
-		this->setModeL(client, flag);
+		this->setModeL(client, flag, arg);
 	else
 		std::cout	<< "Unknown flag "	<< flag	<< std::endl;
 }
@@ -269,7 +262,6 @@ void	Channel::setModeT(Client &client, std::string flag)
 
 void	Channel::setModeK(Client &client, std::string flag, std::string newPass)
 {
-	std::cout	<< __func__	<< __LINE__	<< std::endl;
 	if (newPass.empty())
 		return ;
 	std::string	clientAdr = ":" + client.getNickName() + "!~" + \
@@ -359,9 +351,34 @@ void	Channel::setModeO(Client &client, std::string flag, std::string clientName)
 	this->sendToChannel(':' + client.getNickName() + "!~" + client.getIdentName() + '@' + client.getIpHostName() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
 }
 
-void	Channel::setModeL(Client &client, std::string flag)
+void	Channel::setModeL(Client &client, std::string flag, std::string count)
 {
+	int	oldLimit = this->userLimit;
+	int	newLimit = oldLimit;
 
+	if (flag[0] == '-')
+		this->userLimit = 0;
+	else if (!count.empty())
+	{
+		this->userLimit = std::stoi(count);
+		if (this->userLimit < 0)
+			this->userLimit = oldLimit;
+	}
+	if (this->userLimit == oldLimit)
+		return ;
+	if (verboseCheck() >= V_CHANNEL)
+	{
+		std::cout	<< C_RESET	<< "User "
+					<< C_LCYAN	<< client.getNickName()
+					<< C_RESET	<< " has set the user limit of channel "
+					<< C_LCYAN	<< this->name
+					<< C_RESET	<< " to ";
+		if (this->userLimit == 0)
+			std::cout	<< C_LCYAN	<< "unlimited";
+		else
+			std::cout	<< C_LCYAN	<< this->userLimit;
+		std::cout	<< C_RESET	<< std::endl;
+	}
 }
 
 void	Channel::setTopic(Client &client, const std::string newTopic)
@@ -411,35 +428,35 @@ void	Channel::setTopic(Client &client, const std::string newTopic)
 	}
 }
 
-void	Channel::sendTopic(Client *client) const
+void	Channel::sendTopic(Client &client) const
 {
 	std::string	msg;
 
-	msg = ": 332 " + client->getNickName() + " " + this->name + " :" + this->topic + "\r\n";
-	client->sendMsg(msg);
+	msg = ": 332 " + client.getNickName() + " " + this->name + " :" + this->topic + "\r\n";
+	client.sendMsg(msg);
 }
 
-void	Channel::sendNames(Client *client)
+void	Channel::sendNames(Client &client)
 {
 	std::string	msg;
 
-	msg = ": 353 " + client->getNickName() + " = " + this->name + " :";
+	msg = ": 353 " + client.getNickName() + " = " + this->name + " :";
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	{
 		if ((*i).admin == true)
 			msg += "@";
 		msg += (*i).client->getNickName() + " ";
 	}
-	client->sendMsg(msg + "\r\n");
-	msg = ": 366 " + client->getNickName() + " " + this->name + " :end of /NAMES list.\r\n";
-	client->sendMsg(msg);
+	client.sendMsg(msg + "\r\n");
+	msg = ": 366 " + client.getNickName() + " " + this->name + " :end of /NAMES list.\r\n";
+	client.sendMsg(msg);
 }
 
-void	Channel::sendWho(Client *client)
+void	Channel::sendWho(Client &client)
 {
 	std::string	msg;
 
-	msg = ":" + this->server->getName() + " 352 " + client->getNickName() + " " + this->name + " ";
+	msg = ":" + this->server->getName() + " 352 " + client.getNickName() + " " + this->name + " ";
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	{
 		std::string	msgWho;
@@ -452,10 +469,10 @@ void	Channel::sendWho(Client *client)
 		else
 			msgWho += " H:0 ";
 		msgWho +=		(*i).client->getRealName() + "\r\n";
-		client->sendMsg(msgWho);
+		client.sendMsg(msgWho);
 	}
-	msg = ":" + this->server->getName() + " 315 " + client->getNickName() + " " + this->name + " :End of /WHO list.\r\n";
-	client->sendMsg(msg);
+	msg = ":" + this->server->getName() + " 315 " + client.getNickName() + " " + this->name + " :End of /WHO list.\r\n";
+	client.sendMsg(msg);
 }
 
 void	Channel::sendToChannel(const std::string msg) const
@@ -464,22 +481,13 @@ void	Channel::sendToChannel(const std::string msg) const
 		(*i).client->sendMsg(msg);
 }
 
-void	Channel::sendToChannel(const Client *exclude, const std::string msg) const
+void	Channel::sendToChannel(const Client &exclude, const std::string msg) const
 {
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
-		if ((*i).client != exclude)
+		if ((*i).client != &exclude)
 			(*i).client->sendMsg(msg);
 }
 
-// void	Channel::sendPrivMsg(Client *sender, std::string msg)
-// {
-// 	msg = ":" + sender->getNickName() + " PRIVMSG " + this->name + " :" + msg + "\r\n";
-// 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
-// 		if ((*i).client != sender)
-// 			(*i).client->sendMsg(msg);
-// }
-#include <algorithm>
-// std::transform
 ChannelUser	*Channel::getChannelUser(std::string clientName)
 {
 	std::transform(clientName.begin(), clientName.end(), clientName.begin(), ::tolower);
@@ -495,10 +503,10 @@ ChannelUser	*Channel::getChannelUser(std::string clientName)
 	return (nullptr);
 }
 
-bool	Channel::userIsInChannel(const Client *client) const
+bool	Channel::userIsInChannel(const Client &client) const
 {
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
-		if ((*i).client == client)
+		if ((*i).client == &client)
 			return (true);
 	return (false);
 }
@@ -517,11 +525,6 @@ bool	Channel::userIsAdmin(const Client &client) const
 			return ((*user).admin);
 	return (false);
 }
-
-// std::string	Channel::getTopic(void) const
-// {
-// 	return (this->topic);
-// }
 
 size_t	Channel::getSize(void) const
 {

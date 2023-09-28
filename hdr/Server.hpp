@@ -54,7 +54,7 @@ class Server
 		void	readEnv(void);
 
 		void	acceptClient(void);
-		void	sendWelcome(Client *client);
+		void	sendWelcome(Client &client);
 
 	protected:
 
@@ -78,15 +78,16 @@ class Server
 		const std::string		getIP(void) const;
 		uint32_t				getTransferIP(void) const;
 
+		void	joinChannel(Client &client, const std::string channelName);
 		void	joinChannel(Client &client, const std::vector<std::string> &args);
-		void	partChannel(Client *client, const std::string channelName);
-		void	sendChannelList(Client *client) const;
-		void	sendWho(Client *client, const std::string who) const;
-		void	sendWhoIs(Client *client, const std::string who) const;
-		void	sendPong(Client *client) const;
-		void	sendPong(Client *client, const std::string token) const;
-		void	sendPrivMsg(const Client *client, const std::vector<std::string> &args);
-		void	sendInvite(Client *client, const std::vector<std::string> &args);
+		void	partChannel(Client &client, const std::string channelName);
+		void	sendChannelList(Client &client) const;
+		void	sendWho(Client &client, const std::string who) const;
+		void	sendWhoIs(Client &client, const std::string who) const;
+		void	sendPong(Client &client) const;
+		void	sendPong(Client &client, const std::string token) const;
+		void	sendPrivMsg(const Client &client, const std::vector<std::string> &args);
+		void	sendInvite(Client &client, const std::vector<std::string> &args);
 		void	setChannelTopic(Client &client, const std::vector<std::string> &args);
 		void	setChannelMode(Client &client, const std::vector<std::string> &args);
 

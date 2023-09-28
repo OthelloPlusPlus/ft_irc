@@ -57,11 +57,11 @@ class Channel
 		Channel(const Channel &src);
 		~Channel(void);
 
-		void	addClient(Client *newClient, bool admin, const std::string password);
+		void	addClient(Client &newClient, bool admin, const std::string password);
 		bool	addClientValidate(const Client &newClient, const std::string password);
 
 		// void	inviteClient(Client *client);
-		void	removeUser(const Client *client);
+		void	removeUser(const Client &client);
 		void	promoteOldestUser(void);
 
 		// void	setAdmin(Client *target, bool status);
@@ -70,18 +70,18 @@ class Channel
 		void	setModeT(Client &client, std::string flag);
 		void	setModeK(Client &client, std::string flag, std::string newPass);
 		void	setModeO(Client &client, std::string flag, std::string targetName);
-		void	setModeL(Client &client, std::string flag);
+		void	setModeL(Client &client, std::string flag, std::string count);
 		void	setTopic(Client &client, const std::string newTopic);
 
-		void	sendTopic(Client *client) const;
-		void	sendNames(Client *client);
-		void	sendWho(Client *client);
+		void	sendTopic(Client &client) const;
+		void	sendNames(Client &client);
+		void	sendWho(Client &client);
 		void	sendToChannel(const std::string msg) const;
-		void	sendToChannel(const Client *exclude, const std::string msg) const;
+		void	sendToChannel(const Client &exclude, const std::string msg) const;
 		// void	sendPrivMsg(Client *sender, std::string msg);
 		void	sendMode(Client &client) const;
 
-		bool	userIsInChannel(const Client *client) const;
+		bool	userIsInChannel(const Client &client) const;
 		ChannelUser	*getChannelUser(std::string clientName);
 		bool	userIsAdmin(const Client &client) const;
 
