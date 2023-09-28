@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/22 20:27:27 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/28 16:00:44 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,12 +109,9 @@ bool	Client::readReceive(int sockfd){
 		bzero(buffer, sizeof(buffer));
 		recvLen = recv(this->pollInfo.fd, buffer, sizeof(buffer) - 1, 0);
 		if (recvLen < 0) {
-			if (errno == EWOULDBLOCK || errno == EAGAIN) {
-				return false;	
-			} else {
+			if (errno != EWOULDBLOCK && errno != EAGAIN)
 				std::cerr	<< "Error recv(): "	<< strerror(errno)	<< std::endl;
-				return false;
-			}
+			return false;
 		}
 		if (recvLen == 0) {
 			if (this->getPollInfofd() != -1){

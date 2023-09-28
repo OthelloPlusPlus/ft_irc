@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/22 19:41:05 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/28 17:10:12 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ namespace Command
 	static void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	static void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	static void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+	static void unknownCmd(Client &user, const std::string &cmd);
 }
 
 #endif

@@ -100,7 +100,7 @@
 # define ERR_NORECIPIENT			"411"
 # define ERR_NOTEXTTOSEND			"412"
 # define ERR_INPUTTOOLONG			"417"
-# define ERR_UNKNOWNCOMMAND			"421"
+# define ERR_UNKNOWNCOMMAND			"421 :Unknown command\r\n"
 # define ERR_NOMOTD					"422"
 # define ERR_NONICKNAMEGIVEN		"431 :No nickname given\r\n"
 # define ERR_ERRONEUSNICKNAME		"432 :Erroneus nickname\r\n"
