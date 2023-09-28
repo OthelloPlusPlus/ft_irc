@@ -410,3 +410,42 @@ Received:
 :calcium.libera.chat 315 MagicEmi #!/bin/zsh :End of /WHO list.
 
 Sent: 405 bytes
+
+
+*****************************************************************
+******************************************************************
+FILE SEND/Received
+
+in Pidgin:
+(12:44:00 PM) Offering to send file.doc to NickServ
+
+terminal
+Received:
+PRIVMSG NickServ :DCC SEND "file.doc" 168493318 34993 6
+
+
+FILE TO USER
+in Pidgin:
+(12:53:55 PM) MagicEma: hi
+(12:53:56 PM) MagicEma: hi
+(12:54:40 PM) Offering to send file.doc to MagicEma
+(12:54:41 PM) MagicEma is offering to send file file.doc
+(12:56:20 PM) Starting transfer of file.doc from MagicEma
+(12:56:20 PM) Transfer of file file.doc complete
+(12:56:20 PM) Transfer of file file.doc complete
+
+ON terminal
+
+Sent: 357 bytes
+Received:
+JOIN #!/bin/zsh 
+
+Sent: 83 bytes
+Received:
+PRIVMSG MagicEma :DCC SEND "file.doc" 168493318 41107 6
+
+Sent: 59 bytes
+Received:
+:MagicEma!~Ident2@185-61-55-68.185-61-55-ip.fmo-solutions.nl PRIVMSG MagicEma :DCC SEND "file.doc" 168493318 41107 6
+
+Sent: 120 bytes

@@ -15,6 +15,8 @@ https://beej.us/guide/bgnet/html/
 
 http://chi.cs.uchicago.edu/chirc/index.html
 
+https://modern.ircdocs.horse/dcc.html
+
 ##  Pidgin
 rm -rf ~/.purple
 rm -rf ~/.config/pidgin
@@ -40,3 +42,10 @@ I also added the new modules in PATH
 export PKG_CONFIG_PATH=$HOME/.homebrew/lib/pkgconfig
 export LD_LIBRARY_PATH=$HOME/.homebrew/lib
 export GTK_PATH=$HOME/.homebrew/lib/gtk-2.0
+
+error 	C_LRED text + C_RESET variables + C_LRED rest of the text
+message C_RESET text + C_LCYAN variables + C_RESET rest of the text
+Joining C_RESET text + C_CYAN variables + C_RESET rest of the text
+leaving C_RED text + C_RESET variables + C_RED rest of the text
+
+sendMsg --> never forget \r\n, or never forgive
