@@ -65,6 +65,10 @@ void Parse::parseMsg(Client &user, Server *server){
 		cmd = user.getBuff().substr(0, spacePos);
 		arguments = user.getBuff().substr(spacePos + 1);
 	}
+	else {
+		cmd = user.getBuff().substr(0, spacePos);
+		args.push_back(arguments);
+	}
 	size_t colPos = arguments.find(':');
 	if (colPos != std::string::npos) {
 		std::string firstPart = arguments.substr(0, colPos);

@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/28 17:24:38 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/28 20:43:49 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,11 @@ e_command	mapToEnum(std::string cmd){
 }
 
 void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server){
+	if (args.size() == 0)
+		return ;
+		
 	e_command command = mapToEnum(cmd);
-
+	
 	if (command > CMD_SIZE_OPEN_INT && command < CMD_SIZE_REGISTERED_INT){
 		if (!user.getIsRegistered()){
 			user.userNotRegisteredMsg(cmd);
@@ -53,6 +56,8 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		}
 	}
 
+	/******************* Check double NICK with transfor !!!!********************************************************/
+		
 	switch (command) {
 		case CMD_USER:	Command::user(user, cmd, args); 						break;
 		case CMD_NICK:	Command::nick(user, cmd, args, server->getClientList());break;
@@ -386,7 +391,7 @@ static void	Command::unknownCmd(Client &user, const std::string &cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	user.sendMsg(":" + serverName + " 421 " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
 	if (verboseCheck()	>= V_USER)	
-		std::cout	<<	C_LRED	<<	"The command tyed is unknown" 
+		std::cout	<<	C_LRED	<<	"The command typed is unknown" 
 					<<	C_RESET	<<	std::endl;
 	return ;
 }
