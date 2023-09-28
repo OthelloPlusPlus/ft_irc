@@ -449,3 +449,7 @@ Received:
 :MagicEma!~Ident2@185-61-55-68.185-61-55-ip.fmo-solutions.nl PRIVMSG MagicEma :DCC SEND "file.doc" 168493318 41107 6
 
 Sent: 120 bytes
+
+PASS password
+USER ema * 12 :Hi
+NICK MAG
