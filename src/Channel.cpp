@@ -28,6 +28,8 @@
 Channel::Channel(std::string name, Server *server): name(name), topic(""), server(server),
 modeInvite(false), userLimit(0), modeTopic(false)
 {
+	if (!this->name.empty() && this->name.at(0) != '#')
+		this->name = '#' + this->name;
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< "Channel"
 				<< C_DGREEN	<< " called."
@@ -476,12 +478,20 @@ void	Channel::sendToChannel(const Client *exclude, const std::string msg) const
 // 		if ((*i).client != sender)
 // 			(*i).client->sendMsg(msg);
 // }
-
+#include <algorithm>
+// std::transform
 ChannelUser	*Channel::getChannelUser(std::string clientName)
 {
+	std::transform(clientName.begin(), clientName.end(), clientName.begin(), ::tolower);
+
 	for (std::vector<ChannelUser>::iterator user = this->users.begin(); user != this->users.end(); ++user)
-		if ((*user).client->getNickName() == clientName)
+	{
+		std::string	userName = (*user).client->getNickName();
+
+		std::transform(userName.begin(), userName.end(), userName.begin(), ::tolower);
+		if (userName == clientName)
 			return (&(*user));
+	}
 	return (nullptr);
 }
 
