@@ -254,7 +254,7 @@ void	Server::sendChannelList(Client &client) const
 void	Server::sendWho(Client &client, const std::string who) const
 {
 	{
-		Client	*whoClient = this->getClient(who);
+		AClient	*whoClient = this->getClient(who);
 
 		if (whoClient != nullptr)
 		{
@@ -274,7 +274,7 @@ void	Server::sendWho(Client &client, const std::string who) const
 void	Server::sendWhoIs(Client &client, const std::string who) const
 {
 	std::string	msg;
-	Client		*whoClient;
+	AClient		*whoClient;
 
 	msg = ":" + this->publicIP + " 000 " + client.getNickName() + " " + who + " ";
 	whoClient = this->getClient(who);
@@ -297,7 +297,7 @@ void	Server::sendWhoIs(Client &client, const std::string who) const
 
 void	Server::sendInvite(Client &client, const std::vector<std::string> &args)
 {
-	std::set<Client *>	name;
+	std::set<AClient *>	name;
 	std::set<Channel *>	channel;
 
 	for (std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i)
@@ -312,7 +312,7 @@ void	Server::sendInvite(Client &client, const std::vector<std::string> &args)
 		}
 		else
 		{
-			Client	*add = this->getClient(*i);
+			AClient	*add = this->getClient(*i);
 			if (add != nullptr && add != &client)
 				name.insert(add);
 			else
@@ -321,7 +321,7 @@ void	Server::sendInvite(Client &client, const std::vector<std::string> &args)
 	}
 	for (std::set<Channel *>::iterator i = channel.begin(); i != channel.end(); ++i)
 	{
-		for (std::set<Client *>::iterator j = name.begin(); j != name.end(); ++j)
+		for (std::set<AClient *>::iterator j = name.begin(); j != name.end(); ++j)
 		{
 			if (!(*i)->userIsInChannel(**j))
 				(*j)->sendMsg(':' + client.getNickName() + "!~" + client.getUserName() + '@' + client.getIpHostName() + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName() + "\r\n");
@@ -360,7 +360,7 @@ void	Server::sendPrivMsg(const Client &client, const std::vector<std::string> &a
 	}
 	else
 	{
-		Client	*user = getClient(name);
+		AClient	*user = getClient(name);
 
 		if (user != nullptr)
 			user->sendMsg(":" + client.getSourceName() + " PRIVMSG " + user->getNickName() + " " + msg + "\r\n");	
@@ -369,7 +369,7 @@ void	Server::sendPrivMsg(const Client &client, const std::vector<std::string> &a
 
 void	Server::checkClients(void)
 {
-	for (std::vector<Client *>::iterator client = this->clients.begin(); client != this->clients.end();)
+	for (std::vector<AClient *>::iterator client = this->clients.begin(); client != this->clients.end();)
 	{
 		if ((*client)->stillActive())
 		{
@@ -382,14 +382,14 @@ void	Server::checkClients(void)
 								<< C_RESET	<< std::flush;
 				if ((*client)->getNickName().empty())
 				{
-					Parse::parseMsg(**client, this);
+					Parse::parseMsg(*(dynamic_cast<Client *>(*client)), this);
 					if (!(*client)->getNickName().empty())
-						this->sendWelcome(**client);
-					if (verboseCheck() >= V_USER)
-						(*client)->printInfo();
+						this->sendWelcome(*(dynamic_cast<Client *>(*client)));
+					// if (verboseCheck() >= V_USER)
+					// 	(*client)->printInfo();
 				}
 				else
-					Parse::parseMsg(**client, this);
+					Parse::parseMsg(*(dynamic_cast<Client *>(*client)), this);
 			}
 			++client;
 		}
@@ -449,16 +449,16 @@ void	Server::partChannel(Client &client, const std::string channelName)
 		channel->removeUser(client);
 }
 
-std::vector<Client *>	Server::getClientList(void)
+std::vector<AClient *>	Server::getClientList(void)
 {
 	return (this->clients);
 }
 
-Client	*Server::getClient(std::string name) const
+AClient	*Server::getClient(std::string name) const
 {
 	std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
-	for (std::vector<Client *>::const_iterator client = this->clients.begin(); client != this->clients.end(); ++client)
+	for (std::vector<AClient *>::const_iterator client = this->clients.begin(); client != this->clients.end(); ++client)
 	{
 		std::string	clientName = (*client)->getNickName();
 

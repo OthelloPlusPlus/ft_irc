@@ -60,7 +60,7 @@ namespace Command
 	
 	static void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void password(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
-	static void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
+	static void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<AClient*> clients);
 	static void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	static void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	static void away(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);

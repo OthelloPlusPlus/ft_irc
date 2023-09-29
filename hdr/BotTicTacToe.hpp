@@ -8,8 +8,8 @@ class BotTicTacToe: public AClient
 	private:
 		int	pipeFD[2];
 
-		bool	readReceive(void);
-		void	botRespond(std::string msg);
+		bool		readReceive(void);
+		std::string	botRespond(std::string msg);
 		
 	protected:
 

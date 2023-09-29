@@ -18,6 +18,11 @@
 # else
 class Client;
 # endif
+# ifndef ACLIENT_HPP
+#  include "AClient.hpp"
+# else
+class AClient;
+# endif
 # ifndef CHANNEL_HPP
 #  include "Channel.hpp"
 # else
@@ -45,7 +50,7 @@ class Server
 		uint32_t				transferIP;
 
 		std::vector<Channel *>	channels;
-		std::vector<Client *>	clients;
+		std::vector<AClient *>	clients;
 		std::string				passwordUser;
 
 		// std::string	getHostIp(void);
@@ -71,8 +76,8 @@ class Server
 		int	validatePassword(const std::string password) const;
 		// bool	nicknameExists(const std::string nickname) const;
 
-		std::vector<Client *>	getClientList(void);
-		Client					*getClient(std::string name) const;
+		std::vector<AClient *>	getClientList(void);
+		AClient					*getClient(std::string name) const;
 		Channel					*getChannel(std::string channel) const;
 		std::string				getName(void) const;
 		const std::string		getIP(void) const;

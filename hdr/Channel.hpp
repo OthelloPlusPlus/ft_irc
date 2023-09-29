@@ -18,6 +18,11 @@
 # else
 class Client;
 # endif
+# ifndef ACLIENT_HPP
+#  include "Client.hpp"
+# else
+class AClient;
+# endif
 # ifndef SERVER_HPP
 #  include "Server.hpp"
 # else
@@ -31,7 +36,7 @@ class Server;
 
 struct ChannelUser
 {
-	Client			*client;
+	AClient			*client;
 	bool			admin;
 	unsigned int	timestamp;
 };
@@ -57,33 +62,33 @@ class Channel
 		Channel(const Channel &src);
 		~Channel(void);
 
-		void	addClient(Client &newClient, bool admin, const std::string password);
-		bool	addClientValidate(const Client &newClient, const std::string password);
+		void	addClient(AClient &newClient, bool admin, const std::string password);
+		bool	addClientValidate(const AClient &newClient, const std::string password);
 
-		// void	inviteClient(Client *client);
-		void	removeUser(const Client &client);
+		// void	inviteClient(AClient *client);
+		void	removeUser(const AClient &client);
 		void	promoteOldestUser(void);
 
-		// void	setAdmin(Client *target, bool status);
-		void	setMode(Client &client, std::string flag, std::string arg);
-		void	setModeI(Client &client, std::string flag);
-		void	setModeT(Client &client, std::string flag);
-		void	setModeK(Client &client, std::string flag, std::string newPass);
-		void	setModeO(Client &client, std::string flag, std::string targetName);
-		void	setModeL(Client &client, std::string flag, std::string count);
-		void	setTopic(Client &client, const std::string newTopic);
+		// void	setAdmin(AClient *target, bool status);
+		void	setMode(AClient &client, std::string flag, std::string arg);
+		void	setModeI(AClient &client, std::string flag);
+		void	setModeT(AClient &client, std::string flag);
+		void	setModeK(AClient &client, std::string flag, std::string newPass);
+		void	setModeO(AClient &client, std::string flag, std::string targetName);
+		void	setModeL(AClient &client, std::string flag, std::string count);
+		void	setTopic(AClient &client, const std::string newTopic);
 
-		void	sendTopic(Client &client) const;
-		void	sendNames(Client &client);
-		void	sendWho(Client &client);
+		void	sendTopic(AClient &client) const;
+		void	sendNames(AClient &client);
+		void	sendWho(AClient &client);
 		void	sendToChannel(const std::string msg) const;
-		void	sendToChannel(const Client &exclude, const std::string msg) const;
-		// void	sendPrivMsg(Client *sender, std::string msg);
-		void	sendMode(Client &client) const;
+		void	sendToChannel(const AClient &exclude, const std::string msg) const;
+		// void	sendPrivMsg(AClient *sender, std::string msg);
+		void	sendMode(AClient &client) const;
 
-		bool	userIsInChannel(const Client &client) const;
+		bool	userIsInChannel(const AClient &client) const;
 		ChannelUser	*getChannelUser(std::string clientName);
-		bool	userIsAdmin(const Client &client) const;
+		bool	userIsAdmin(const AClient &client) const;
 
 		std::string	getName(void) const;
 		// std::string	getTopic(void) const;

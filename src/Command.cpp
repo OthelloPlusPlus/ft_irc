@@ -187,7 +187,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 /* ************************************************************************** *\
 *				NICK														  *
 \* ************************************************************************** */
-static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params, std::vector<Client*> clients) {
+static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params, std::vector<AClient*> clients) {
 	
 	std::string nickname = params[0];
 
@@ -201,7 +201,7 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	for (std::vector<Client *>::const_iterator i = clients.begin(); i != clients.end(); ++i)
+	for (std::vector<AClient *>::const_iterator i = clients.begin(); i != clients.end(); ++i)
 		if ((*i)->getNickName() == nickname && (*i) != &user){
 			user.sendMsg(":" + serverName + " 433 * " + nickname + " " +  ERR_NICKNAMEINUSE);
 			if (verboseCheck()	>= V_USER)
@@ -338,8 +338,8 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 	
-	const std::vector<Client *> &clientList = server->getClientList();
-	for (std::vector<Client *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
+	const std::vector<AClient *> &clientList = server->getClientList();
+	for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
 			(*it)->setIsOperator(true);
 			user.sendMsg(":" + serverName + " 381 * " + (*it)->getNickName() + " " + RPL_YOUREOPER);
@@ -388,9 +388,9 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 	
-	const std::vector<Client *> &clientList = server->getClientList();
+	const std::vector<AClient *> &clientList = server->getClientList();
 
-	for (std::vector<Client *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
+	for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickName() == args[0]){
 			user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
 						(*it)->getNickName() + ": " + args[args.size()] + "\r\n");

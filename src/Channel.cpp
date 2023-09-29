@@ -67,7 +67,7 @@ Channel::~Channel(void)
  * 
 \* ************************************************************************** */
 
-void	Channel::addClient(Client &newClient, bool admin, const std::string password)
+void	Channel::addClient(AClient &newClient, bool admin, const std::string password)
 {
 	ChannelUser	newUser;
 
@@ -91,7 +91,7 @@ void	Channel::addClient(Client &newClient, bool admin, const std::string passwor
 	this->sendWho(*newUser.client);
 }
 
-bool	Channel::addClientValidate(const Client &newClient, const std::string password)
+bool	Channel::addClientValidate(const AClient &newClient, const std::string password)
 {
 	if (this->userIsInChannel(newClient))
 	{
@@ -134,7 +134,7 @@ bool	Channel::addClientValidate(const Client &newClient, const std::string passw
 	return (true);
 }
 
-void	Channel::removeUser(const Client &client)
+void	Channel::removeUser(const AClient &client)
 {
 	if (this->userIsInChannel(client))
 	{
@@ -164,7 +164,7 @@ void	Channel::promoteOldestUser(void)
 	this->sendToChannel(":" + this->server->getName() + " MODE " + this->name + " +o " + (*oldest).client->getNickName() + "\r\n");
 }
 
-void	Channel::sendMode(Client &client) const
+void	Channel::sendMode(AClient &client) const
 {
 	std::string	msg = ':' + this->server->getName() + " 324 " + client.getNickName() + ' ' + this->name + " \n";
 	if (this->modeInvite)
@@ -191,7 +191,7 @@ void	Channel::sendMode(Client &client) const
 	client.sendMsg(msg + "\r\n");
 }
 
-void	Channel::setMode(Client &client, std::string flag, std::string arg)
+void	Channel::setMode(AClient &client, std::string flag, std::string arg)
 {
 	if (!this->userIsAdmin(client))
 	{
@@ -224,7 +224,7 @@ void	Channel::setMode(Client &client, std::string flag, std::string arg)
 		std::cout	<< "Unknown flag "	<< flag	<< std::endl;
 }
 
-void	Channel::setModeI(Client &client, std::string flag)
+void	Channel::setModeI(AClient &client, std::string flag)
 {
 	if (flag[0] == '-')
 		this->modeInvite = false;
@@ -242,7 +242,7 @@ void	Channel::setModeI(Client &client, std::string flag)
 					<< C_RESET	<< std::endl;
 }
 
-void	Channel::setModeT(Client &client, std::string flag)
+void	Channel::setModeT(AClient &client, std::string flag)
 {
 	if (flag[0] == '-')
 		this->modeTopic = false;
@@ -260,7 +260,7 @@ void	Channel::setModeT(Client &client, std::string flag)
 					<< C_RESET	<< std::endl;
 }
 
-void	Channel::setModeK(Client &client, std::string flag, std::string newPass)
+void	Channel::setModeK(AClient &client, std::string flag, std::string newPass)
 {
 	if (newPass.empty())
 		return ;
@@ -304,7 +304,7 @@ void	Channel::setModeK(Client &client, std::string flag, std::string newPass)
 	}
 }
 
-void	Channel::setModeO(Client &client, std::string flag, std::string clientName)
+void	Channel::setModeO(AClient &client, std::string flag, std::string clientName)
 {
 	if (clientName.empty())
 		return ;
@@ -351,7 +351,7 @@ void	Channel::setModeO(Client &client, std::string flag, std::string clientName)
 	this->sendToChannel(':' + client.getNickName() + "!~" + client.getUserName() + '@' + client.getIpHostName() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
 }
 
-void	Channel::setModeL(Client &client, std::string flag, std::string count)
+void	Channel::setModeL(AClient &client, std::string flag, std::string count)
 {
 	int	oldLimit = this->userLimit;
 	int	newLimit = oldLimit;
@@ -381,7 +381,7 @@ void	Channel::setModeL(Client &client, std::string flag, std::string count)
 	}
 }
 
-void	Channel::setTopic(Client &client, const std::string newTopic)
+void	Channel::setTopic(AClient &client, const std::string newTopic)
 {
 	if (this->topic == newTopic || \
 		(this->topic.empty() && newTopic == "-"))
@@ -428,7 +428,7 @@ void	Channel::setTopic(Client &client, const std::string newTopic)
 	}
 }
 
-void	Channel::sendTopic(Client &client) const
+void	Channel::sendTopic(AClient &client) const
 {
 	std::string	msg;
 
@@ -436,7 +436,7 @@ void	Channel::sendTopic(Client &client) const
 	client.sendMsg(msg);
 }
 
-void	Channel::sendNames(Client &client)
+void	Channel::sendNames(AClient &client)
 {
 	std::string	msg;
 
@@ -452,7 +452,7 @@ void	Channel::sendNames(Client &client)
 	client.sendMsg(msg);
 }
 
-void	Channel::sendWho(Client &client)
+void	Channel::sendWho(AClient &client)
 {
 	std::string	msg;
 
@@ -481,7 +481,7 @@ void	Channel::sendToChannel(const std::string msg) const
 		(*i).client->sendMsg(msg);
 }
 
-void	Channel::sendToChannel(const Client &exclude, const std::string msg) const
+void	Channel::sendToChannel(const AClient &exclude, const std::string msg) const
 {
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 		if ((*i).client != &exclude)
@@ -503,7 +503,7 @@ ChannelUser	*Channel::getChannelUser(std::string clientName)
 	return (nullptr);
 }
 
-bool	Channel::userIsInChannel(const Client &client) const
+bool	Channel::userIsInChannel(const AClient &client) const
 {
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 		if ((*i).client == &client)
@@ -516,7 +516,7 @@ std::string	Channel::getName(void) const
 	return (this->name);
 }
 
-bool	Channel::userIsAdmin(const Client &client) const
+bool	Channel::userIsAdmin(const AClient &client) const
 {
 	if (client.getIsOperator())
 		return (true);

@@ -32,6 +32,11 @@ void	AClient::setServerName(std::string serverName)
 	this->_serverName = serverName;
 }
 
+void	AClient::setIpHostName(std::string IpHostName)
+{
+	this->_IpHostName = IpHostName;
+}
+
 void	AClient::setNickName(std::string nickName)
 {
 	this->_nickName = nickName;
@@ -39,7 +44,6 @@ void	AClient::setNickName(std::string nickName)
 
 void	AClient::setUserName(std::string userName)
 {
-	std::cout << "Here!" << std::endl;
 	this->_userName = userName;
 }
 
@@ -66,6 +70,11 @@ void	AClient::setBuffer(std::string buffer)
 const std::string	&AClient::getServerName(void) const
 {
 	return (this->_serverName);
+}
+
+const std::string	&AClient::getIpHostName(void) const
+{
+	return (this->_IpHostName);
 }
 
 const std::string	&AClient::getNickName(void) const
