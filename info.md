@@ -68,3 +68,10 @@ Joining C_RESET text + C_CYAN variables + C_RESET rest of the text
 leaving C_RED text + C_RESET variables + C_RED rest of the text
 
 sendMsg --> never forget \r\n, or never forgive
+
+## EWOULDBLOCK & EAGAIN
+
+EWOULDBLOCK & EAGAIN - typically used to indicate that a non-blocking socket operation 
+would block because there is no data available to read at the moment. 
+In other words, these error codes mean that the recv function didn't receive any data 
+because the socket is non-blocking and no data was immediately available.

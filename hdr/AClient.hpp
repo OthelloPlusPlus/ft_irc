@@ -13,7 +13,7 @@ class AClient
 		std::string	_nickName;
 		std::string	_userName; //Ident Name
 		std::string	_realName;
-		bool		_isRegsitered;
+		bool		_isRegistered;
 		bool		_isOperator;
 		std::string	_buffer;
 

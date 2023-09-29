@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/09/13 19:08:49 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/09/29 18:12:24 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,7 @@ void	Channel::setModeK(Client &client, std::string flag, std::string newPass)
 	if (newPass.empty())
 		return ;
 	std::string	clientAdr = ":" + client.getNickName() + "!~" + \
-							client.getIdentName() + '@' + client.getIpHostName();
+							client.getUserName() + '@' + client.getIpHostName();
 	if (flag[0] == '-')
 	{
 		if (this->key == newPass)
@@ -348,7 +348,7 @@ void	Channel::setModeO(Client &client, std::string flag, std::string clientName)
 						<< C_RESET	<< this->name
 						<< C_RESET	<< std::endl;
 	}
-	this->sendToChannel(':' + client.getNickName() + "!~" + client.getIdentName() + '@' + client.getIpHostName() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
+	this->sendToChannel(':' + client.getNickName() + "!~" + client.getUserName() + '@' + client.getIpHostName() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
 }
 
 void	Channel::setModeL(Client &client, std::string flag, std::string count)
@@ -460,7 +460,7 @@ void	Channel::sendWho(Client &client)
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	{
 		std::string	msgWho;
-		msgWho = msg +	(*i).client->getIdentName() + " " + \
+		msgWho = msg +	(*i).client->getUserName() + " " + \
 						(*i).client->getIpHostName() + " " + \
 						(*i).client->getServer() + " " + \
 						(*i).client->getNickName();

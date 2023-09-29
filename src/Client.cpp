@@ -6,11 +6,12 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/28 16:00:44 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/29 18:59:44 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
+#include "AClient.hpp"
 #include "colors.hpp"
 
 #include <iostream>
@@ -36,9 +37,7 @@
  * 
 \* ************************************************************************** */
 
-Client::Client(int serverFD) : _nickName(""), _userName(""), _identName(""), 
-								_realName(""), _IpHostName(""), _server(""), _isRegistered(false),
-								_isOperator(false), _hasPassword(false) {
+Client::Client(int serverFD) : AClient(""),_IpHostName(""), _server(""), _hasPassword(false) {
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called.\n"
@@ -47,9 +46,7 @@ Client::Client(int serverFD) : _nickName(""), _userName(""), _identName(""),
 	initialize(serverFD);
 }
 
-Client::Client(const Client &src) : _nickName(src._nickName), _userName(src._userName),
-								_identName(src._identName), _realName(src._realName),
-								_IpHostName(src._IpHostName), _server(src._server), _isRegistered(src._isRegistered),
+Client::Client(const Client &src) : AClient(""), _IpHostName(src._IpHostName), _server(src._server),
 								_hasPassword(src._hasPassword) {
 	*this = src;
 	std::cout	<< C_DGREEN	<< "Copy constructor "
@@ -102,7 +99,7 @@ void	Client::sendMsg(std::string msg) {
 					<< C_RESET	<< std::flush;
 }
 
-bool	Client::readReceive(int sockfd){
+bool	Client::readReceive(void){
 		char	buffer[4096];
 		ssize_t	recvLen;
 
@@ -145,7 +142,7 @@ std::string	Client::getMsg(void) {
 	if (pollConnection() == false)
 		return "";
 	if (this->pollInfo.revents & POLLIN) {
-		if(!readReceive(this->pollInfo.fd))
+		if(!readReceive())
 			return "";
 	}
 	std::string::size_type pos;
@@ -154,6 +151,7 @@ std::string	Client::getMsg(void) {
 		// Extract the complete message including the delimiter
 		this->_message = this->_buffer.substr(0, pos + 1);
 		this->_buffer.erase(0, pos + 1);
+
 		return this->_message;
 	}
 
@@ -164,16 +162,15 @@ bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
 }
 
-std::string	const & Client::getBuff(void)const { return _message;}
-std::string const & Client::getUserName(void) const  { return _userName; }
-std::string const & Client::getIdentName (void) const { return _identName; }
-std::string const & Client::getRealName(void) const  { return _realName; }
-std::string const & Client::getNickName(void) const  { return _nickName; }
+std::string	const & Client::getMessage(void)const { return _message;}
+// std::string const & Client::getUserName(void) const  { return _userName; }
+// std::string const & Client::getRealName(void) const  { return _realName; }
+// std::string const & Client::getNickName(void) const  { return _nickName; }
 std::string const & Client::getServer(void) const  { return _server; }
 std::string const & Client::getIpHostName(void) const  { return _IpHostName; }
 int const & Client::getPollInfofd(void) const { return pollInfo.fd; }
-bool Client::getIsRegistered(void) const  { return _isRegistered; }
-bool Client::getIsOperator(void) const  { return _isOperator; }
+// bool Client::getIsRegistered(void) const  { return _isRegistered; }
+// bool Client::getIsOperator(void) const  { return _isOperator; }
 bool Client::hasPassword(void) const  { return _hasPassword; }
 
 std::string	Client::getBestName( void ) const {
@@ -190,25 +187,22 @@ std::string Client::getSourceName(void) const {
     return info.str();
 }
 
-void Client::setBuff(std::string buffer){
-	this->_message = buffer;
+void Client::setMessage(std::string message){
+	this->_message = message;
 }
 
-void Client::setUserName(std::string username){
-	this->_userName = username;
-}
+// void Client::setUserName(std::string username){
+// 	this->_userName = username;
+// }
 
-void Client::setIdentName(std::string identname){
-	this->_identName = identname;
-}
 
-void Client::setRealName(std::string realname){
-	this->_realName = realname;
-}
+// void Client::setRealName(std::string realname){
+// 	this->_realName = realname;
+// }
 
-void Client::setNickName(std::string nickname){
-	this->_nickName = nickname;
-}
+// void Client::setNickName(std::string nickname){
+// 	this->_nickName = nickname;
+// }
 
 void Client::setServer(std::string server){
 	this->_server = server;
@@ -222,20 +216,20 @@ void Client::setIpHostName(std::string ipAddress){
 	this->_IpHostName = ipAddress;
 }
 
-void Client::setIsRegistered(bool val){
-	this->_isRegistered = val;
-}
+// void Client::setIsRegistered(bool val){
+// 	this->_isRegistered = val;
+// }
 
-void Client::setIsOperator(bool val){
-	this->_isOperator = val;
-}
+// void Client::setIsOperator(bool val){
+// 	this->_isOperator = val;
+// }
 
 void Client::setHasPassword(bool val){
 	this->_hasPassword = val;
 }
 
 void Client::userRegistration(void){
-	if (hasPassword() == true && !getNickName().empty() && !getIdentName().empty()){
+	if (hasPassword() == true && !getNickName().empty() && !getUserName().empty()){
 		setIsRegistered(true);
 		if (verboseCheck() >= V_USER){
 			std::cout	<< std::left 		<< C_HEADER	 
@@ -270,7 +264,7 @@ void	Client::printInfo(void) const {
 
 	if (verboseCheck() >= V_DETAILS){
 		std::cout << "this->getNickName()\t" << C_BLUE << this->getNickName() << C_RESET	<< std::endl;
-		std::cout << "this->getIdentName()\t" << C_BLUE << this->getIdentName() << C_RESET	<< std::endl;
+		std::cout << "this->getUserName()\t" << C_BLUE << this->getUserName() << C_RESET	<< std::endl;
 		std::cout << "this->getRealName()\t" << C_BLUE << this->getRealName() << C_RESET	<< std::endl;
 		std::cout << "this->getServer()\t" << C_BLUE << this->getServer() << C_RESET	<< std::endl;
 		std::cout << "this->getIpHostName()\t" << C_BLUE << this->getIpHostName() << C_RESET	<< std::endl;
@@ -302,7 +296,6 @@ Client	&Client::operator=(const Client &src) {
 	this->pollInfo = src.pollInfo;
 	this->_nickName = src._nickName;
 	this->_userName = src._userName;
-	this->_identName = src._identName;
 	this->_realName = src._realName;
 	this->_IpHostName = src._IpHostName;
 	this->_server = src._server;
@@ -315,11 +308,3 @@ Client	&Client::operator=(const Client &src) {
 
 	return (*this);
 }
-
-/*
-
-EWOULDBLOCK & EAGAIN)typically used to indicate that a non-blocking socket operation 
-would block because there is no data available to read at the moment. 
-In other words, these error codes mean that the recv function didn't receive any data 
-because the socket is non-blocking and no data was immediately available.
-*/

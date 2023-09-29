@@ -20,8 +20,8 @@ namespace
 //removed the trailing "\r\n"
 void cleanMsg(Client &user){
 	std::string del = "\r\n";
-	int end = user.getBuff().find_first_of(del, 0); 
-	user.setBuff(user.getBuff().substr(0, end)); 
+	int end = user.getMessage().find_first_of(del, 0); 
+	user.setMessage(user.getMessage().substr(0, end)); 
 }
 
 std::vector<std::string> ircSplitMulti(const std::string& input, const std::string& delimiters) {
@@ -60,13 +60,13 @@ void Parse::parseMsg(Client &user, Server *server){
 	std::vector<std::string>	args;
 	
 	cleanMsg(user);
-	size_t spacePos = user.getBuff().find(' ');
+	size_t spacePos = user.getMessage().find(' ');
 	if (spacePos != std::string::npos) {
-		cmd = user.getBuff().substr(0, spacePos);
-		arguments = user.getBuff().substr(spacePos + 1);
+		cmd = user.getMessage().substr(0, spacePos);
+		arguments = user.getMessage().substr(spacePos + 1);
 	}
 	else {
-		cmd = user.getBuff().substr(0, spacePos);
+		cmd = user.getMessage().substr(0, spacePos);
 		args.push_back(arguments);
 	}
 	size_t colPos = arguments.find(':');
@@ -85,6 +85,8 @@ void Parse::parseMsg(Client &user, Server *server){
 			args.push_back(arguments);
 		}
 	}
+	std::cout << __func__ << __LINE__ << "\tcmd\t [" << cmd << "]" << std::endl;
+
 	Command::parseCmd(user, cmd, args, server);
 }
 

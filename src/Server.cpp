@@ -281,7 +281,7 @@ void	Server::sendWhoIs(Client &client, const std::string who) const
 	if (whoClient)
 	{
 		msg.replace(msg.find(" 000 "), 5, " 311 ");
-		client.sendMsg(msg + whoClient->getIdentName() + " " + whoClient->getIpHostName() + " * :" + whoClient->getRealName() + "\r\n");
+		client.sendMsg(msg + whoClient->getUserName() + " " + whoClient->getIpHostName() + " * :" + whoClient->getRealName() + "\r\n");
 		msg.replace(msg.find(" 311 "), 5, " 312 ");
 		client.sendMsg(msg + this->publicIP + "\r\n");
 		msg.replace(msg.find(" 312 "), 5, " 318 ");
@@ -324,7 +324,7 @@ void	Server::sendInvite(Client &client, const std::vector<std::string> &args)
 		for (std::set<Client *>::iterator j = name.begin(); j != name.end(); ++j)
 		{
 			if (!(*i)->userIsInChannel(**j))
-				(*j)->sendMsg(':' + client.getNickName() + "!~" + client.getIdentName() + '@' + client.getIpHostName() + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName() + "\r\n");
+				(*j)->sendMsg(':' + client.getNickName() + "!~" + client.getUserName() + '@' + client.getIpHostName() + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName() + "\r\n");
 			else
 				client.sendMsg(':' + this->publicIP + " 443 " + client.getNickName() + ' ' + (*j)->getNickName() + ' ' + (*i)->getName() + " :is already on channel\r\n");
 		}

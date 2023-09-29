@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/16 15:46:37 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/09/20 18:41:54 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/29 19:08:56 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 // std::
 #include <string.h>
 // char *strerror(int errnum);
+#include <errno.h>
 
 bool	setEnv(void);
 

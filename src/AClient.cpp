@@ -1,4 +1,5 @@
 #include "AClient.hpp"
+#include <iostream>
 
 /** ************************************************************************ **\
  * 
@@ -7,7 +8,7 @@
 \* ************************************************************************** */
 
 AClient::AClient(std::string serverName): _serverName(serverName), \
-										_isRegsitered(false), _isOperator(false)
+										_isRegistered(false), _isOperator(false)
 {}
 
 /** ************************************************************************ **\
@@ -38,6 +39,7 @@ void	AClient::setNickName(std::string nickName)
 
 void	AClient::setUserName(std::string userName)
 {
+	std::cout << "Here!" << std::endl;
 	this->_userName = userName;
 }
 
@@ -48,7 +50,7 @@ void	AClient::setRealName(std::string realName)
 
 void	AClient::setIsRegistered(bool value)
 {
-	this->_isRegsitered = value;
+	this->_isRegistered = value;
 }
 
 void	AClient::setIsOperator(bool value)
@@ -83,7 +85,7 @@ const std::string	&AClient::getRealName(void) const
 
 const bool	&AClient::getIsRegistered(void) const
 {
-	return (this->_isRegsitered);
+	return (this->_isRegistered);
 }
 
 const bool	&AClient::getIsOperator(void) const
