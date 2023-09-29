@@ -10,13 +10,15 @@ INCL_HDR :=	$(shell find . -type f -name '*.hpp' -exec dirname "{}" \; | \
 					uniq | sed -e 's/^/-I/g')
 
 SRC =	$(SRC_MAIN:%.cpp=	$(SRC_DIR)%.cpp)\
+		$(SRC_ACLASS:%.cpp=	$(SRC_DIR)%.cpp)\
 		$(SRC_CLASS:%.cpp=	$(SRC_DIR)%.cpp)\
 		$(SRC_FUNC:%.cpp=	$(SRC_DIR)%.cpp)\
 		$(SRC_NMSPC:%.cpp=	$(SRC_DIR)%.cpp)
 
 SRC_DIR =	src/
 SRC_MAIN =	main.cpp
-SRC_CLASS =	Server.cpp Client.cpp Channel.cpp
+SRC_ACLASS = AClient.cpp
+SRC_CLASS =	Server.cpp Client.cpp Channel.cpp BotTicTacToe.cpp
 SRC_FUNC =	setEnv.cpp	verboseCheck.cpp
 SRC_NMSPC =	Parse.cpp Command.cpp
 # CommandNick.cpp CommandPass.cpp \
