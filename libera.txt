@@ -453,3 +453,6 @@ Sent: 120 bytes
 PASS password
 USER ema * 12 :Hi
 NICK MAG
+
+PRIVMSG Agent :DCC SEND "file.doc" 168493318 41107 6
+SEND Agent /home/emlicame/Desktop/file.doc 168493318 41107 6

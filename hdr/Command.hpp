@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/28 17:10:12 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/29 14:11:01 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,10 @@ enum	e_command
 	CMD_PASS, 
 	CMD_PING,
 	CMD_QUIT,
+	CMD_AWAY,
 	CMD_SIZE_OPEN,
 	
+	CMD_SEND,
 	CMD_PRIVMSG,
 	CMD_LIST,
 	CMD_JOIN,
@@ -43,7 +45,8 @@ enum	e_command
 	CMD_OPER,
 	CMD_KILL,
 	CMD_SIZE_OPER,
-
+	
+	CMD_EMPTY,
 	CMD_UNKNOWN
 };
 
@@ -60,8 +63,11 @@ namespace Command
 	static void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<Client*> clients);
 	static void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	static void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+	static void away(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	static void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
 	static void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+	static void sendFile(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server);
+
 	static void unknownCmd(Client &user, const std::string &cmd);
 }
 

@@ -42,7 +42,7 @@
 # define RPL_AWAY					"301"
 # define RPL_USERHOST				"302"
 # define RPL_UNAWAY					"305"
-# define RPL_NOWAWAY				"306"
+# define RPL_NOWAWAY				"306 :You have been marked as being away"
 # define RPL_WHOREPLY				"352"
 # define RPL_ENDOFWHO				"315"
 # define RPL_WHOISREGNICK			"307"

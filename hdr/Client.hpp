@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/22 20:14:19 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/29 13:34:54 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@
 #include <iostream>
 // std::
 #include <vector>
+
+struct FileTransfer
+{
+	std::string		targetName;
+	std::string		fileName;
+	std::string		hostTarget;
+	u_int32_t		port;
+};
 
 class Client
 {
@@ -54,39 +62,42 @@ class Client
 	public:
 		Client(int serverFD);
 		~Client(void);
-		std::string	const &getBuff(void) const;
-		std::string const &getUserName(void) const; 
-		std::string const &getIdentName(void) const;
-		std::string const &getRealName(void) const;
-		std::string const &getNickName(void) const;
-		std::string const &getServer(void) const; 		// server IP
-		std::string const &getIpHostName(void) const; 	// client IP
-		int const	&getPollInfofd(void) const; 
-		bool 		getIsRegistered(void) const;
-		bool 		getIsOperator(void) const;
-		bool		hasPassword(void) const;
-		std::string getBestName (void) const;
-		std::string getSourceName(void) const;
 
-		void setNickName(std::string nickname);
-		void setBuff(std::string buffer);
-		void userRegistration(void);
-		void setUserName(std::string username);
-		void setIdentName(std::string identname);
-		void setRealName(std::string realname);
-		void setServer(std::string server);
-		void setPollInfofd(int val);
-		void setIpHostName(std::string ipAddress);
-		void setIsRegistered(bool val);
-		void setIsOperator(bool val);
-		void setHasPassword(bool val);
-		bool stillActive(void) const;
+		std::vector<FileTransfer> fileTransfers;
+		
+		std::string	const &getBuff(void) const;
+		std::string	const &getUserName(void) const; 
+		std::string	const &getIdentName(void) const;
+		std::string	const &getRealName(void) const;
+		std::string	const &getNickName(void) const;
+		std::string	const &getServer(void) const; 		// server IP
+		std::string	const &getIpHostName(void) const; 	// client IP
+		int const	&getPollInfofd(void) const; 
+		bool		getIsRegistered(void) const;
+		bool		getIsOperator(void) const;
+		bool		hasPassword(void) const;
+		std::string	getBestName (void) const;
+		std::string	getSourceName(void) const;
+
+		void	setNickName(std::string nickname);
+		void	setBuff(std::string buffer);
+		void	userRegistration(void);
+		void	setUserName(std::string username);
+		void	setIdentName(std::string identname);
+		void	setRealName(std::string realname);
+		void	setServer(std::string server);
+		void	setPollInfofd(int val);
+		void	setIpHostName(std::string ipAddress);
+		void	setIsRegistered(bool val);
+		void	setIsOperator(bool val);
+		void	setHasPassword(bool val);
+		bool	stillActive(void) const;
 
 		std::string	getMsg(void);
-		void		sendMsg(std::string msg);
-		void		userNotRegisteredMsg(std::string cmd);
-		void		userNotOperatorMsg(std::string cmd);
-		void		printInfo(void) const;
+		void	sendMsg(std::string msg);
+		void	userNotRegisteredMsg(std::string cmd);
+		void	userNotOperatorMsg(std::string cmd);
+		void	printInfo(void) const;
 };
 
 #endif

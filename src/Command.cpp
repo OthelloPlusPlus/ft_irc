@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/28 20:43:49 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/29 14:31:45 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ e_command	mapToEnum(std::string cmd){
 	if (cmd == "PASS") return CMD_PASS;
 	if (cmd == "PING") return CMD_PING;
 	if (cmd == "QUIT") return CMD_QUIT;
+	if (cmd == "AWAY") return CMD_AWAY;
+	if (cmd == "SEND") return CMD_SEND;
 	if (cmd == "PRIVMSG") return CMD_PRIVMSG;
 	if (cmd == "LIST") return CMD_LIST;
 	if (cmd == "JOIN") return CMD_JOIN;
@@ -33,6 +35,7 @@ e_command	mapToEnum(std::string cmd){
 	if (cmd == "MODE") return CMD_MODE;
 	if (cmd == "OPER") return CMD_OPER;
 	if (cmd == "KILL") return CMD_KILL;
+	if (cmd == "") return CMD_EMPTY;
 	return CMD_UNKNOWN;
 }
 
@@ -64,17 +67,20 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		case CMD_PASS:	Command::password(user, cmd, args, server); 			break;
 		case CMD_PING:	Command::ping(user, cmd, args, server);					break;
 		case CMD_QUIT:	Command::quit(user, cmd, args, server);					break;
-		case CMD_PRIVMSG:	server->sendPrivMsg(user, args);					break;
+		case CMD_AWAY:	Command::away(user, cmd, args, server);					break;
+		case CMD_SEND:	Command::sendFile(user, cmd, args, server);				break;
+		case CMD_PRIVMSG:server->sendPrivMsg(user, args);						break;
 		case CMD_LIST:	server->sendChannelList(user);							break;
 		case CMD_JOIN:	server->joinChannel(user, args);						break;
-		case CMD_WHO:	server->sendWho(user, args[0]);						break;
+		case CMD_WHO:	server->sendWho(user, args[0]);							break;
 		case CMD_WHOIS:	server->sendWhoIs(user, args[0]);						break;
-		case CMD_PART:	server->partChannel(user, args[0]);					break;
-		case CMD_INVITE:server->sendInvite(user, args);						break;
+		case CMD_PART:	server->partChannel(user, args[0]);						break;
+		case CMD_INVITE:server->sendInvite(user, args);							break;
 		case CMD_TOPIC:	server->setChannelTopic(user, args);					break;
 		case CMD_MODE:	server->setChannelMode(user, args);						break;
 		case CMD_OPER:	Command::oper(user, cmd, args, server);					break;
 		case CMD_KILL:	Command::kill(user, cmd, args, server);					break;
+		case CMD_EMPTY:															break;
 		case CMD_SIZE_OPEN:														break;
 		case CMD_SIZE_REGISTERED:												break;
 		case CMD_SIZE_OPER:														break;
@@ -95,9 +101,9 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 *				USER														  *
 \* ************************************************************************** */
 static void	Command::user(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
-
+	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (user.getIsRegistered()){
-		user.sendMsg("462 " + user.getNickName() + " " + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + serverName + user.getNickName() + " " + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
 						<<	C_RESET	<<	user.getNickName()
@@ -107,7 +113,7 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 	}
 
 	if (args.size() < 4){
-		user.sendMsg("461 " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error: format required: USER <user name> * <host> :<realname>" 
 						<<	C_RESET	<<	std::endl;
@@ -140,7 +146,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.empty() || args[0].empty()){
-		user.sendMsg(":" + serverName + "461 " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Password not submitted. No imput provided"
 						<<	C_RESET	<<	std::endl;
@@ -148,7 +154,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 		return ;
 	}
 	if (user.getIsRegistered() == true){
-		user.sendMsg(":" + serverName + "462 " + user.getNickName() + " " + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + serverName + user.getNickName() + " " + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
 						<<	C_RESET	<<	user.getNickName()
@@ -159,7 +165,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 	
 	if (server->validatePassword(args[0]) != 1 && \
 		server->validatePassword(args[0]) != 2 ){
-		user.sendMsg(":" + serverName + "464 " + user.getBestName() + " " + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cerr	<<	C_LRED	<<	"Wrong password " 
 						<<	C_RESET	<<	user.getBestName() 
@@ -184,7 +190,7 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (nickname.empty()) {
-		user.sendMsg(":" + serverName + " 431 * " + ERR_NONICKNAMEGIVEN);
+		user.sendMsg(":" + serverName + ERR_NONICKNAMEGIVEN);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Nick name not provided " 
 						<<	C_RESET	<<	user.getBestName() 
@@ -273,6 +279,25 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 	
 	close (user.getPollInfofd());
 	user.setPollInfofd(-1); 
+}
+
+static void Command::away(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+	
+	if (!args[0].empty()){
+		user.sendMsg(":" + user.getBestName()+ " " + RPL_NOWAWAY);
+		if (verboseCheck()	>= V_USER)
+				std::cout	<<	C_RESET	<<	"User "
+							<<	C_LCYAN	<<	user.getBestName()
+							<<	C_RESET	<<	" is away"
+							<<	C_RESET	<<	std::endl;
+	}
+	/*
+RPL_NOWAWAY (306)
+
+"<client> :You have been marked as being away"
+
+Sent as a reply to the AWAY command, this lets the client know that they are set as being away. 
+The text used in the last param of this message may vary.*/	
 }
 
 /* ************************************************************************** *\
@@ -394,4 +419,51 @@ static void	Command::unknownCmd(Client &user, const std::string &cmd){
 		std::cout	<<	C_LRED	<<	"The command typed is unknown" 
 					<<	C_RESET	<<	std::endl;
 	return ;
+}
+
+
+/* ************************************************************************** *\
+*				SEND - File Transfer														  *
+\* ************************************************************************** */
+
+#include <fstream>
+
+static void	Command::sendFile(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+	std::string serverName = std::getenv("IRC_SERVNAME");
+
+	FileTransfer fileTransfer;
+	
+	if (args.size() < 4){
+		user.sendMsg(":" + serverName + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
+		if (verboseCheck()	>= V_USER)	
+			std::cout	<<	C_LRED	<<	"No imput provided. File transfer requires 3 parameters <file name> <host-IP address> <port>" 
+						<<	C_RESET	<<	std::endl;
+		return ;
+	}
+	if (args.size() >= 4) {
+			fileTransfer.targetName = args[0];
+			fileTransfer.fileName = args[1];
+			fileTransfer.hostTarget = server->getTransferIP();
+			fileTransfer.port = 59;
+
+			user.fileTransfers.push_back(fileTransfer);
+	
+		}
+		size_t	pos = fileTransfer.fileName.find_last_of('/');
+		std::string	fileName = fileTransfer.fileName.substr(pos + 1);
+		std::cout << C_MGNT << fileName << C_RESET <<std::endl;
+		
+		std::ifstream file(fileName, std::ios::binary);
+		if (!file) {
+			user.sendMsg(":" + serverName + " 402 " + fileTransfer.targetName + " " + ":Invalid file path\r\n");
+			return ;
+		}
+		// Read and send the file in chunks
+		const int bufferSize = 1024;
+		char buffer[bufferSize];
+		while (!file.eof()) {
+			file.read(buffer, bufferSize);
+			send(user.getPollInfofd(), buffer, file.gcount(), 0);	
+		}
+		file.close();
 }
