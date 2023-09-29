@@ -36,7 +36,7 @@ BotTicTacToe::BotTicTacToe(std::string serverName): AClient(serverName)
 	this->_nickName = "TicTacBot";
 	this->_userName = "TicTacToeBot";
 	this->_realName = "Tic-Tac-Toe playing Bot";
-	this->_isRegsitered = true;
+	this->_isRegistered = true;
 	this->_isOperator = false;
 	if (pipe(this->pipeFD) == -1)
 		throw(std::runtime_error("pipe(): "));
