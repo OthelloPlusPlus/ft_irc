@@ -60,7 +60,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 	}
 
 	/******************* Check double NICK with transfor !!!!********************************************************/
-	std::cout << __func__ << __LINE__ << "\tcmd\t [" << cmd << "]" << std::endl;
+	// std::cout << __func__ << __LINE__ << "\tcmd\t [" << cmd << "]" << std::endl;
 	switch (command) {
 		case CMD_USER:	Command::user(user, cmd, args); 						break;
 		case CMD_NICK:	Command::nick(user, cmd, args, server->getClientList());break;
@@ -101,7 +101,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 *				USER														  *
 \* ************************************************************************** */
 static void	Command::user(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
-	std::cout << __func__ << __LINE__ << "!!!!!!!!!!!!!!!!!!!!1user.getIsRegistered()" << user.getIsRegistered() << std::endl;
+	// std::cout << __func__ << __LINE__ << "!!!!!!!!!!!!!!!!!!!!1user.getIsRegistered()" << user.getIsRegistered() << std::endl;
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (user.getIsRegistered()){
 		user.sendMsg(":" + serverName + user.getNickName() + " " + ERR_ALREADYREGISTERED);
@@ -112,7 +112,7 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	std::cout << __func__ << __LINE__ << "args[0] " << args[0] << std::endl;
+	// std::cout << __func__ << __LINE__ << "args[0] " << args[0] << std::endl;
 
 	if (args.size() < 4){
 		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_NEEDMOREPARAMS);

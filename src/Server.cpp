@@ -215,7 +215,7 @@ void	Server::acceptClient(void)
 
 	try
 	{
-		Client	*newClient = new Client(this->pollInfo.fd);
+		Client	*newClient = new Client(*this);
 		this->clients.push_back(newClient);
 	}
 	catch(const std::exception& e)
@@ -489,6 +489,11 @@ Channel	*Server::getChannel(std::string name) const
 std::string	Server::getName(void) const
 {
 	return (this->serverName);
+}
+
+int		Server::getFD(void) const
+{
+	return (this->pollInfo.fd);
 }
 
 const std::string	Server::getIP(void) const

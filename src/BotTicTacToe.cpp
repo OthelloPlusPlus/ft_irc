@@ -31,7 +31,7 @@
  * 
 \* ************************************************************************** */
 
-BotTicTacToe::BotTicTacToe(std::string serverName): AClient(serverName)
+BotTicTacToe::BotTicTacToe(Server &server): AClient(server)
 {
 	this->_nickName = "TicTacBot";
 	this->_userName = "TicTacToeBot";
@@ -123,7 +123,7 @@ std::string	BotTicTacToe::botRespond(std::string msg)
 
 void	BotTicTacToe::sendMsg(std::string msg)
 {
-	msg = ':' + this->_serverName + ' ' + msg + "\r\n";
+	msg = ':' + this->_serverAdd.getName() + ' ' + msg + "\r\n";
 
 	ssize_t	size = send(this->pipeFD[0], msg.c_str(), msg.length(), 0);
 	if (verboseCheck() >= V_MSG)

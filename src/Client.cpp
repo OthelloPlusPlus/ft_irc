@@ -37,16 +37,16 @@
  * 
 \* ************************************************************************** */
 
-Client::Client(int serverFD) : AClient(""),_IpHostName(""), _server(""), _hasPassword(false) {
+Client::Client(Server &server) : AClient(server),_IpHostName(""), _server(""), _hasPassword(false) {
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called.\n"
 				<< C_LMGNT	<< "IRC OMS: To register please use commands PASS - NICK - USER(user_name * host :realname)."
 				<< C_RESET	<< std::endl;
-	initialize(serverFD);
+	initialize(server.getFD());
 }
 
-Client::Client(const Client &src) : AClient(""), _IpHostName(src._IpHostName), _server(src._server),
+Client::Client(const Client &src) : AClient(src._serverAdd), _IpHostName(src._IpHostName), _server(src._server),
 								_hasPassword(src._hasPassword) {
 	*this = src;
 	std::cout	<< C_DGREEN	<< "Copy constructor "

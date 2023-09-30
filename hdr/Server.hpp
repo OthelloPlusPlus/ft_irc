@@ -13,21 +13,9 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# ifndef CLIENT_HPP
-#  include "Client.hpp"
-# else
 class Client;
-# endif
-# ifndef ACLIENT_HPP
-#  include "AClient.hpp"
-# else
 class AClient;
-# endif
-# ifndef CHANNEL_HPP
-#  include "Channel.hpp"
-# else
 class Channel;
-# endif
 
 #include <string>
 // std::string
@@ -80,6 +68,7 @@ class Server
 		AClient					*getClient(std::string name) const;
 		Channel					*getChannel(std::string channel) const;
 		std::string				getName(void) const;
+		int						getFD(void) const;
 		const std::string		getIP(void) const;
 		uint32_t				getTransferIP(void) const;
 
@@ -98,5 +87,13 @@ class Server
 
 		Server	&operator=(const Server &src);
 };
+
+# include "Client.hpp"
+# include "AClient.hpp"
+# include "Channel.hpp"
+
+#else
+
+class Server;
 
 #endif

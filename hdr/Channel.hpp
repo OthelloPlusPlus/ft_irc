@@ -13,21 +13,9 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-# ifndef CLIENT_HPP
-#  include "Client.hpp"
-# else
-class Client;
-# endif
-# ifndef ACLIENT_HPP
-#  include "Client.hpp"
-# else
-class AClient;
-# endif
-# ifndef SERVER_HPP
-#  include "Server.hpp"
-# else
-class Server;
-# endif
+# include "Client.hpp"
+# include "Client.hpp"
+# include "Server.hpp"
 
 #include <string>
 // std::string
@@ -99,5 +87,9 @@ class Channel
 
 		Channel	&operator=(const Channel &src);
 };
+
+#else
+
+class Channel;
 
 #endif

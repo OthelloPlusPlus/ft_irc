@@ -7,8 +7,7 @@
  * 
 \* ************************************************************************** */
 
-AClient::AClient(std::string serverName): _serverName(serverName), \
-										_isRegistered(false), _isOperator(false)
+AClient::AClient(Server &server): _serverAdd(server), _isRegistered(false), _isOperator(false)
 {}
 
 /** ************************************************************************ **\
@@ -27,10 +26,10 @@ AClient::~AClient(void)
 \* ************************************************************************** */
 
 
-void	AClient::setServerName(std::string serverName)
-{
-	this->_serverName = serverName;
-}
+// void	AClient::setServerName(std::string serverName)
+// {
+// 	this->_serverName = serverName;
+// }
 
 void	AClient::setIpHostName(std::string IpHostName)
 {
@@ -67,10 +66,10 @@ void	AClient::setBuffer(std::string buffer)
 	this->_buffer = buffer;
 }
 
-const std::string	&AClient::getServerName(void) const
-{
-	return (this->_serverName);
-}
+// const std::string	&AClient::getServerName(void) const
+// {
+// 	return (this->_serverName);
+// }
 
 const std::string	&AClient::getIpHostName(void) const
 {

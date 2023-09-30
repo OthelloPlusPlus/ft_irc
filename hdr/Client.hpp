@@ -62,7 +62,7 @@ class Client : public AClient
 	
 
 	public:
-		Client(int serverFD);
+		Client(Server &server);
 		~Client(void);
 
 		std::vector<FileTransfer> fileTransfers;
@@ -99,5 +99,9 @@ class Client : public AClient
 		void	userNotOperatorMsg(std::string cmd);
 		void	printInfo(void) const;
 };
+
+#else
+
+class Client;
 
 #endif

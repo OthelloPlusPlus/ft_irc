@@ -85,7 +85,7 @@ void Parse::parseMsg(Client &user, Server *server){
 			args.push_back(arguments);
 		}
 	}
-	std::cout << __func__ << __LINE__ << "\tcmd\t [" << cmd << "]" << std::endl;
+	// std::cout << __func__ << __LINE__ << "\tcmd\t [" << cmd << "]" << std::endl;
 
 	Command::parseCmd(user, cmd, args, server);
 }
