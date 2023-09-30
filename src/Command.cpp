@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/29 18:39:28 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 15:33:16 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		}
 	}
 
-	/******************* Check double NICK with transfor !!!!********************************************************/
-	// std::cout << __func__ << __LINE__ << "\tcmd\t [" << cmd << "]" << std::endl;
 	switch (command) {
 		case CMD_USER:	Command::user(user, cmd, args); 						break;
 		case CMD_NICK:	Command::nick(user, cmd, args, server->getClientList());break;
@@ -101,7 +99,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 *				USER														  *
 \* ************************************************************************** */
 static void	Command::user(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
-	// std::cout << __func__ << __LINE__ << "!!!!!!!!!!!!!!!!!!!!1user.getIsRegistered()" << user.getIsRegistered() << std::endl;
+
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (user.getIsRegistered()){
 		user.sendMsg(":" + serverName + user.getNickName() + " " + ERR_ALREADYREGISTERED);
@@ -112,7 +110,6 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	// std::cout << __func__ << __LINE__ << "args[0] " << args[0] << std::endl;
 
 	if (args.size() < 4){
 		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
@@ -122,7 +119,6 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 		return ;
 	}
 
-	// std::cout << __func__ << __LINE__ << "args[0] " << args[0] << std::endl;
 	user.setUserName(args[0]);
 	if (args[1] != "*"){
 		if (verboseCheck()	>= V_USER)
@@ -294,13 +290,6 @@ static void Command::away(Client &user, const std::string &cmd, const std::vecto
 							<<	C_RESET	<<	" is away"
 							<<	C_RESET	<<	std::endl;
 	}
-	/*
-RPL_NOWAWAY (306)
-
-"<client> :You have been marked as being away"
-
-Sent as a reply to the AWAY command, this lets the client know that they are set as being away. 
-The text used in the last param of this message may vary.*/	
 }
 
 /* ************************************************************************** *\
@@ -344,7 +333,6 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 			(*it)->setIsOperator(true);
 			user.sendMsg(":" + serverName + " 381 * " + (*it)->getNickName() + " " + RPL_YOUREOPER);
 			//set Mode +o
-			//server->setChannelMode(it, "o", (*it)->getNickName());
 			if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_RESET	<<	"User "
 							<<	C_LCYAN	<<	(*it)->getNickName()
