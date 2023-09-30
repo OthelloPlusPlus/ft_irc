@@ -26,6 +26,18 @@ AClient::~AClient(void)
 \* ************************************************************************** */
 
 
+void	AClient::printInfo(void) const
+{
+	std::cout	<< "this->_clientIP\t"	<< this->_clientIP	<< '\n'
+				<< "this->_nickName\t"	<< this->_nickName	<< '\n'
+				<< "this->_userName\t"	<< this->_userName	<< '\n'
+				<< "this->_realName\t"	<< this->_realName	<< '\n'
+				<< "this->_isRegistered\t"	<< this->_isRegistered	<< '\n'
+				<< "this->_isOperator\t"	<< this->_isOperator	<< '\n'
+				<< "this->_buffer\t"	<< this->_buffer	<< '\n'
+				<< std::flush;
+}
+
 // void	AClient::setServerName(std::string serverName)
 // {
 // 	this->_serverName = serverName;

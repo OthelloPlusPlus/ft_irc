@@ -30,6 +30,7 @@ class AClient
 		virtual void		sendMsg(std::string msg) = 0;
 		virtual bool		stillActive(void) const = 0;
 		virtual void		closeFD(void) = 0;
+		virtual void		printInfo(void) const;
 
 		void	setClientIP(std::string clientIP);
 		void	setNickName(std::string nickName);
