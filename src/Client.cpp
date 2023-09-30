@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/29 18:59:44 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 16:17:14 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ bool	Client::pollConnection(void)
 		return (false);
 	if (this->pollInfo.revents & (POLLERR | POLLHUP))
 	{
-		std::cout   << "closing "   << this->_nickName  << "'s FD." << std::endl;
 		close(this->pollInfo.fd);
 		this->pollInfo.fd = -1;
 		return (false);
@@ -149,10 +148,11 @@ std::string	Client::getMsg(void) {
 	if (!this->_buffer.empty() && (pos = this->_buffer.find("\n")) != std::string::npos)
 	{
 		// Extract the complete message including the delimiter
-		this->_message = this->_buffer.substr(0, pos + 1);
+		std::string msg;
+		msg = this->_buffer.substr(0, pos + 1);
 		this->_buffer.erase(0, pos + 1);
 
-		return this->_message;
+		return msg;
 	}
 
 	return "";
@@ -162,16 +162,11 @@ bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
 }
 
-std::string	const & Client::getMessage(void)const { return _message;}
-// std::string const & Client::getUserName(void) const  { return _userName; }
-// std::string const & Client::getRealName(void) const  { return _realName; }
-// std::string const & Client::getNickName(void) const  { return _nickName; }
 std::string const & Client::getServer(void) const  { return _server; }
 std::string const & Client::getIpHostName(void) const  { return _IpHostName; }
 int const & Client::getPollInfofd(void) const { return pollInfo.fd; }
-// bool Client::getIsRegistered(void) const  { return _isRegistered; }
-// bool Client::getIsOperator(void) const  { return _isOperator; }
 bool Client::hasPassword(void) const  { return _hasPassword; }
+
 
 std::string	Client::getBestName( void ) const {
 	if (!this->_nickName.empty())
@@ -187,23 +182,6 @@ std::string Client::getSourceName(void) const {
     return info.str();
 }
 
-void Client::setMessage(std::string message){
-	this->_message = message;
-}
-
-// void Client::setUserName(std::string username){
-// 	this->_userName = username;
-// }
-
-
-// void Client::setRealName(std::string realname){
-// 	this->_realName = realname;
-// }
-
-// void Client::setNickName(std::string nickname){
-// 	this->_nickName = nickname;
-// }
-
 void Client::setServer(std::string server){
 	this->_server = server;
 }
@@ -215,14 +193,6 @@ void Client::setPollInfofd(int val){
 void Client::setIpHostName(std::string ipAddress){
 	this->_IpHostName = ipAddress;
 }
-
-// void Client::setIsRegistered(bool val){
-// 	this->_isRegistered = val;
-// }
-
-// void Client::setIsOperator(bool val){
-// 	this->_isOperator = val;
-// }
 
 void Client::setHasPassword(bool val){
 	this->_hasPassword = val;
@@ -242,7 +212,6 @@ void Client::userRegistration(void){
 		printInfo();
 	}
 }
-
 
 void	Client::userNotRegisteredMsg(std::string cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
@@ -274,13 +243,6 @@ void	Client::printInfo(void) const {
 		std::cout << std::endl;
 	}	
 }
-	// std::cout	<< "socketAddress.sin_addr.s_addr\t"	
-	//				<< this->socketAddress.sin_addr.s_addr	<< "\n"
-	// 				<< "PollInfo.fd\t"	<< this->pollInfo.fd	<< "\n"
-	// 				<< std::flush;
-// std::cout	<< __func__	<< " " <<  __LINE__	<< std::endl;
-// this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");
-
 
 /** ************************************************************************ **\
  * 
@@ -302,9 +264,49 @@ Client	&Client::operator=(const Client &src) {
 	this->_isRegistered = src._isRegistered;
 	this->_hasPassword = src._hasPassword;
 	this->_buffer = src._buffer;
-	this->_message = src._message;
+	// this->_message = src._message;
 
 	// this->   = src. ; ????
 
 	return (*this);
 }
+
+// std::string	const & Client::getMessage(void)const { return _message;}
+// std::string const & Client::getUserName(void) const  { return _userName; }
+// std::string const & Client::getRealName(void) const  { return _realName; }
+// std::string const & Client::getNickName(void) const  { return _nickName; }
+// bool Client::getIsRegistered(void) const  { return _isRegistered; }
+// bool Client::getIsOperator(void) const  { return _isOperator; }
+
+// void Client::setMessage(std::string message){
+// 	this->_message = message;
+// }
+
+// void Client::setUserName(std::string username){
+// 	this->_userName = username;
+// }
+
+
+// void Client::setRealName(std::string realname){
+// 	this->_realName = realname;
+// }
+
+// void Client::setNickName(std::string nickname){
+// 	this->_nickName = nickname;
+// }
+
+
+// void Client::setIsRegistered(bool val){
+// 	this->_isRegistered = val;
+// }
+
+// void Client::setIsOperator(bool val){
+// 	this->_isOperator = val;
+// }
+
+// std::cout	<< "socketAddress.sin_addr.s_addr\t"	
+//				<< this->socketAddress.sin_addr.s_addr	<< "\n"
+// 				<< "PollInfo.fd\t"	<< this->pollInfo.fd	<< "\n"
+// 				<< std::flush;
+// std::cout	<< __func__	<< " " <<  __LINE__	<< std::endl;
+// this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");
