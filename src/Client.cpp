@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 16:17:14 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 19:27:25 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
  * 
 \* ************************************************************************** */
 
-Client::Client(Server &server) : AClient(server), _hasPassword(false) {
+Client::Client(Server &server) : AClient(server), _password(false) {
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called.\n"
@@ -46,8 +46,7 @@ Client::Client(Server &server) : AClient(server), _hasPassword(false) {
 	initialize(server.getFD());
 }
 
-Client::Client(const Client &src) : AClient(src._server),
-								_hasPassword(src._hasPassword) {
+Client::Client(const Client &src) : AClient(src._server), _password(src._password) {
 	*this = src;
 	std::cout	<< C_DGREEN	<< "Copy constructor "
 				<< C_GREEN	<< "Client"
@@ -112,10 +111,7 @@ bool	Client::readReceive(void){
 			return false;
 		}
 		if (recvLen == 0) {
-			if (this->getPollInfofd() != -1){
-				close(this->pollInfo.fd);
-				this->pollInfo.fd = -1;
-			}
+			this->closeFD();
 			std::cout	<< "Client " << getBestName() << " disconnected from server."	<< std::endl;
 			return false;
 		}
@@ -163,10 +159,7 @@ bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
 }
 
-// std::string const & Client::getServer(void) const  { return _server; }
-// std::string const & Client::getIpHostName(void) const  { return _IpHostName; }
-int const & Client::getPollInfofd(void) const { return pollInfo.fd; }
-bool Client::hasPassword(void) const  { return _hasPassword; }
+bool Client::hasPassword(void) const  { return _password; }
 
 
 std::string	Client::getBestName( void ) const {
@@ -195,13 +188,16 @@ void Client::setPollInfofd(int val){
 // 	this->_IpHostName = ipAddress;
 // }
 
-void Client::setHasPassword(bool val){
-	this->_hasPassword = val;
+void Client::passwordValidation(bool val){
+	this->_password = val;
 }
+// void Client::setIsRegistered(bool val){
+// 	this->_isRegistered = val;
+// }
 
-void Client::userRegistration(void){
+void	Client::setIsRegistered(bool val){
 	if (hasPassword() == true && !getNickName().empty() && !getUserName().empty()){
-		setIsRegistered(true);
+		this->_isRegistered = true;
 		if (verboseCheck() >= V_USER){
 			std::cout	<< std::left 		<< C_HEADER	 
 						<< getNickName() 	<< " is now registered in the " << std::getenv("IRC_SERVNAME")
@@ -214,21 +210,21 @@ void Client::userRegistration(void){
 	}
 }
 
-void	Client::userNotRegisteredMsg(std::string cmd){
-	std::string serverName = std::getenv("IRC_SERVNAME");
-	if (verboseCheck() >= V_USER)
-		std::cout 	<< C_LRED << serverName << " User " << C_RESET << this->getBestName() 
-					<< C_LRED " needs to be registered for the " << C_RESET << cmd 
-					<< C_LRED " command" << C_RESET << std::endl;
-}
+// void	Client::userNotRegisteredMsg(std::string cmd){
+// 	std::string serverName = std::getenv("IRC_SERVNAME");
+// 	if (verboseCheck() >= V_USER)
+// 		std::cout 	<< C_LRED << serverName << " User " << C_RESET << this->getBestName() 
+// 					<< C_LRED " needs to be registered for the " << C_RESET << cmd 
+// 					<< C_LRED " command" << C_RESET << std::endl;
+// }
 
-void	Client::userNotOperatorMsg(std::string cmd){
-	std::string serverName = std::getenv("IRC_SERVNAME");
-	if (verboseCheck() >= V_USER)
-		std::cout 	<< C_LRED << serverName << "User " << C_RESET << this->getBestName() 
-					<< C_LRED " needs to be operator for the " << C_RESET << cmd 
-					<< C_LRED " command" << C_RESET << std::endl;
-}
+// void	Client::userNotOperatorMsg(std::string cmd){
+// 	std::string serverName = std::getenv("IRC_SERVNAME");
+// 	if (verboseCheck() >= V_USER)
+// 		std::cout 	<< C_LRED << serverName << "User " << C_RESET << this->getBestName() 
+// 					<< C_LRED " needs to be operator for the " << C_RESET << cmd 
+// 					<< C_LRED " command" << C_RESET << std::endl;
+// }
 
 void	Client::printInfo(void) const {
 
@@ -246,8 +242,10 @@ void	Client::printInfo(void) const {
 
 void	Client::closeFD(void)
 {
-	close(this->pollInfo.fd);
-	this->pollInfo.fd = -1;
+	if (this->pollInfo.fd > 2) {
+		close(this->pollInfo.fd);
+		this->pollInfo.fd = -1;
+	}
 }
 
 /** ************************************************************************ **\
@@ -268,7 +266,7 @@ Client	&Client::operator=(const Client &src) {
 	// this->_IpHostName = src._IpHostName;
 	this->_server = src._server;
 	this->_isRegistered = src._isRegistered;
-	this->_hasPassword = src._hasPassword;
+	this->_password = src._password;
 	this->_buffer = src._buffer;
 	// this->_message = src._message;
 
@@ -302,9 +300,6 @@ Client	&Client::operator=(const Client &src) {
 // }
 
 
-// void Client::setIsRegistered(bool val){
-// 	this->_isRegistered = val;
-// }
 
 // void Client::setIsOperator(bool val){
 // 	this->_isOperator = val;

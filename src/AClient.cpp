@@ -38,6 +38,11 @@ void	AClient::printInfo(void) const
 				<< std::flush;
 }
 
+void	AClient::passwordValidation(bool val)
+{
+	(void)val;
+}
+
 // void	AClient::setServerName(std::string serverName)
 // {
 // 	this->_serverName = serverName;
@@ -55,6 +60,7 @@ void	AClient::setClientIP(std::string clientIP)
 void	AClient::setNickName(std::string nickName)
 {
 	this->_nickName = nickName;
+	// this->updateRegistered();
 }
 
 void	AClient::setUserName(std::string userName)

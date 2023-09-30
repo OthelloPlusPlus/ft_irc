@@ -26,22 +26,22 @@ class AClient
 		AClient(Server &server);
 		virtual ~AClient(void) = 0;
 
-		virtual std::string	getMsg(void) = 0;
-		virtual void		sendMsg(std::string msg) = 0;
 		virtual bool		stillActive(void) const = 0;
 		virtual void		closeFD(void) = 0;
+		virtual std::string	getMsg(void) = 0;
+		virtual void		sendMsg(std::string msg) = 0;
+
+		virtual void		passwordValidation(bool val);
+		virtual void		setIsRegistered(bool value);
 		virtual void		printInfo(void) const;
+		virtual std::string	getSourceName(void) const;
 
 		void	setClientIP(std::string clientIP);
 		void	setNickName(std::string nickName);
 		void	setUserName(std::string userName);
 		void	setRealName(std::string realName);
-		void	setIsRegistered(bool value);
 		void	setIsOperator(bool value);
 		void	setBuffer(std::string buffer);
-
-		virtual std::string	getSourceName(void) const;
-
 		Server				*getServer(void) const;
 		const std::string	&getClientIP(void) const;
 		const std::string	&getNickName(void) const;

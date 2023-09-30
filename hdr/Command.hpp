@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 17:00:56 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 18:45:21 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ namespace Command
 	static void sendFile(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 
 	static void unknownCmd(Client &user, const std::string &cmd);
+
+	static void	userNotRegisteredMsg(Client &user, std::string cmd);
+	static void	userNotOperatorMsg(Client &user, std::string cmd);
 }
 
 #endif

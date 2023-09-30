@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 16:13:59 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 19:19:17 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,7 @@ class Client : public AClient
 		socklen_t			socketAddressLen;
 		struct pollfd		pollInfo;
 		
-		// std::string			_server;
-		bool				_hasPassword;
+		bool				_password;
 
 		Client(const Client &src);
 		Client	&operator=(const Client &src);
@@ -48,6 +47,8 @@ class Client : public AClient
 		void	initialize(int serverFd);
 		bool	readReceive(void);
 		bool	pollConnection(void);
+		bool	hasPassword(void) const;
+		void	setPollInfofd(int val);
 
 
 	protected:	
@@ -57,28 +58,20 @@ class Client : public AClient
 		~Client(void);
 
 		std::vector<FileTransfer> fileTransfers;
-		
-		// std::string	const &getServer(void) const; 		// server IP
-		// std::string	const &getIpHostName(void) const; 	// client IP
-		int const	&getPollInfofd(void) const; 
-		bool		hasPassword(void) const;
-		std::string	getBestName (void) const;
-		std::string	getSourceName(void) const;
-
-		
-		void	userRegistration(void);
-		// void	setServer(std::string server);
-		void	setPollInfofd(int val);
-		void	setHasPassword(bool val);
-		bool	stillActive(void) const;
 
 		std::string	getMsg(void);
-		void	sendMsg(std::string msg);
-		void	userNotRegisteredMsg(std::string cmd);
-		void	userNotOperatorMsg(std::string cmd);
-		void	printInfo(void) const;
+		void		sendMsg(std::string msg);
+		void		printInfo(void) const;
+		
+		std::string	getBestName (void) const; // remove - use getnickName
+		std::string	getSourceName(void) const;
 
-		void	closeFD(void);
+		void		passwordValidation(bool val);
+		void		setIsRegistered(bool val);
+
+
+		bool		stillActive(void) const;
+		void		closeFD(void);
 };
 
 #else
@@ -106,5 +99,4 @@ class Client;
 		// void	setNickName(std::string nickname);
 		// void	setUserName(std::string username);
 		// void	setRealName(std::string realname);
-		// void	setIsRegistered(bool val);
 		// void	setIsOperator(bool val);

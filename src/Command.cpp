@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 17:26:49 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 19:26:35 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,26 +47,26 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 	
 	if (command > CMD_SIZE_OPEN_INT && command < CMD_SIZE_REGISTERED_INT){
 		if (!user.getIsRegistered()){
-			user.userNotRegisteredMsg(cmd);
+			userNotRegisteredMsg(user, cmd);
 			return;
 		}
 	}
 
 	if (command > CMD_SIZE_REGISTERED_INT && command < CMD_SIZE_OPER_INT){
 		if (!user.getIsOperator()){
-			user.userNotOperatorMsg(cmd);
+			userNotOperatorMsg(user, cmd);
 			return;
 		}
 	}
 
 	switch (command) {
-		case CMD_USER:		Command::user(user, cmd, args); 					break;
-		case CMD_NICK:		Command::nick(user, cmd, args);						break;
-		case CMD_PASS:		Command::password(user, cmd, args); 				break;
-		case CMD_PING:		Command::ping(user, cmd, args);						break;
-		case CMD_QUIT:		Command::quit(user, cmd, args);						break;
-		case CMD_AWAY:		Command::away(user, cmd, args);						break;
-		case CMD_SEND:		Command::sendFile(user, cmd, args);					break;
+		case CMD_USER:		Command::user(user, cmd, args);					break;
+		case CMD_NICK:		Command::nick(user, cmd, args);					break;
+		case CMD_PASS:		Command::password(user, cmd, args);				break;
+		case CMD_PING:		Command::ping(user, cmd, args);					break;
+		case CMD_QUIT:		Command::quit(user, cmd, args);					break;
+		case CMD_AWAY:		Command::away(user, cmd, args);					break;
+		case CMD_SEND:		Command::sendFile(user, cmd, args);				break;
 		case CMD_PRIVMSG:	user.getServer()->sendPrivMsg(user, args);		break;
 		case CMD_LIST:		user.getServer()->sendChannelList(user);		break;
 		case CMD_JOIN:		user.getServer()->joinChannel(user, args);		break;
@@ -76,13 +76,13 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		case CMD_INVITE:	user.getServer()->sendInvite(user, args);		break;
 		case CMD_TOPIC:		user.getServer()->setChannelTopic(user, args);	break;
 		case CMD_MODE:		user.getServer()->setChannelMode(user, args);	break;
-		case CMD_OPER:		Command::oper(user, cmd, args);						break;
-		case CMD_KILL:		Command::kill(user, cmd, args);						break;
-		case CMD_EMPTY:															break;
-		case CMD_SIZE_OPEN:														break;
-		case CMD_SIZE_REGISTERED:												break;
-		case CMD_SIZE_OPER:														break;
-		case CMD_UNKNOWN:	Command::unknownCmd(user, cmd);						break;
+		case CMD_OPER:		Command::oper(user, cmd, args);					break;
+		case CMD_KILL:		Command::kill(user, cmd, args);					break;
+		case CMD_EMPTY:														break;
+		case CMD_SIZE_OPEN:													break;
+		case CMD_SIZE_REGISTERED:											break;
+		case CMD_SIZE_OPER:													break;
+		case CMD_UNKNOWN:	Command::unknownCmd(user, cmd);					break;
 	}
 }
 
@@ -137,7 +137,7 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 	}
 	user.setRealName(temp);
 	
-	user.userRegistration();
+	user.setIsRegistered(true);
 }
 
 /* ************************************************************************** *\
@@ -171,15 +171,13 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 						<<	C_RESET	<<	user.getBestName() 
 						<<	C_LRED	<<	" disconnected from server" 
 						<<	C_RESET	<<	std::endl;
-		// close (user.getPollInfofd());
-		// user.setPollInfofd(-1); 
 		user.closeFD();
 		return ;
 	}
 	if (user.getServer()->validatePassword(args[0]) == 2)
 		user.setIsOperator(true);
-	user.setHasPassword(true);
-	user.userRegistration();
+	user.passwordValidation(true);
+	user.setIsRegistered(true);
 }
 
 /* ************************************************************************** *\
@@ -230,7 +228,7 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 		}
 	}
 	user.setNickName(nickname);
-	user.userRegistration();
+	user.setIsRegistered(true);
 }
 
 /* ************************************************************************** *\
@@ -277,9 +275,6 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 						<<	C_RESET	<<	" is exiting the network"
 						<<	C_RESET	<<	std::endl;
 	}
-	
-	// close (user.getPollInfofd());
-	// user.setPollInfofd(-1); 
 	user.closeFD();
 }
 
@@ -383,8 +378,6 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 		if ((*it)->getNickName() == args[0]){
 			user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
 						(*it)->getNickName() + ": " + args[args.size()] + "\r\n");
-			// close ((*it)->getPollInfofd());
-			// (*it)->setPollInfofd(-1);
 			(*it)->closeFD();
 			if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_LRED	<<	"User " 
@@ -459,4 +452,20 @@ static void	Command::sendFile(Client &user, const std::string &cmd, const std::v
 		// 	send(user.getPollInfofd(), buffer, file.gcount(), 0);
 		// }
 		file.close();
+}
+
+static void	Command::userNotRegisteredMsg(Client &user, std::string cmd){
+	std::string serverName = std::getenv("IRC_SERVNAME");
+	if (verboseCheck() >= V_USER)
+		std::cout 	<< C_LRED << serverName << " User " << C_RESET << user.getBestName() 
+					<< C_LRED " needs to be registered for the " << C_RESET << cmd 
+					<< C_LRED " command" << C_RESET << std::endl;
+}
+
+static void	Command::userNotOperatorMsg(Client &user, std::string cmd){
+	std::string serverName = std::getenv("IRC_SERVNAME");
+	if (verboseCheck() >= V_USER)
+		std::cout 	<< C_LRED << serverName << "User " << C_RESET << user.getBestName() 
+					<< C_LRED " needs to be operator for the " << C_RESET << cmd 
+					<< C_LRED " command" << C_RESET << std::endl;
 }
