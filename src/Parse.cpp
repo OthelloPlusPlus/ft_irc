@@ -55,7 +55,7 @@ std::vector<std::string> ircSplit( const std::string& input, const std::string& 
 
 }
 
-void Parse::parseMsg(Client &user, Server *server, std::string msg){
+void Parse::parseMsg(Client &user, std::string msg){
 	std::string cmd;
 	std::string arguments;
 	std::vector<std::string>	args;
@@ -87,7 +87,7 @@ void Parse::parseMsg(Client &user, Server *server, std::string msg){
 		}
 	}
 
-	Command::parseCmd(user, cmd, args, server);
+	Command::parseCmd(user, cmd, args);
 }
 
 

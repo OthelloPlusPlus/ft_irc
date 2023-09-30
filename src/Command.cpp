@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 16:05:25 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 16:52:48 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ e_command	mapToEnum(std::string cmd){
 	return CMD_UNKNOWN;
 }
 
-void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server){
+void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args){
 	if (args.size() == 0)
 		return ;
 		
@@ -62,11 +62,11 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 	switch (command) {
 		case CMD_USER:	Command::user(user, cmd, args); 						break;
 		case CMD_NICK:	Command::nick(user, cmd, args, server->getClientList());break;
-		case CMD_PASS:	Command::password(user, cmd, args, server); 			break;
-		case CMD_PING:	Command::ping(user, cmd, args, server);					break;
-		case CMD_QUIT:	Command::quit(user, cmd, args, server);					break;
-		case CMD_AWAY:	Command::away(user, cmd, args, server);					break;
-		case CMD_SEND:	Command::sendFile(user, cmd, args, server);				break;
+		case CMD_PASS:	Command::password(user, cmd, args); 					break;
+		case CMD_PING:	Command::ping(user, cmd, args);							break;
+		case CMD_QUIT:	Command::quit(user, cmd, args);							break;
+		case CMD_AWAY:	Command::away(user, cmd, args);							break;
+		case CMD_SEND:	Command::sendFile(user, cmd, args);						break;
 		case CMD_PRIVMSG:server->sendPrivMsg(user, args);						break;
 		case CMD_LIST:	server->sendChannelList(user);							break;
 		case CMD_JOIN:	server->joinChannel(user, args);						break;
@@ -76,8 +76,8 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		case CMD_INVITE:server->sendInvite(user, args);							break;
 		case CMD_TOPIC:	server->setChannelTopic(user, args);					break;
 		case CMD_MODE:	server->setChannelMode(user, args);						break;
-		case CMD_OPER:	Command::oper(user, cmd, args, server);					break;
-		case CMD_KILL:	Command::kill(user, cmd, args, server);					break;
+		case CMD_OPER:	Command::oper(user, cmd, args);							break;
+		case CMD_KILL:	Command::kill(user, cmd, args);							break;
 		case CMD_EMPTY:															break;
 		case CMD_SIZE_OPEN:														break;
 		case CMD_SIZE_REGISTERED:												break;
@@ -141,7 +141,7 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 /* ************************************************************************** *\
 *				PASS														  *
 \* ************************************************************************** */
-static void Command::password(Client &user, const std::string& cmd, const std::vector<std::string>& args, Server *server) {
+static void Command::password(Client &user, const std::string& cmd, const std::vector<std::string>& args) {
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.empty() || args[0].empty()){
@@ -162,7 +162,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 		return ;
 	}
 	
-	if (server->validatePassword(args[0]) != 1 && \
+	if (user.getServer() server->validatePassword(args[0]) != 1 && \
 		server->validatePassword(args[0]) != 2 ){
 		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
@@ -234,7 +234,7 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 /* ************************************************************************** *\
 *				PING														  *
 \* ************************************************************************** */
-static void Command::ping(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+static void Command::ping(Client &user, const std::string &cmd, const std::vector<std::string> &args){
 	if (args.empty() || args[0].empty()){
 		std::string serverName = std::getenv("IRC_SERVNAME");
 		user.sendMsg(":" + serverName + "461 * " + cmd + " " + ERR_NEEDMOREPARAMS);
@@ -252,7 +252,7 @@ static void Command::ping(Client &user, const std::string &cmd, const std::vecto
 *				QUIT														  *
 \* ************************************************************************** */
 #include <fcntl.h>
-static void	Command::quit(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+static void	Command::quit(Client &user, const std::string &cmd, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
@@ -280,7 +280,7 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 	user.setPollInfofd(-1); 
 }
 
-static void Command::away(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+static void Command::away(Client &user, const std::string &cmd, const std::vector<std::string> &args){
 	
 	if (!args[0].empty()){
 		user.sendMsg(":" + user.getBestName()+ " " + RPL_NOWAWAY);
@@ -295,7 +295,7 @@ static void Command::away(Client &user, const std::string &cmd, const std::vecto
 /* ************************************************************************** *\
 *				OPER														  *
 \* ************************************************************************** */
-static void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+static void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
@@ -355,7 +355,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 /* ************************************************************************** *\
 *				KILL														  *
 \* ************************************************************************** */
-static void	Command::kill(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+static void	Command::kill(Client &user, const std::string &cmd, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
@@ -419,7 +419,7 @@ static void	Command::unknownCmd(Client &user, const std::string &cmd){
 
 #include <fstream>
 
-static void	Command::sendFile(Client &user, const std::string &cmd, const std::vector<std::string> &args, Server *server){
+static void	Command::sendFile(Client &user, const std::string &cmd, const std::vector<std::string> &args){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 
 	FileTransfer fileTransfer;

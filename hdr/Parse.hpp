@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 18:37:36 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 15:35:29 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 16:48:57 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 namespace Parse
 {
-    void parseMsg(Client &user, Server *server, std::string msg);
+    void parseMsg(Client &user, std::string msg);
 
 }
 
