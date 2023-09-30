@@ -39,8 +39,7 @@ class Client : public AClient
 		socklen_t			socketAddressLen;
 		struct pollfd		pollInfo;
 		
-		std::string			_IpHostName;
-		std::string			_server;
+		// std::string			_server;
 		bool				_hasPassword;
 
 		Client(const Client &src);
@@ -59,8 +58,8 @@ class Client : public AClient
 
 		std::vector<FileTransfer> fileTransfers;
 		
-		std::string	const &getServer(void) const; 		// server IP
-		std::string	const &getIpHostName(void) const; 	// client IP
+		// std::string	const &getServer(void) const; 		// server IP
+		// std::string	const &getIpHostName(void) const; 	// client IP
 		int const	&getPollInfofd(void) const; 
 		bool		hasPassword(void) const;
 		std::string	getBestName (void) const;
@@ -68,9 +67,8 @@ class Client : public AClient
 
 		
 		void	userRegistration(void);
-		void	setServer(std::string server);
+		// void	setServer(std::string server);
 		void	setPollInfofd(int val);
-		void	setIpHostName(std::string ipAddress);
 		void	setHasPassword(bool val);
 		bool	stillActive(void) const;
 
@@ -79,6 +77,8 @@ class Client : public AClient
 		void	userNotRegisteredMsg(std::string cmd);
 		void	userNotOperatorMsg(std::string cmd);
 		void	printInfo(void) const;
+
+		void	closeFD(void);
 };
 
 #else

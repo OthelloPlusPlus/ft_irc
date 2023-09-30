@@ -123,13 +123,27 @@ std::string	BotTicTacToe::botRespond(std::string msg)
 
 void	BotTicTacToe::sendMsg(std::string msg)
 {
-	msg = ':' + this->_serverAdd.getName() + ' ' + msg + "\r\n";
+	msg = ':' + this->_server.getName() + ' ' + msg + "\r\n";
 
 	ssize_t	size = send(this->pipeFD[0], msg.c_str(), msg.length(), 0);
 	if (verboseCheck() >= V_MSG)
 		std::cout	<< C_RESET	<< "Send ["	<< size	<< "]\t"
 					<< C_LORANGE	<< msg
 					<< C_RESET	<< std::flush;
+}
+
+void	BotTicTacToe::closeFD(void)
+{
+	if (this->pipeFD[0] > 2)
+	{
+		close(this->pipeFD[0]);
+		this->pipeFD[0] = -1;
+	}
+	if (this->pipeFD[1] > 2)
+	{
+		close(this->pipeFD[1]);
+		this->pipeFD[1] = -1;
+	}
 }
 
 /** ************************************************************************ **\

@@ -265,7 +265,7 @@ void	Channel::setModeK(AClient &client, std::string flag, std::string newPass)
 	if (newPass.empty())
 		return ;
 	std::string	clientAdr = ":" + client.getNickName() + "!~" + \
-							client.getUserName() + '@' + client.getIpHostName();
+							client.getUserName() + '@' + client.getClientIP();
 	if (flag[0] == '-')
 	{
 		if (this->key == newPass)
@@ -348,7 +348,7 @@ void	Channel::setModeO(AClient &client, std::string flag, std::string clientName
 						<< C_RESET	<< this->name
 						<< C_RESET	<< std::endl;
 	}
-	this->sendToChannel(':' + client.getNickName() + "!~" + client.getUserName() + '@' + client.getIpHostName() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
+	this->sendToChannel(':' + client.getNickName() + "!~" + client.getUserName() + '@' + client.getClientIP() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
 }
 
 void	Channel::setModeL(AClient &client, std::string flag, std::string count)
@@ -461,8 +461,7 @@ void	Channel::sendWho(AClient &client)
 	{
 		std::string	msgWho;
 		msgWho = msg +	(*i).client->getUserName() + " " + \
-						(*i).client->getIpHostName() + " " + \
-						(*i).client->getServer() + " " + \
+						(*i).client->getClientIP() + " " + \
 						(*i).client->getNickName();
 		if ((*i).admin == true)
 			msgWho += " H@:0 ";
@@ -540,6 +539,11 @@ size_t	Channel::getAdminSize(void) const
 		if ((*user).admin == true)
 			++size;
 	return (size);
+}
+
+std::string	Channel::getTopic(void) const
+{
+	return (this->topic);
 }
 
 // void	Channel::printClientList(void) const

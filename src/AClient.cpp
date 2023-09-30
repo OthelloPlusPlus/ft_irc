@@ -7,7 +7,7 @@
  * 
 \* ************************************************************************** */
 
-AClient::AClient(Server &server): _serverAdd(server), _isRegistered(false), _isOperator(false)
+AClient::AClient(Server &server): _server(server), _isRegistered(false), _isOperator(false)
 {}
 
 /** ************************************************************************ **\
@@ -26,15 +26,31 @@ AClient::~AClient(void)
 \* ************************************************************************** */
 
 
+void	AClient::printInfo(void) const
+{
+	std::cout	<< "this->_clientIP\t"	<< this->_clientIP	<< '\n'
+				<< "this->_nickName\t"	<< this->_nickName	<< '\n'
+				<< "this->_userName\t"	<< this->_userName	<< '\n'
+				<< "this->_realName\t"	<< this->_realName	<< '\n'
+				<< "this->_isRegistered\t"	<< this->_isRegistered	<< '\n'
+				<< "this->_isOperator\t"	<< this->_isOperator	<< '\n'
+				<< "this->_buffer\t"	<< this->_buffer	<< '\n'
+				<< std::flush;
+}
+
 // void	AClient::setServerName(std::string serverName)
 // {
 // 	this->_serverName = serverName;
 // }
-
-void	AClient::setIpHostName(std::string IpHostName)
+void	AClient::setClientIP(std::string clientIP)
 {
-	this->_IpHostName = IpHostName;
+	this->_clientIP = clientIP;
 }
+
+// void	AClient::setIpHostName(std::string IpHostName)
+// {
+// 	this->_IpHostName = IpHostName;
+// }
 
 void	AClient::setNickName(std::string nickName)
 {
@@ -71,15 +87,20 @@ void	AClient::setBuffer(std::string buffer)
 // 	return (this->_serverName);
 // }
 
-Server	*AClient::getServerAddr(void) const
+Server	*AClient::getServer(void) const
 {
-	return (&this->_serverAdd);
+	return (&this->_server);
 }
 
-const std::string	&AClient::getIpHostName(void) const
+const std::string	&AClient::getClientIP(void) const
 {
-	return (this->_IpHostName);
+	return (this->_clientIP);
 }
+
+// const std::string	&AClient::getIpHostName(void) const
+// {
+// 	return (this->_IpHostName);
+// }
 
 const std::string	&AClient::getNickName(void) const
 {
@@ -109,4 +130,9 @@ const bool	&AClient::getIsOperator(void) const
 const std::string	&AClient::getBuffer(void) const
 {
 	return (this->_buffer);
+}
+
+std::string	AClient::getSourceName(void) const
+{
+	return (this->_nickName + " !~" + this->_userName + '@' + this->_clientIP);
 }
