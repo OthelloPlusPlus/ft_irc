@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 16:52:48 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 17:12:19 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,29 +60,29 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 	}
 
 	switch (command) {
-		case CMD_USER:	Command::user(user, cmd, args); 						break;
-		case CMD_NICK:	Command::nick(user, cmd, args, server->getClientList());break;
-		case CMD_PASS:	Command::password(user, cmd, args); 					break;
-		case CMD_PING:	Command::ping(user, cmd, args);							break;
-		case CMD_QUIT:	Command::quit(user, cmd, args);							break;
-		case CMD_AWAY:	Command::away(user, cmd, args);							break;
-		case CMD_SEND:	Command::sendFile(user, cmd, args);						break;
-		case CMD_PRIVMSG:server->sendPrivMsg(user, args);						break;
-		case CMD_LIST:	server->sendChannelList(user);							break;
-		case CMD_JOIN:	server->joinChannel(user, args);						break;
-		case CMD_WHO:	server->sendWho(user, args[0]);							break;
-		case CMD_WHOIS:	server->sendWhoIs(user, args[0]);						break;
-		case CMD_PART:	server->partChannel(user, args[0]);						break;
-		case CMD_INVITE:server->sendInvite(user, args);							break;
-		case CMD_TOPIC:	server->setChannelTopic(user, args);					break;
-		case CMD_MODE:	server->setChannelMode(user, args);						break;
-		case CMD_OPER:	Command::oper(user, cmd, args);							break;
-		case CMD_KILL:	Command::kill(user, cmd, args);							break;
+		case CMD_USER:		Command::user(user, cmd, args); 					break;
+		case CMD_NICK:		Command::nick(user, cmd, args);						break;
+		case CMD_PASS:		Command::password(user, cmd, args); 				break;
+		case CMD_PING:		Command::ping(user, cmd, args);						break;
+		case CMD_QUIT:		Command::quit(user, cmd, args);						break;
+		case CMD_AWAY:		Command::away(user, cmd, args);						break;
+		case CMD_SEND:		Command::sendFile(user, cmd, args);					break;
+		case CMD_PRIVMSG:	user.getServerAddr()->sendPrivMsg(user, args);		break;
+		case CMD_LIST:		user.getServerAddr()->sendChannelList(user);		break;
+		case CMD_JOIN:		user.getServerAddr()->joinChannel(user, args);		break;
+		case CMD_WHO:		user.getServerAddr()->sendWho(user, args[0]);		break;
+		case CMD_WHOIS:		user.getServerAddr()->sendWhoIs(user, args[0]);		break;
+		case CMD_PART:		user.getServerAddr()->partChannel(user, args[0]);	break;
+		case CMD_INVITE:	user.getServerAddr()->sendInvite(user, args);		break;
+		case CMD_TOPIC:		user.getServerAddr()->setChannelTopic(user, args);	break;
+		case CMD_MODE:		user.getServerAddr()->setChannelMode(user, args);	break;
+		case CMD_OPER:		Command::oper(user, cmd, args);						break;
+		case CMD_KILL:		Command::kill(user, cmd, args);						break;
 		case CMD_EMPTY:															break;
 		case CMD_SIZE_OPEN:														break;
 		case CMD_SIZE_REGISTERED:												break;
 		case CMD_SIZE_OPER:														break;
-		case CMD_UNKNOWN:Command::unknownCmd(user, cmd);						break;
+		case CMD_UNKNOWN:	Command::unknownCmd(user, cmd);						break;
 	}
 }
 
@@ -162,8 +162,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 		return ;
 	}
 	
-	if (user.getServer() server->validatePassword(args[0]) != 1 && \
-		server->validatePassword(args[0]) != 2 ){
+	if (user.getServerAddr()->validatePassword(args[0]) == 0 ){
 		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cerr	<<	C_LRED	<<	"Wrong password " 
@@ -174,7 +173,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 		user.setPollInfofd(-1); 
 		return ;
 	}
-	if (server->validatePassword(args[0]) == 2)
+	if (user.getServerAddr()->validatePassword(args[0]) == 2)
 		user.setIsOperator(true);
 	user.setHasPassword(true);
 	user.userRegistration();
@@ -183,10 +182,10 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 /* ************************************************************************** *\
 *				NICK														  *
 \* ************************************************************************** */
-static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params, std::vector<AClient*> clients) {
+static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params) {
 	
 	std::string nickname = params[0];
-
+	std::vector<AClient*> clients = user.getServerAddr()->getClientList();
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (nickname.empty()) {
 		user.sendMsg(":" + serverName + ERR_NONICKNAMEGIVEN);
@@ -245,7 +244,7 @@ static void Command::ping(Client &user, const std::string &cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	server->sendPong(user, args[0]);
+	user.getServerAddr()->sendPong(user, args[0]);
 }
 
 /* ************************************************************************** *\
@@ -308,7 +307,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 		
-	if (server->validatePassword(args[1]) != 2){
+	if (user.getServerAddr()->validatePassword(args[1]) != 2){
 		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + " " + cmd + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong password. Command " 
@@ -327,7 +326,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 	
-	const std::vector<AClient *> &clientList = server->getClientList();
+	const std::vector<AClient *> &clientList = user.getServerAddr()->getClientList();
 	for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
 			(*it)->setIsOperator(true);
@@ -340,7 +339,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 							<<	C_RESET	<<	std::endl;
 			break;
 		}
-		if (it == server->getClientList().end()){
+		if (it == clientList.end()){
 				user.sendMsg(":" + serverName + " 491 * " + (*it)->getNickName() + " " + cmd + ERR_NOOPERHOST);
 				if (verboseCheck()	>= V_USER)
 					std::cout	<<	C_LRED	<<	"Request rejected  " 
@@ -376,8 +375,7 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 	
-	const std::vector<AClient *> &clientList = server->getClientList();
-
+	const std::vector<AClient *> &clientList = user.getServerAddr()->getClientList();
 	for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickName() == args[0]){
 			user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
@@ -391,7 +389,7 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 							<<	C_RESET	<<	args[args.size()] << std::endl;
 			break;
 		}
-		if (it == server->getClientList().end()){
+		if (it == clientList.end()){
 				user.sendMsg(":" + serverName + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
 				if (verboseCheck() >= V_USER)
 					std::cout 	<<	C_LRED	<<	"Server or user "
@@ -434,7 +432,7 @@ static void	Command::sendFile(Client &user, const std::string &cmd, const std::v
 	if (args.size() >= 4) {
 			fileTransfer.targetName = args[0];
 			fileTransfer.fileName = args[1];
-			fileTransfer.hostTarget = server->getTransferIP();
+			fileTransfer.hostTarget = user.getServerAddr()->getTransferIP();
 			fileTransfer.port = 59;
 
 			user.fileTransfers.push_back(fileTransfer);

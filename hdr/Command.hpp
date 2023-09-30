@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 16:49:54 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 17:00:56 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ namespace Command
 	
 	static void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void password(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args, std::vector<AClient*> clients);
+	static void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void away(Client &user, const std::string &cmd, const std::vector<std::string> &args);

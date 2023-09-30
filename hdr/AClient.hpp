@@ -43,7 +43,7 @@ class AClient
 		void	setBuffer(std::string buffer);
 
 		// const std::string	&getServerName(void) const;
-		const Server		*getServerAddr(void) const;
+		Server				*getServerAddr(void) const;
 		const std::string	&getIpHostName(void) const;
 		const std::string	&getNickName(void) const;
 		const std::string	&getUserName(void) const;
