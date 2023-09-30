@@ -58,10 +58,3 @@ The de facto standard has always been to run IRC on 6667/TCP and nearby port num
 Use "/help <command>" for help on a specific command.
 The following commands are available in this context:
 action, authserv, away, chanserv, clear, clearall, ctcp, debug, deop, devoice, help, invite, j, join, kick, list, me, me, memoserv, mode, msg, names, nick, nickserv, notice, op, operserv, operwall, part, ping, query, quit, quote, remove, say, time, topic, umode, version, voice, wallops, whois, whowas.
-
-Received:
-AWAY :Away
-
-Sent: 12 bytes
-Received:
-:copper.libera.chat 306 MagicEma :You have been marked as being away

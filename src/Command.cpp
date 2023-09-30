@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 17:12:19 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/30 17:26:49 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,9 +280,9 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 }
 
 static void Command::away(Client &user, const std::string &cmd, const std::vector<std::string> &args){
-	
+	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
-		user.sendMsg(":" + user.getBestName()+ " " + RPL_NOWAWAY);
+		user.sendMsg(":" + serverName + " " + user.getBestName()+ " " + RPL_NOWAWAY);
 		if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_RESET	<<	"User "
 							<<	C_LCYAN	<<	user.getBestName()
@@ -331,7 +331,6 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 		if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
 			(*it)->setIsOperator(true);
 			user.sendMsg(":" + serverName + " 381 * " + (*it)->getNickName() + " " + RPL_YOUREOPER);
-			//set Mode +o
 			if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_RESET	<<	"User "
 							<<	C_LCYAN	<<	(*it)->getNickName()
