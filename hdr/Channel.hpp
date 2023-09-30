@@ -13,9 +13,8 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-# include "Client.hpp"
-# include "Client.hpp"
-# include "Server.hpp"
+class AClient;
+class Server;
 
 #include <string>
 // std::string
@@ -82,11 +81,15 @@ class Channel
 		// std::string	getTopic(void) const;
 		size_t		getSize(void) const;
 		size_t		getAdminSize(void) const;
+		std::string getTopic(void) const;
 
 		// void	printClientList(void) const;
 
 		Channel	&operator=(const Channel &src);
 };
+
+# include "AClient.hpp"
+# include "Server.hpp"
 
 #else
 

@@ -11,10 +11,9 @@ class AClient
 	private:
 
 	protected:
-		Server		&_serverAdd;
-		// std::string	&_serverName;
-		std::string	_IpHostName;
+		Server		&_server;
 
+		std::string	_clientIP;
 		std::string	_nickName;
 		std::string	_userName; //Ident Name
 		std::string	_realName;
@@ -23,8 +22,6 @@ class AClient
 	
 		std::string	_buffer;
 
-		int			_temp;
-
 	public:
 		AClient(Server &server);
 		virtual ~AClient(void) = 0;
@@ -32,9 +29,9 @@ class AClient
 		virtual std::string	getMsg(void) = 0;
 		virtual void		sendMsg(std::string msg) = 0;
 		virtual bool		stillActive(void) const = 0;
+		virtual void		closeFD(void) = 0;
 
-		// void	setServerName(std::string serverName);
-		void	setIpHostName(std::string IpHostName);
+		void	setClientIP(std::string clientIP);
 		void	setNickName(std::string nickName);
 		void	setUserName(std::string userName);
 		void	setRealName(std::string realName);
@@ -42,25 +39,16 @@ class AClient
 		void	setIsOperator(bool value);
 		void	setBuffer(std::string buffer);
 
-		// const std::string	&getServerName(void) const;
-		Server				*getServerAddr(void) const;
-		const std::string	&getIpHostName(void) const;
+		virtual std::string	getSourceName(void) const;
+
+		Server				*getServer(void) const;
+		const std::string	&getClientIP(void) const;
 		const std::string	&getNickName(void) const;
 		const std::string	&getUserName(void) const;
 		const std::string	&getRealName(void) const;
 		const bool			&getIsRegistered(void) const;
 		const bool			&getIsOperator(void) const;
 		const std::string	&getBuffer(void) const;
-
-		virtual std::string	getSourceName(void) const
-			{return ("AOthello");}
-		virtual std::string	const &getServer(void) const
-			{return (this->_IpHostName);}
-		virtual int const	&getPollInfofd(void) const
-			{return (this->_temp);}
-		virtual void	setPollInfofd(int val)
-			{this->_temp = val;}
-		
 };
 
 #include "Server.hpp"

@@ -21,6 +21,7 @@ class BotTicTacToe: public AClient
 		std::string	getMsg(void);
 		void		sendMsg(std::string msg);
 		bool		stillActive(void) const;
+		void		closeFD(void);
 };
 
 # include "Server.hpp"

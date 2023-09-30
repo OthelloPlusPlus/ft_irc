@@ -67,15 +67,15 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		case CMD_QUIT:		Command::quit(user, cmd, args);						break;
 		case CMD_AWAY:		Command::away(user, cmd, args);						break;
 		case CMD_SEND:		Command::sendFile(user, cmd, args);					break;
-		case CMD_PRIVMSG:	user.getServerAddr()->sendPrivMsg(user, args);		break;
-		case CMD_LIST:		user.getServerAddr()->sendChannelList(user);		break;
-		case CMD_JOIN:		user.getServerAddr()->joinChannel(user, args);		break;
-		case CMD_WHO:		user.getServerAddr()->sendWho(user, args[0]);		break;
-		case CMD_WHOIS:		user.getServerAddr()->sendWhoIs(user, args[0]);		break;
-		case CMD_PART:		user.getServerAddr()->partChannel(user, args[0]);	break;
-		case CMD_INVITE:	user.getServerAddr()->sendInvite(user, args);		break;
-		case CMD_TOPIC:		user.getServerAddr()->setChannelTopic(user, args);	break;
-		case CMD_MODE:		user.getServerAddr()->setChannelMode(user, args);	break;
+		case CMD_PRIVMSG:	user.getServer()->sendPrivMsg(user, args);		break;
+		case CMD_LIST:		user.getServer()->sendChannelList(user);		break;
+		case CMD_JOIN:		user.getServer()->joinChannel(user, args);		break;
+		case CMD_WHO:		user.getServer()->sendWho(user, args[0]);		break;
+		case CMD_WHOIS:		user.getServer()->sendWhoIs(user, args[0]);		break;
+		case CMD_PART:		user.getServer()->partChannel(user, args[0]);	break;
+		case CMD_INVITE:	user.getServer()->sendInvite(user, args);		break;
+		case CMD_TOPIC:		user.getServer()->setChannelTopic(user, args);	break;
+		case CMD_MODE:		user.getServer()->setChannelMode(user, args);	break;
 		case CMD_OPER:		Command::oper(user, cmd, args);						break;
 		case CMD_KILL:		Command::kill(user, cmd, args);						break;
 		case CMD_EMPTY:															break;
@@ -126,7 +126,9 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	user.setServer(args[2]);
+	// std::cout	<< __func__	<< __LINE__	<< args[2]	<< std::endl;
+	// user.setClientIP(args[2]);
+	// std::cout	<< __func__	<< __LINE__	<< user.getClientIP()	<< std::endl;
 	
 	std::string temp = args[3].substr(0);
 	if (args.size() > 4){
@@ -162,18 +164,19 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 		return ;
 	}
 	
-	if (user.getServerAddr()->validatePassword(args[0]) == 0 ){
+	if (user.getServer()->validatePassword(args[0]) == 0 ){
 		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cerr	<<	C_LRED	<<	"Wrong password " 
 						<<	C_RESET	<<	user.getBestName() 
 						<<	C_LRED	<<	" disconnected from server" 
 						<<	C_RESET	<<	std::endl;
-		close (user.getPollInfofd());
-		user.setPollInfofd(-1); 
+		// close (user.getPollInfofd());
+		// user.setPollInfofd(-1); 
+		user.closeFD();
 		return ;
 	}
-	if (user.getServerAddr()->validatePassword(args[0]) == 2)
+	if (user.getServer()->validatePassword(args[0]) == 2)
 		user.setIsOperator(true);
 	user.setHasPassword(true);
 	user.userRegistration();
@@ -185,7 +188,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params) {
 	
 	std::string nickname = params[0];
-	std::vector<AClient*> clients = user.getServerAddr()->getClientList();
+	std::vector<AClient*> clients = user.getServer()->getClientList();
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (nickname.empty()) {
 		user.sendMsg(":" + serverName + ERR_NONICKNAMEGIVEN);
@@ -244,7 +247,7 @@ static void Command::ping(Client &user, const std::string &cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	user.getServerAddr()->sendPong(user, args[0]);
+	user.getServer()->sendPong(user, args[0]);
 }
 
 /* ************************************************************************** *\
@@ -255,9 +258,9 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
-		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
+		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getClientIP() + " " \
 						+ cmd + ":Client Quit " + args[0] + "\r\n");
-		user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)\r\n");
+		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)\r\n");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_RESET	<<	"User "
 						<<	C_LCYAN	<<	user.getBestName()
@@ -265,9 +268,9 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 						<<	C_LCYAN	<<	args[0]
 						<<	C_RESET	<<	std::endl;
 	} else {
-		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getIpHostName() + " " \
+		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getClientIP() + " " \
 						+ cmd + ":Client Quit\r\n");
-		user.sendMsg("ERROR :Closing Link: " + user.getIpHostName() + " (Client Quit)\r\n");
+		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)\r\n");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_RESET	<<	"User "
 						<<	C_LCYAN	<<	user.getBestName()
@@ -275,8 +278,9 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 	}
 	
-	close (user.getPollInfofd());
-	user.setPollInfofd(-1); 
+	// close (user.getPollInfofd());
+	// user.setPollInfofd(-1); 
+	user.closeFD();
 }
 
 static void Command::away(Client &user, const std::string &cmd, const std::vector<std::string> &args){
@@ -307,7 +311,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 		
-	if (user.getServerAddr()->validatePassword(args[1]) != 2){
+	if (user.getServer()->validatePassword(args[1]) != 2){
 		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + " " + cmd + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong password. Command " 
@@ -326,7 +330,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 	
-	const std::vector<AClient *> &clientList = user.getServerAddr()->getClientList();
+	const std::vector<AClient *> &clientList = user.getServer()->getClientList();
 	for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
 			(*it)->setIsOperator(true);
@@ -375,13 +379,14 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 	
-	const std::vector<AClient *> &clientList = user.getServerAddr()->getClientList();
+	const std::vector<AClient *> &clientList = user.getServer()->getClientList();
 	for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickName() == args[0]){
 			user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
 						(*it)->getNickName() + ": " + args[args.size()] + "\r\n");
-			close ((*it)->getPollInfofd());
-			(*it)->setPollInfofd(-1);
+			// close ((*it)->getPollInfofd());
+			// (*it)->setPollInfofd(-1);
+			(*it)->closeFD();
 			if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_LRED	<<	"User " 
 							<<	C_RESET	<<	(*it)->getNickName()
@@ -432,7 +437,7 @@ static void	Command::sendFile(Client &user, const std::string &cmd, const std::v
 	if (args.size() >= 4) {
 			fileTransfer.targetName = args[0];
 			fileTransfer.fileName = args[1];
-			fileTransfer.hostTarget = user.getServerAddr()->getTransferIP();
+			fileTransfer.hostTarget = user.getServer()->getTransferIP();
 			fileTransfer.port = 59;
 
 			user.fileTransfers.push_back(fileTransfer);
@@ -450,9 +455,9 @@ static void	Command::sendFile(Client &user, const std::string &cmd, const std::v
 		// Read and send the file in chunks
 		const int bufferSize = 1024;
 		char buffer[bufferSize];
-		while (!file.eof()) {
-			file.read(buffer, bufferSize);
-			send(user.getPollInfofd(), buffer, file.gcount(), 0);	
-		}
+		// while (!file.eof()) {
+		// 	file.read(buffer, bufferSize);
+		// 	send(user.getPollInfofd(), buffer, file.gcount(), 0);
+		// }
 		file.close();
 }

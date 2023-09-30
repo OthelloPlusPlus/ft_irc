@@ -37,7 +37,7 @@
  * 
 \* ************************************************************************** */
 
-Client::Client(Server &server) : AClient(server),_IpHostName(""), _server(""), _hasPassword(false) {
+Client::Client(Server &server) : AClient(server), _hasPassword(false) {
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called.\n"
@@ -46,7 +46,7 @@ Client::Client(Server &server) : AClient(server),_IpHostName(""), _server(""), _
 	initialize(server.getFD());
 }
 
-Client::Client(const Client &src) : AClient(src._serverAdd), _IpHostName(src._IpHostName), _server(src._server),
+Client::Client(const Client &src) : AClient(src._server),
 								_hasPassword(src._hasPassword) {
 	*this = src;
 	std::cout	<< C_DGREEN	<< "Copy constructor "
@@ -84,7 +84,8 @@ void	Client::initialize(int serverFD) {
 	if (this->pollInfo.fd < 0)
 		throw (std::runtime_error("accept(): "));
 	this->pollInfo.events = POLLIN;
-	setIpHostName(ipAddress(this->socketAddress));
+	this->_clientIP = ipAddress(this->socketAddress);
+// std::cout	<< __func__	<< __LINE__	<< this->_clientIP	<< std::endl;
 }
 
 void	Client::sendMsg(std::string msg) {
@@ -162,8 +163,8 @@ bool	Client::stillActive(void) const {
 	return (this->pollInfo.fd != -1);
 }
 
-std::string const & Client::getServer(void) const  { return _server; }
-std::string const & Client::getIpHostName(void) const  { return _IpHostName; }
+// std::string const & Client::getServer(void) const  { return _server; }
+// std::string const & Client::getIpHostName(void) const  { return _IpHostName; }
 int const & Client::getPollInfofd(void) const { return pollInfo.fd; }
 bool Client::hasPassword(void) const  { return _hasPassword; }
 
@@ -171,28 +172,28 @@ bool Client::hasPassword(void) const  { return _hasPassword; }
 std::string	Client::getBestName( void ) const {
 	if (!this->_nickName.empty())
 		return this->_nickName;
-	else if (!this->_IpHostName.empty())
-		return _IpHostName;
+	else if (!this->_clientIP.empty())
+		return _clientIP;
 	return "";
 }
 
 std::string Client::getSourceName(void) const {
 	std::stringstream info;
-    info << getBestName() << "!~" << _userName << "@" << _IpHostName;
+    info << getBestName() << "!~" << _userName << "@" << _clientIP;
     return info.str();
 }
 
-void Client::setServer(std::string server){
-	this->_server = server;
-}
+// void Client::setClientIP(std::string clientIP){
+// 	this->_clientIP = clientIP;
+// }
 
 void Client::setPollInfofd(int val){
 	this->pollInfo.fd = val;
 }
 
-void Client::setIpHostName(std::string ipAddress){
-	this->_IpHostName = ipAddress;
-}
+// void Client::setIpHostName(std::string ipAddress){
+// 	this->_IpHostName = ipAddress;
+// }
 
 void Client::setHasPassword(bool val){
 	this->_hasPassword = val;
@@ -235,13 +236,18 @@ void	Client::printInfo(void) const {
 		std::cout << "this->getNickName()\t" << C_BLUE << this->getNickName() << C_RESET	<< std::endl;
 		std::cout << "this->getUserName()\t" << C_BLUE << this->getUserName() << C_RESET	<< std::endl;
 		std::cout << "this->getRealName()\t" << C_BLUE << this->getRealName() << C_RESET	<< std::endl;
-		std::cout << "this->getServer()\t" << C_BLUE << this->getServer() << C_RESET	<< std::endl;
-		std::cout << "this->getIpHostName()\t" << C_BLUE << this->getIpHostName() << C_RESET	<< std::endl;
+		std::cout << "this->getClientIP()\t" << C_BLUE << this->getClientIP() << C_RESET	<< std::endl;
 		std::cout << "this->getIsRegistered()\t" << C_BLUE << this->getIsRegistered() << C_RESET	<< std::endl;
 		std::cout << "this->hasPassword()\t" << C_BLUE << this->hasPassword() << C_RESET	<< std::endl;
 		std::cout << "this->getIsOperator\t" << C_BLUE << this->getIsOperator() << C_RESET	<< std::endl;
 		std::cout << std::endl;
 	}	
+}
+
+void	Client::closeFD(void)
+{
+	close(this->pollInfo.fd);
+	this->pollInfo.fd = -1;
 }
 
 /** ************************************************************************ **\
@@ -259,7 +265,7 @@ Client	&Client::operator=(const Client &src) {
 	this->_nickName = src._nickName;
 	this->_userName = src._userName;
 	this->_realName = src._realName;
-	this->_IpHostName = src._IpHostName;
+	// this->_IpHostName = src._IpHostName;
 	this->_server = src._server;
 	this->_isRegistered = src._isRegistered;
 	this->_hasPassword = src._hasPassword;
