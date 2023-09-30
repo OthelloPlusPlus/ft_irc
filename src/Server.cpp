@@ -382,14 +382,14 @@ void	Server::checkClients(void)
 								<< C_RESET	<< std::flush;
 				if ((*client)->getNickName().empty())
 				{
-					Parse::parseMsg(*(dynamic_cast<Client *>(*client)), this);
+					Parse::parseMsg(*(dynamic_cast<Client *>(*client)), this, msg);
 					if (!(*client)->getNickName().empty())
 						this->sendWelcome(*(dynamic_cast<Client *>(*client)));
 					// if (verboseCheck() >= V_USER)
 					// 	(*client)->printInfo();
 				}
 				else
-					Parse::parseMsg(*(dynamic_cast<Client *>(*client)), this);
+					Parse::parseMsg(*(dynamic_cast<Client *>(*client)), this, msg);
 			}
 			++client;
 		}
