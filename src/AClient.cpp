@@ -71,6 +71,11 @@ void	AClient::setBuffer(std::string buffer)
 // 	return (this->_serverName);
 // }
 
+const Server	*AClient::getServerAddr(void) const
+{
+	return (&this->_serverAdd);
+}
+
 const std::string	&AClient::getIpHostName(void) const
 {
 	return (this->_IpHostName);
