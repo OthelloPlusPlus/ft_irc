@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 19:26:35 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/02 18:39:03 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 #include <vector>
 #include <string>
 #include <unistd.h>
+//	int	close(int filedes);
+#include <algorithm>
+// std::transform
 
 e_command	mapToEnum(std::string cmd){
 	if (cmd == "USER") return CMD_USER;
@@ -183,9 +186,9 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 /* ************************************************************************** *\
 *				NICK														  *
 \* ************************************************************************** */
-static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &params) {
+static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
 	
-	std::string nickname = params[0];
+	std::string nickname = args[0];
 	std::vector<AClient*> clients = user.getServer()->getClientList();
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (nickname.empty()) {
@@ -197,22 +200,27 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	for (std::vector<AClient *>::const_iterator i = clients.begin(); i != clients.end(); ++i)
-		if ((*i)->getNickName() == nickname && (*i) != &user){
-			user.sendMsg(":" + serverName + " 433 * " + nickname + " " +  ERR_NICKNAMEINUSE);
-			if (verboseCheck()	>= V_USER)
-				std::cout	<<	C_LRED	<<	"Nick name not available. [ ]" 
-							<<	C_RESET	<<	nickname
-							<<	C_LRED	<<	" ] is already in use on the network." 
-							<<	C_RESET	<<	std::endl;
-			return ;
-		}
+	
+	AClient	*clientName = user.getServer()->getClient(nickname);
+	// for (std::vector<AClient *>::const_iterator i = clients.begin(); i != clients.end(); ++i){
+		// std::string	clientName = (*i)->getNickName();
+		// if (clientName == nickname && (*i) != &user){
+	if (clientName != nullptr && clientName != &user){
+		user.sendMsg(":" + serverName + " 433 * " + nickname + " " +  ERR_NICKNAMEINUSE);
+		if (verboseCheck()	>= V_USER)
+			std::cout	<<	C_LRED	<<	"Nick name not available. [" 
+						<<	C_RESET	<<	nickname
+						<<	C_LRED	<<	"] is already in use on the network." 
+						<<	C_RESET	<<	std::endl;
+		return ;
+	}
+
 	if (isdigit(nickname.at(0))){
 		user.sendMsg(":" + serverName + " 432 * " + nickname + " " + ERR_ERRONEUSNICKNAME);
 		if (verboseCheck()	>= V_USER)
-			std::cout	<<	C_LRED	<<	"Wrong character in name [ " 
+			std::cout	<<	C_LRED	<<	"Wrong character in name [" 
 						<<	C_RESET	<<	nickname
-						<<	C_LRED	<<	" ] First character in nick name cannot be a digit" 
+						<<	C_LRED	<<	"] First character in nick name cannot be a digit" 
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
@@ -220,9 +228,9 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 		if (!isalnum(nickname[i])){
 			user.sendMsg(":" + serverName + "432 * " + nickname + " " + ERR_ERRONEUSNICKNAME);
 			if (verboseCheck()	>= V_USER)
-				std::cout	<<	C_LRED	<<	"Wrong character in name [ " 
+				std::cout	<<	C_LRED	<<	"Wrong character in name [" 
 							<<	C_RESET	<<	nickname
-							<<	C_LRED	<<	" ] Only alphanumeric characters are allowed in nick name" 
+							<<	C_LRED	<<	"] Only alphanumeric characters are allowed in nick name" 
 							<<	C_RESET	<<	std::endl;
 			return ;
 		}
@@ -278,6 +286,11 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 	user.closeFD();
 }
 
+
+/* ************************************************************************** *\
+*				AWAY														  *
+\* ************************************************************************** */
+
 static void Command::away(Client &user, const std::string &cmd, const std::vector<std::string> &args){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
@@ -325,30 +338,35 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 	
+	AClient	*clientName = user.getServer()->getClient(args[0]);
 	const std::vector<AClient *> &clientList = user.getServer()->getClientList();
-	for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
-		if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
-			(*it)->setIsOperator(true);
-			user.sendMsg(":" + serverName + " 381 * " + (*it)->getNickName() + " " + RPL_YOUREOPER);
-			if (verboseCheck()	>= V_USER)
-				std::cout	<<	C_RESET	<<	"User "
-							<<	C_LCYAN	<<	(*it)->getNickName()
-							<<	C_RESET	<<	" is now IRC server Operator"
-							<<	C_RESET	<<	std::endl;
-			break;
-		}
-		if (it == clientList.end()){
-				user.sendMsg(":" + serverName + " 491 * " + (*it)->getNickName() + " " + cmd + ERR_NOOPERHOST);
-				if (verboseCheck()	>= V_USER)
-					std::cout	<<	C_LRED	<<	"Request rejected  " 
-								<<	C_RESET	<<	serverName
-								<<	C_LRED	<<	" doesn’t allow connections from current network of user "
-								<<	C_RESET	<<	(*it)->getNickName() <<	std::endl;
-				return ;
-		}
+	// for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
+		// if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
+	if (clientName != nullptr && user.getIsOperator() == true) {
+		clientName->setIsOperator(true);
+		user.sendMsg(":" + serverName + " 381 * " + clientName->getNickName() + " " + RPL_YOUREOPER);
+		if (verboseCheck()	>= V_USER)
+			std::cout	<<	C_RESET	<<	"User "
+						<<	C_LCYAN	<<	clientName->getNickName()
+						<<	C_RESET	<<	" is now IRC server Operator"
+						<<	C_RESET	<<	std::endl;
+	}
+	if (clientName == nullptr){
+		user.sendMsg(":" + serverName + " 491 * " + args[0] + " " + cmd + ERR_NOOPERHOST);
+		if (verboseCheck()	>= V_USER)
+			std::cout	<<	C_LRED	<<	"Request rejected  " 
+						<<	C_RESET	<<	serverName
+						<<	C_LRED	<<	" doesn’t allow connections from current network of user "
+						<<	C_RESET	<<	args[0] <<	std::endl;
+		return ;
 	}
 }
 
+/*
+PASS password
+USER Ema * 123 :Lic
+NICK Mag
+*/
 /* ************************************************************************** *\
 *				KILL														  *
 \* ************************************************************************** */
@@ -373,28 +391,26 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 		return ;
 	}
 	
+	AClient	*clientName = user.getServer()->getClient(args[0]);
 	const std::vector<AClient *> &clientList = user.getServer()->getClientList();
-	for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
-		if ((*it)->getNickName() == args[0]){
-			user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
-						(*it)->getNickName() + ": " + args[args.size()] + "\r\n");
-			(*it)->closeFD();
-			if (verboseCheck()	>= V_USER)
-				std::cout	<<	C_LRED	<<	"User " 
-							<<	C_RESET	<<	(*it)->getNickName()
-							<<	C_LRED	<<	" has been killed; reason : "
-							<<	C_RESET	<<	args[args.size()] << std::endl;
-			break;
-		}
-		if (it == clientList.end()){
-				user.sendMsg(":" + serverName + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
-				if (verboseCheck() >= V_USER)
-					std::cout 	<<	C_LRED	<<	"Server or user "
-								<<	C_RESET	<<	args[0]
-								<<	C_LRED	<<	" targeted to be killed, does not exist"	
-								<<	C_RESET	<<	std::endl;
-				return ;
-		}
+	if (clientName != nullptr){
+		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
+					clientName->getNickName() + ": " + args[args.size()] + "\r\n");
+		clientName->closeFD();
+		if (verboseCheck()	>= V_USER)
+			std::cout	<<	C_LRED	<<	"User " 
+						<<	C_RESET	<<	clientName->getNickName()
+						<<	C_LRED	<<	" has been killed; reason : "
+						<<	C_RESET	<<	args[args.size()] << std::endl;
+	}
+	if (clientName == nullptr){
+			user.sendMsg(":" + serverName + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
+			if (verboseCheck() >= V_USER)
+				std::cout 	<<	C_LRED	<<	"Server or user "
+							<<	C_RESET	<<	args[0]
+							<<	C_LRED	<<	" targeted to be killed, does not exist"	
+							<<	C_RESET	<<	std::endl;
+			return ;
 	}
 }
 
