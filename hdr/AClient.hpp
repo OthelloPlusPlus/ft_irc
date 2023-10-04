@@ -47,6 +47,7 @@ class AClient
 		const std::string	&getNickName(void) const;
 		const std::string	&getUserName(void) const;
 		const std::string	&getRealName(void) const;
+		const std::string	&getBestName(void) const;
 		const bool			&getIsRegistered(void) const;
 		const bool			&getIsOperator(void) const;
 		const std::string	&getBuffer(void) const;

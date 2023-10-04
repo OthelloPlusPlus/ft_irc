@@ -123,6 +123,15 @@ const std::string	&AClient::getRealName(void) const
 	return (this->_realName);
 }
 
+const std::string	&AClient::getBestName(void) const
+{
+	if (!this->_nickName.empty())
+		return (this->_nickName);
+	if (!this->_clientIP.empty())
+		return (this->_clientIP);
+	return (this->_nickName);
+}
+
 const bool	&AClient::getIsRegistered(void) const
 {
 	return (this->_isRegistered);
