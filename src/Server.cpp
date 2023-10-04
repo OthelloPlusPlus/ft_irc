@@ -16,6 +16,7 @@
 #include "Parse.hpp"
 #include "IRCReplyCodes.hpp"
 #include "verboseCheck.hpp"
+#include "BotTicTacToe.hpp"
 
 #include <iostream>
 // std::cout
@@ -23,6 +24,8 @@
 // std::setw()
 #include <string>
 // int	stoi(const char *)
+#include <cstring>
+// char* strerror( int errnum );
 #include <unistd.h>
 //	int	close(int fildes);
 #include <ifaddrs.h>
@@ -198,6 +201,40 @@ void	Server::readEnv(void)
 // 	freeifaddrs(ifap);
 // 	return (this->localIP);
 // }
+
+void	Server::addBots(void)
+{
+	for (int i = 0; i >= 0; ++i)
+	{
+		try
+		{
+			AClient	*bot = nullptr;
+			switch (i)
+			{
+				case 0:	bot = new BotTicTacToe(*this);	break;
+				default:	i = -2;
+			}
+			if (!bot)
+				break ;
+			if (bot && this->getClient(bot->getNickName()) == nullptr)
+				this->clients.push_back(bot);
+			else
+			{
+				delete bot;
+				throw (std::runtime_error("Bot name already in use"));
+			}
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr	<< C_RED	<< "Bot Error "
+						<< C_RESET	<< i
+						<< C_RED	<< ": "
+						<< C_RESET	<< e.what()	<< ". Errno: "	<< strerror(errno)
+						<< C_RESET	<< std::endl;
+		}
+		
+	}
+}
 
 void	Server::checkNewClient(void)
 {

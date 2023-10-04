@@ -38,8 +38,8 @@ BotTicTacToe::BotTicTacToe(Server &server): AClient(server)
 	this->_realName = "Tic-Tac-Toe playing Bot";
 	this->_isRegistered = true;
 	this->_isOperator = false;
-	if (pipe(this->pipeFD) == -1)
-		throw(std::runtime_error("pipe(): "));
+	// if (pipe(this->pipeFD) == -1)
+	// 	throw(std::runtime_error("pipe(): "));
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< "BotTicTacToe"
 				<< C_DGREEN	<< " called."
@@ -63,10 +63,11 @@ BotTicTacToe::BotTicTacToe(Server &server): AClient(server)
 
 BotTicTacToe::~BotTicTacToe(void)
 {
-	if (this->pipeFD[0] > 2)
-		close(this->pipeFD[0]);
-	if (this->pipeFD[1] > 2)
-		close(this->pipeFD[1]);
+	// if (this->pipeFD[0] > 2)
+	// 	close(this->pipeFD[0]);
+	// if (this->pipeFD[1] > 2)
+	// 	close(this->pipeFD[1]);
+	this->closeFD();
 	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< "BotTicTacToe"
 				<< C_DRED	<< " called"
@@ -81,7 +82,7 @@ BotTicTacToe::~BotTicTacToe(void)
 
 bool	BotTicTacToe::stillActive(void) const
 {
-	return (this->pipeFD[0] >= 2 && this->pipeFD[1] >= 2);
+	return (true);
 }
 
 std::string	BotTicTacToe::getMsg(void)
@@ -101,17 +102,30 @@ std::string	BotTicTacToe::getMsg(void)
 
 bool	BotTicTacToe::readReceive(void)
 {
-	char	buffer[4096];
-	ssize_t	recvLen;
-	
-	bzero(buffer, sizeof(buffer));
-	recvLen = recv(this->pipeFD[1], buffer, sizeof(buffer) - 1, 0);
-	if (recvLen < 0)
+	while (!this->msgs.empty())
 	{
-		std::cerr	<< "Error recv(): "	<< strerror(errno)	<< std::endl;
-		return (false);
+		std::cout	<< "bot recv\t"	<< this->msgs.front()	<< std::endl;
+		this->msgs.pop();
 	}
-	this->_buffer.append(buffer);
+	// char	buffer[4096];
+	// ssize_t	recvLen;
+	
+	// bzero(buffer, sizeof(buffer));
+	// std::cout	<< __func__	<< __LINE__	
+	// 			<< '\t'	<< this->pipeFD[0]	<< '\t'	<< this->pipeFD[1]
+	// 			<< std::endl;
+
+	// recvLen = recv(this->pipeFD[0], buffer, sizeof(buffer) - 1, 0);
+	// std::cout	<< __func__	<< __LINE__	
+	// 			<< '\t'	<< recvLen
+	// 			<< std::endl;
+	// if (recvLen < 0)
+	// {
+	// 	std::cerr	<< "Error read(): "	<< strerror(errno)	<< std::endl;
+	// 	return (false);
+	// }
+	// std::cout	<< __func__	<< __LINE__	<< std::endl;
+	// this->_buffer.append(buffer);
 	return (true);
 }
 
@@ -123,27 +137,30 @@ std::string	BotTicTacToe::botRespond(std::string msg)
 
 void	BotTicTacToe::sendMsg(std::string msg)
 {
-	msg = ':' + this->_server.getName() + ' ' + msg + "\r\n";
+	this->msgs.push(msg);
+	// msg = ':' + this->_server.getName() + ' ' + msg + "\r\n";
 
-	ssize_t	size = send(this->pipeFD[0], msg.c_str(), msg.length(), 0);
-	if (verboseCheck() >= V_MSG)
-		std::cout	<< C_RESET	<< "Send ["	<< size	<< "]\t"
-					<< C_LORANGE	<< msg
-					<< C_RESET	<< std::flush;
+	// ssize_t	size = send(this->pipeFD[0], msg.c_str(), msg.length(), 0);
+	// if (verboseCheck() >= V_MSG)
+	// 	std::cout	<< C_RESET	<< "Send ["	<< size	<< "]\t"
+	// 				<< C_LORANGE	<< msg
+	// 				<< C_RESET	<< std::flush;
 }
 
 void	BotTicTacToe::closeFD(void)
 {
-	if (this->pipeFD[0] > 2)
-	{
-		close(this->pipeFD[0]);
-		this->pipeFD[0] = -1;
-	}
-	if (this->pipeFD[1] > 2)
-	{
-		close(this->pipeFD[1]);
-		this->pipeFD[1] = -1;
-	}
+	while (!this->msgs.empty())
+		this->msgs.pop();
+	// if (this->pipeFD[0] > 2)
+	// {
+	// 	close(this->pipeFD[0]);
+	// 	this->pipeFD[0] = -1;
+	// }
+	// if (this->pipeFD[1] > 2)
+	// {
+	// 	close(this->pipeFD[1]);
+	// 	this->pipeFD[1] = -1;
+	// }
 }
 
 /** ************************************************************************ **\
