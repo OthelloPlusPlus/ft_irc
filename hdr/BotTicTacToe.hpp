@@ -4,10 +4,13 @@
 class Server;
 # include "AClient.hpp"
 
+# include <queue>
+
 class BotTicTacToe: public AClient
 {
 	private:
-		int	pipeFD[2];
+		// int	pipeFD[2];
+		std::queue<std::string>	msgs;
 
 		bool		readReceive(void);
 		std::string	botRespond(std::string msg);

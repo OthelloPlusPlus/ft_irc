@@ -29,6 +29,7 @@ int	main(int argc, char **argv)
 	{
 		Server	server(argc, argv);
 
+		server.addBots();
 		while (true)
 		{
 			server.checkNewClient();

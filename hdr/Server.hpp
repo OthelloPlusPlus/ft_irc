@@ -57,6 +57,7 @@ class Server
 		Server(const Server &src);
 		~Server(void);
 
+		void	addBots(void);
 		void	checkNewClient(void);
 		void	checkClients(void);
 		void	checkChannels(void);
