@@ -274,7 +274,7 @@ void	Server::sendWelcome(Client &client)
 	this->joinChannel(client, "#WelcomeChannel");
 }
 
-void	Server::sendChannelList(Client &client) const
+void	Server::sendChannelList(AClient &client) const
 {
 	std::string	msg;
 
@@ -289,7 +289,7 @@ void	Server::sendChannelList(Client &client) const
 	client.sendMsg(msg + ":END of /LIST\r\n");
 }
 
-void	Server::sendWho(Client &client, const std::string who) const
+void	Server::sendWho(AClient &client, const std::string who) const
 {
 	{
 		AClient	*whoClient = this->getClient(who);
@@ -309,7 +309,7 @@ void	Server::sendWho(Client &client, const std::string who) const
 	}
 }
 
-void	Server::sendWhoIs(Client &client, const std::string who) const
+void	Server::sendWhoIs(AClient &client, const std::string who) const
 {
 	std::string	msg;
 	AClient		*whoClient;
@@ -333,7 +333,7 @@ void	Server::sendWhoIs(Client &client, const std::string who) const
 	client.sendMsg(msg + ":End of /WHOIS list.\r\n");
 }
 
-void	Server::sendInvite(Client &client, const std::vector<std::string> &args)
+void	Server::sendInvite(AClient &client, const std::vector<std::string> &args)
 {
 	std::set<AClient *>	name;
 	std::set<Channel *>	channel;
@@ -369,7 +369,7 @@ void	Server::sendInvite(Client &client, const std::vector<std::string> &args)
 	}
 }
 
-void	Server::sendPong(Client &client) const
+void	Server::sendPong(AClient &client) const
 {
 	std::string	time;
 
@@ -377,12 +377,12 @@ void	Server::sendPong(Client &client) const
 	client.sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + time + "\r\n");
 }
 
-void	Server::sendPong(Client &client, const std::string token) const
+void	Server::sendPong(AClient &client, const std::string token) const
 {
 	client.sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
 }
 
-void	Server::sendPrivMsg(const Client &client, const std::vector<std::string> &args)
+void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &args)
 {
 	std::string	name = args[0];
 	std::string msg = args[args.size() - 1];
@@ -414,24 +414,25 @@ void	Server::checkClients(void)
 			std::string	msg = (*client)->getMsg();
 			if (!msg.empty())
 			{
+				bool	welcome = (*client)->getNickName().empty();
 				if (verboseCheck() >= V_MSG)
 					std::cout	<< "Recv ["	<< msg.length()	<< "]\t"
 								<< C_ORANGE	<< msg
 								<< C_RESET	<< std::flush;
-				if ((*client)->getNickName().empty())
-				{
-					std::tuple<Client& , std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<Client *>(*client)), msg);
+				// if ((*client)->getNickName().empty())
+				// {
+					std::tuple<AClient& , std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<AClient *>(*client)), msg);
 					Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
-					if (!(*client)->getNickName().empty())
+					if (welcome == true && !(*client)->getNickName().empty())
 						this->sendWelcome(*(dynamic_cast<Client *>(*client)));
 					// if (verboseCheck() >= V_USER)
 					// 	(*client)->printInfo();
-				}
-				else
-				{
-					std::tuple<Client&, std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<Client *>(*client)), msg);
-					Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
-				}
+				// }
+				// else
+				// {
+				// 	std::tuple<AClient&, std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<AClient *>(*client)), msg);
+				// 	Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
+				// }
 			}
 			++client;
 		}
@@ -453,14 +454,14 @@ int	Server::validatePassword(const std::string password) const
 	return (this->passwordUser == password);
 }
 
-void	Server::joinChannel(Client &client, const std::string channelName)
+void	Server::joinChannel(AClient &client, const std::string channelName)
 {
 	std::vector<std::string>	channel = {channelName};
 
 	this->joinChannel(client, channel);
 }
 
-void	Server::joinChannel(Client &client, const std::vector<std::string> &args)
+void	Server::joinChannel(AClient &client, const std::vector<std::string> &args)
 {
 	Channel		*channel;
 	std::string	pass;
@@ -482,7 +483,7 @@ void	Server::joinChannel(Client &client, const std::vector<std::string> &args)
 	channel->addClient(client, admin, pass);
 }
 
-void	Server::partChannel(Client &client, const std::string channelName)
+void	Server::partChannel(AClient &client, const std::string channelName)
 {
 	Channel	*channel;
 
@@ -564,7 +565,7 @@ void	Server::checkChannels(void)
 	}
 }
 
-void	Server::setChannelTopic(Client &client, const std::vector<std::string> &args)
+void	Server::setChannelTopic(AClient &client, const std::vector<std::string> &args)
 {
 	Channel		*channel = this->getChannel(args[0]);
 	std::string	topic = args[args.size() - 1];
@@ -574,7 +575,7 @@ void	Server::setChannelTopic(Client &client, const std::vector<std::string> &arg
 	channel->setTopic(client, topic);
 }
 
-void	Server::setChannelMode(Client &client, const std::vector<std::string> &args)
+void	Server::setChannelMode(AClient &client, const std::vector<std::string> &args)
 {
 	Channel		*channel = this->getChannel(args[0]);
 

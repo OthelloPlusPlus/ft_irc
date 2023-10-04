@@ -73,18 +73,18 @@ class Server
 		const std::string		getIP(void) const;
 		uint32_t				getTransferIP(void) const;
 
-		void	joinChannel(Client &client, const std::string channelName);
-		void	joinChannel(Client &client, const std::vector<std::string> &args);
-		void	partChannel(Client &client, const std::string channelName);
-		void	sendChannelList(Client &client) const;
-		void	sendWho(Client &client, const std::string who) const;
-		void	sendWhoIs(Client &client, const std::string who) const;
-		void	sendPong(Client &client) const;
-		void	sendPong(Client &client, const std::string token) const;
-		void	sendPrivMsg(const Client &client, const std::vector<std::string> &args);
-		void	sendInvite(Client &client, const std::vector<std::string> &args);
-		void	setChannelTopic(Client &client, const std::vector<std::string> &args);
-		void	setChannelMode(Client &client, const std::vector<std::string> &args);
+		void	joinChannel(AClient &client, const std::string channelName);
+		void	joinChannel(AClient &client, const std::vector<std::string> &args);
+		void	partChannel(AClient &client, const std::string channelName);
+		void	sendChannelList(AClient &client) const;
+		void	sendWho(AClient &client, const std::string who) const;
+		void	sendWhoIs(AClient &client, const std::string who) const;
+		void	sendPong(AClient &client) const;
+		void	sendPong(AClient &client, const std::string token) const;
+		void	sendPrivMsg(const AClient &client, const std::vector<std::string> &args);
+		void	sendInvite(AClient &client, const std::vector<std::string> &args);
+		void	setChannelTopic(AClient &client, const std::vector<std::string> &args);
+		void	setChannelMode(AClient &client, const std::vector<std::string> &args);
 
 		Server	&operator=(const Server &src);
 };
