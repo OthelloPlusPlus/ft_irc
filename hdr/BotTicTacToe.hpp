@@ -10,13 +10,16 @@ class BotTicTacToe: public AClient
 {
 	private:
 		// int	pipeFD[2];
-		std::queue<std::string>	msgs;
+		std::queue<std::string>	recv;
+		std::queue<std::string> send;
 
 		// bool		readReceive(void);
 		// std::string	botRespond(std::string msg);
-		std::string	botRespond(AClient &src, const std::string cmd, const std::vector<std::string> &args);
-		std::string	botRespondInvite(const std::vector<std::string> &args);
-		std::string	botRespondPart(const std::vector<std::string> &args);
+		void	botRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args);
+		void	botRespondInvite(const std::vector<std::string> &args);
+		void	botRespondPart(const std::vector<std::string> &args);
+		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
+		void	think(std::string dest, const std::vector<std::string> &args);
 
 	protected:
 

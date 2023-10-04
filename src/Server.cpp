@@ -394,7 +394,7 @@ void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &
 		Channel *channel = getChannel(name);
 
 		if (channel != nullptr)
-			channel->sendToChannel(client, ":" + client.getSourceName() + " PRIVMSG " + channel->getName() + " " + msg + "\r\n");
+			channel->sendToChannel(client, ":" + client.getSourceName() + " PRIVMSG " + channel->getName() + " :" + msg + "\r\n");
 	}
 	else
 	{
