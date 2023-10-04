@@ -12,8 +12,9 @@
 
 #include "Parse.hpp"
 #include "colors.hpp"
-#include <vector>
 #include <string>
+#include <vector>
+#include <tuple>   // for std::tuple
 
 namespace
 {
@@ -55,7 +56,7 @@ std::vector<std::string> ircSplit( const std::string& input, const std::string& 
 
 }
 
-void Parse::parseMsg(Client &user, std::string msg){
+std::tuple<Client &, std::string, std::vector<std::string>> Parse::parseMsg(Client &user, std::string msg){
 	std::string cmd;
 	std::string arguments;
 	std::vector<std::string>	args;
@@ -88,6 +89,9 @@ void Parse::parseMsg(Client &user, std::string msg){
 	}
 
 	Command::parseCmd(user, cmd, args);
+
+	// std::tuple<Client&, std::string, std::vector<std::string>>    *fwd;
+	return std::tuple<Client &, std::string, std::vector<std::string>>(user, cmd, args);
 }
 
 

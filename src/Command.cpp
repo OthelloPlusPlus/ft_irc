@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/02 18:39:03 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/04 15:05:32 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ e_command	mapToEnum(std::string cmd){
 	if (cmd == "PING") return CMD_PING;
 	if (cmd == "QUIT") return CMD_QUIT;
 	if (cmd == "AWAY") return CMD_AWAY;
-	if (cmd == "SEND") return CMD_SEND;
 	if (cmd == "PRIVMSG") return CMD_PRIVMSG;
 	if (cmd == "LIST") return CMD_LIST;
 	if (cmd == "JOIN") return CMD_JOIN;
@@ -69,7 +68,6 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 		case CMD_PING:		Command::ping(user, cmd, args);					break;
 		case CMD_QUIT:		Command::quit(user, cmd, args);					break;
 		case CMD_AWAY:		Command::away(user, cmd, args);					break;
-		case CMD_SEND:		Command::sendFile(user, cmd, args);				break;
 		case CMD_PRIVMSG:	user.getServer()->sendPrivMsg(user, args);		break;
 		case CMD_LIST:		user.getServer()->sendChannelList(user);		break;
 		case CMD_JOIN:		user.getServer()->joinChannel(user, args);		break;
@@ -129,9 +127,6 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	// std::cout	<< __func__	<< __LINE__	<< args[2]	<< std::endl;
-	// user.setClientIP(args[2]);
-	// std::cout	<< __func__	<< __LINE__	<< user.getClientIP()	<< std::endl;
 	
 	std::string temp = args[3].substr(0);
 	if (args.size() > 4){
@@ -202,9 +197,6 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 	}
 	
 	AClient	*clientName = user.getServer()->getClient(nickname);
-	// for (std::vector<AClient *>::const_iterator i = clients.begin(); i != clients.end(); ++i){
-		// std::string	clientName = (*i)->getNickName();
-		// if (clientName == nickname && (*i) != &user){
 	if (clientName != nullptr && clientName != &user){
 		user.sendMsg(":" + serverName + " 433 * " + nickname + " " +  ERR_NICKNAMEINUSE);
 		if (verboseCheck()	>= V_USER)
@@ -339,9 +331,6 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 	}
 	
 	AClient	*clientName = user.getServer()->getClient(args[0]);
-	// const std::vector<AClient *> &clientList = user.getServer()->getClientList();
-	// for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
-		// if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
 	if (clientName == nullptr){
 		user.sendMsg(":" + serverName + " 491 * " + args[0] + " " + cmd + ERR_NOOPERHOST);
 		if (verboseCheck()	>= V_USER)
@@ -362,11 +351,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 	}
 }
 
-/*
-PASS password
-USER Ema * 123 :Lic
-NICK Mag
-*/
+
 /* ************************************************************************** *\
 *				KILL														  *
 \* ************************************************************************** */
@@ -392,7 +377,6 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 	}
 	
 	AClient	*clientName = user.getServer()->getClient(args[0]);
-	// const std::vector<AClient *> &clientList = user.getServer()->getClientList();
 	if (clientName != nullptr){
 		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
 					clientName->getNickName() + ": " + args[args.size()] + "\r\n");
@@ -403,14 +387,14 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 						<<	C_LRED	<<	" has been killed; reason : "
 						<<	C_RESET	<<	args[args.size()] << std::endl;
 	}
-	if (clientName == nullptr){//else
-			user.sendMsg(":" + serverName + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
-			if (verboseCheck() >= V_USER)
-				std::cout 	<<	C_LRED	<<	"Server or user "
-							<<	C_RESET	<<	args[0]
-							<<	C_LRED	<<	" targeted to be killed, does not exist"	
-							<<	C_RESET	<<	std::endl;
-			return ;
+	else {
+		user.sendMsg(":" + serverName + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
+		if (verboseCheck() >= V_USER)
+			std::cout 	<<	C_LRED	<<	"Server or user "
+						<<	C_RESET	<<	args[0]
+						<<	C_LRED	<<	" targeted to be killed, does not exist"	
+						<<	C_RESET	<<	std::endl;
+		return ;
 	}
 }
 
@@ -423,52 +407,6 @@ static void	Command::unknownCmd(Client &user, const std::string &cmd){
 	return ;
 }
 
-
-/* ************************************************************************** *\
-*				SEND - File Transfer														  *
-\* ************************************************************************** */
-
-#include <fstream>
-
-static void	Command::sendFile(Client &user, const std::string &cmd, const std::vector<std::string> &args){
-	std::string serverName = std::getenv("IRC_SERVNAME");
-
-	FileTransfer fileTransfer;
-	
-	if (args.size() < 4){
-		user.sendMsg(":" + serverName + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
-		if (verboseCheck()	>= V_USER)	
-			std::cout	<<	C_LRED	<<	"No imput provided. File transfer requires 3 parameters <file name> <host-IP address> <port>" 
-						<<	C_RESET	<<	std::endl;
-		return ;
-	}
-	if (args.size() >= 4) {
-			fileTransfer.targetName = args[0];
-			fileTransfer.fileName = args[1];
-			fileTransfer.hostTarget = user.getServer()->getTransferIP();
-			fileTransfer.port = 59;
-
-			user.fileTransfers.push_back(fileTransfer);
-	
-		}
-		size_t	pos = fileTransfer.fileName.find_last_of('/');
-		std::string	fileName = fileTransfer.fileName.substr(pos + 1);
-		std::cout << C_MGNT << fileName << C_RESET <<std::endl;
-		
-		std::ifstream file(fileName, std::ios::binary);
-		if (!file) {
-			user.sendMsg(":" + serverName + " 402 " + fileTransfer.targetName + " " + ":Invalid file path\r\n");
-			return ;
-		}
-		// Read and send the file in chunks
-		const int bufferSize = 1024;
-		char buffer[bufferSize];
-		// while (!file.eof()) {
-		// 	file.read(buffer, bufferSize);
-		// 	send(user.getPollInfofd(), buffer, file.gcount(), 0);
-		// }
-		file.close();
-}
 
 static void	Command::userNotRegisteredMsg(Client &user, std::string cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");

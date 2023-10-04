@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 18:45:21 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/04 15:05:26 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ enum	e_command
 	CMD_AWAY,
 	CMD_SIZE_OPEN,
 	
-	CMD_SEND,
 	CMD_PRIVMSG,
 	CMD_LIST,
 	CMD_JOIN,
@@ -66,7 +65,6 @@ namespace Command
 	static void away(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void sendFile(Client &user, const std::string &cmd, const std::vector<std::string> &args);
 
 	static void unknownCmd(Client &user, const std::string &cmd);
 
