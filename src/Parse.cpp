@@ -88,9 +88,8 @@ std::tuple<Client &, std::string, std::vector<std::string>> Parse::parseMsg(Clie
 		}
 	}
 
-	Command::parseCmd(user, cmd, args);
+	// Command::parseCmd(user, cmd, args);
 
-	// std::tuple<Client&, std::string, std::vector<std::string>>    *fwd;
 	return std::tuple<Client &, std::string, std::vector<std::string>>(user, cmd, args);
 }
 

@@ -25,7 +25,7 @@
 #include <string>
 // int	stoi(const char *)
 #include <cstring>
-// char* strerror( int errnum );
+// char* strerror( int errnum ); 
 #include <unistd.h>
 //	int	close(int fildes);
 #include <ifaddrs.h>
@@ -42,6 +42,8 @@
 // std::chrono
 #include <algorithm>
 // std::transform
+#include <tuple>
+// for std::tuple
 
 
 /** ************************************************************************ **\
@@ -235,7 +237,6 @@ void	Server::addBots(void)
 		
 	}
 }
-
 void	Server::checkNewClient(void)
 {
 	if (poll(&this->pollInfo, 1, 0) == -1)
@@ -419,14 +420,18 @@ void	Server::checkClients(void)
 								<< C_RESET	<< std::flush;
 				if ((*client)->getNickName().empty())
 				{
-					Parse::parseMsg(*(dynamic_cast<Client *>(*client)), msg);
+					std::tuple<Client& , std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<Client *>(*client)), msg);
+					Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
 					if (!(*client)->getNickName().empty())
 						this->sendWelcome(*(dynamic_cast<Client *>(*client)));
 					// if (verboseCheck() >= V_USER)
 					// 	(*client)->printInfo();
 				}
 				else
-					Parse::parseMsg(*(dynamic_cast<Client *>(*client)), msg);
+				{
+					std::tuple<Client&, std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<Client *>(*client)), msg);
+					Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
+				}
 			}
 			++client;
 		}

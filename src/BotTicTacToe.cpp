@@ -12,6 +12,7 @@
 
 #include "BotTicTacToe.hpp"
 #include "Command.hpp"
+#include "Parse.hpp"
 #include "verboseCheck.hpp"
 #include "colors.hpp"
 
@@ -24,6 +25,8 @@
 // void bzero(void *s, size_t n);
 #include <string.h>
 // char *strerror(int errnum);
+#include <tuple>
+// std::tuple
 
 /** ************************************************************************ **\
  * 
@@ -104,7 +107,14 @@ bool	BotTicTacToe::readReceive(void)
 {
 	while (!this->msgs.empty())
 	{
-		std::cout	<< "bot recv\t"	<< this->msgs.front()	<< std::endl;
+		size_t spacePos = this->msgs.front().find(' ');
+		std::tuple<Client& , std::string, std::vector<std::string>> fwd = \
+		Parse::parseMsg(*(dynamic_cast<Client *>(this)), this->msgs.front().substr(spacePos));
+		std::cout	<< "bot recv\t"	<< this->msgs.front() << std::endl;
+		std::cout	<< '\t' << std::get<0>(fwd).getNickName() << std::endl;
+		std::cout	<< '\t' << std::get<1>(fwd) << std::endl;
+		std::cout	<< '\t' << std::get<2>(fwd)[0] << std::endl;
+		std::cout	<< '\t' << std::endl;
 		this->msgs.pop();
 	}
 	// char	buffer[4096];
