@@ -401,7 +401,7 @@ void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &
 		AClient	*user = getClient(name);
 
 		if (user != nullptr)
-			user->sendMsg(":" + client.getSourceName() + " PRIVMSG " + user->getNickName() + " " + msg + "\r\n");	
+			user->sendMsg(":" + client.getSourceName() + " PRIVMSG " + user->getNickName() + " :" + msg + "\r\n");	
 	}
 }
 

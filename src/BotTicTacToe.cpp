@@ -108,12 +108,13 @@ bool	BotTicTacToe::readReceive(void)
 	while (!this->msgs.empty())
 	{
 		size_t spacePos = this->msgs.front().find(' ');
-		std::tuple<Client& , std::string, std::vector<std::string>> fwd = \
-		Parse::parseMsg(*(dynamic_cast<Client *>(this)), this->msgs.front().substr(spacePos));
+		std::tuple<AClient& , std::string, std::vector<std::string>> fwd = \
+		Parse::parseMsg(*(dynamic_cast<AClient *>(this)), this->msgs.front().substr(spacePos + 1));
 		std::cout	<< "bot recv\t"	<< this->msgs.front() << std::endl;
-		std::cout	<< '\t' << std::get<0>(fwd).getNickName() << std::endl;
-		std::cout	<< '\t' << std::get<1>(fwd) << std::endl;
-		std::cout	<< '\t' << std::get<2>(fwd)[0] << std::endl;
+		std::cout	<< "Nick\t" << std::get<0>(fwd).getNickName() << std::endl;
+		std::cout	<< "cmd\t" << std::get<1>(fwd) << std::endl;
+		std::cout	<< "args\t" << std::get<2>(fwd)[0] << std::endl;
+		std::cout	<< "args\t" << std::get<2>(fwd)[1] << std::endl;
 		std::cout	<< '\t' << std::endl;
 		this->msgs.pop();
 	}
