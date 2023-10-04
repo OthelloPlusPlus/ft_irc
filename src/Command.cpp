@@ -324,7 +324,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong password. Command " 
 						<<	C_RESET	<<	cmd 
-						<<	C_LRED	<<	" requiers Admin password"
+						<<	C_LRED	<<	" requires Admin password"
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
@@ -339,18 +339,9 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 	}
 	
 	AClient	*clientName = user.getServer()->getClient(args[0]);
-	const std::vector<AClient *> &clientList = user.getServer()->getClientList();
+	// const std::vector<AClient *> &clientList = user.getServer()->getClientList();
 	// for (std::vector<AClient *>::const_iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		// if ((*it)->getNickName() == args[0] && user.getIsOperator() == true){
-	if (clientName != nullptr && user.getIsOperator() == true) {
-		clientName->setIsOperator(true);
-		user.sendMsg(":" + serverName + " 381 * " + clientName->getNickName() + " " + RPL_YOUREOPER);
-		if (verboseCheck()	>= V_USER)
-			std::cout	<<	C_RESET	<<	"User "
-						<<	C_LCYAN	<<	clientName->getNickName()
-						<<	C_RESET	<<	" is now IRC server Operator"
-						<<	C_RESET	<<	std::endl;
-	}
 	if (clientName == nullptr){
 		user.sendMsg(":" + serverName + " 491 * " + args[0] + " " + cmd + ERR_NOOPERHOST);
 		if (verboseCheck()	>= V_USER)
@@ -359,6 +350,15 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 						<<	C_LRED	<<	" doesn’t allow connections from current network of user "
 						<<	C_RESET	<<	args[0] <<	std::endl;
 		return ;
+	}
+	else if (user.getIsOperator() == true) {
+		clientName->setIsOperator(true);
+		user.sendMsg(":" + serverName + " 381 * " + clientName->getNickName() + " " + RPL_YOUREOPER);
+		if (verboseCheck()	>= V_USER)
+			std::cout	<<	C_RESET	<<	"User "
+						<<	C_LCYAN	<<	clientName->getNickName()
+						<<	C_RESET	<<	" is now IRC server Operator"
+						<<	C_RESET	<<	std::endl;
 	}
 }
 
@@ -392,7 +392,7 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 	}
 	
 	AClient	*clientName = user.getServer()->getClient(args[0]);
-	const std::vector<AClient *> &clientList = user.getServer()->getClientList();
+	// const std::vector<AClient *> &clientList = user.getServer()->getClientList();
 	if (clientName != nullptr){
 		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
 					clientName->getNickName() + ": " + args[args.size()] + "\r\n");
@@ -403,7 +403,7 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 						<<	C_LRED	<<	" has been killed; reason : "
 						<<	C_RESET	<<	args[args.size()] << std::endl;
 	}
-	if (clientName == nullptr){
+	if (clientName == nullptr){//else
 			user.sendMsg(":" + serverName + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
 			if (verboseCheck() >= V_USER)
 				std::cout 	<<	C_LRED	<<	"Server or user "
