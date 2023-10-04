@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/04 17:31:31 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/04 19:17:31 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,7 +356,6 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 *				KILL														  *
 \* ************************************************************************** */
 static void	Command::kill(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
-	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
 		user.sendMsg(":" + serverName + " 461 * " + user.getNickName() + " " + cmd + ERR_NEEDMOREPARAMS);
@@ -365,7 +364,6 @@ static void	Command::kill(AClient &user, const std::string &cmd, const std::vect
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-		
 	if (user.getIsOperator() == false){
 		user.sendMsg(":" + serverName + " 481 * " + user.getNickName() + " " + cmd + ERR_NOPRIVILEGES);
 		if (verboseCheck()	>= V_USER)
@@ -375,17 +373,16 @@ static void	Command::kill(AClient &user, const std::string &cmd, const std::vect
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	
 	AClient	*clientName = user.getServer()->getClient(args[0]);
 	if (clientName != nullptr){
-		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + \
-					clientName->getNickName() + ": " + args[args.size()] + "\r\n");
+		std::cout << " test *** " << clientName->getNickName() << std::endl;
+		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + clientName->getNickName() + ": " + args[args.size() - 1] + "\r\n");
 		clientName->closeFD();
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
 						<<	C_RESET	<<	clientName->getNickName()
 						<<	C_LRED	<<	" has been killed; reason : "
-						<<	C_RESET	<<	args[args.size()] << std::endl;
+						<<	C_RESET	<<	args[args.size() - 1] << std::endl;
 	}
 	else {
 		user.sendMsg(":" + serverName + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
@@ -397,6 +394,10 @@ static void	Command::kill(AClient &user, const std::string &cmd, const std::vect
 		return ;
 	}
 }
+
+/* ************************************************************************** *\
+*				UNKNOWN CMD														  *
+\* ************************************************************************** */
 
 static void	Command::unknownCmd(AClient &user, const std::string &cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
