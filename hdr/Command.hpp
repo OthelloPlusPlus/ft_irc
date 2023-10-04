@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/04 15:05:26 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/04 17:33:34 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,21 +55,21 @@ const int CMD_SIZE_OPER_INT = CMD_SIZE_OPER;
 
 namespace Command
 {
-	void parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args);
+	void parseCmd(AClient &user, const std::string& cmd, const std::vector<std::string>& args);
 	
-	static void user(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void password(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void nick(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void ping(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void quit(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void away(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void oper(Client &user, const std::string &cmd, const std::vector<std::string> &args);
-	static void kill(Client &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void user(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void password(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void nick(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void ping(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void quit(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void away(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void oper(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void kill(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
 
-	static void unknownCmd(Client &user, const std::string &cmd);
+	static void unknownCmd(AClient &user, const std::string &cmd);
 
-	static void	userNotRegisteredMsg(Client &user, std::string cmd);
-	static void	userNotOperatorMsg(Client &user, std::string cmd);
+	static void	userNotRegisteredMsg(AClient &user, std::string cmd);
+	static void	userNotOperatorMsg(AClient &user, std::string cmd);
 }
 
 #endif

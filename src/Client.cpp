@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 19:27:25 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/04 17:29:11 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void	Client::initialize(int serverFD) {
 		throw (std::runtime_error("accept(): "));
 	this->pollInfo.events = POLLIN;
 	this->_clientIP = ipAddress(this->socketAddress);
-// std::cout	<< __func__	<< __LINE__	<< this->_clientIP	<< std::endl;
 }
 
 void	Client::sendMsg(std::string msg) {

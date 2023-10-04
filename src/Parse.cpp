@@ -19,7 +19,7 @@
 namespace
 {
 //removed the trailing "\r\n"
-std::string cleanMsg(Client &user, std::string msg){
+std::string cleanMsg(AClient &user, std::string msg){
 	std::string del = "\r\n";
 	int end = msg.find_first_of(del, 0); 
 	msg = msg.substr(0, end);
@@ -56,7 +56,7 @@ std::vector<std::string> ircSplit( const std::string& input, const std::string& 
 
 }
 
-std::tuple<Client &, std::string, std::vector<std::string>> Parse::parseMsg(Client &user, std::string msg){
+std::tuple<AClient &, std::string, std::vector<std::string>> Parse::parseMsg(AClient &user, std::string msg){
 	std::string cmd;
 	std::string arguments;
 	std::vector<std::string>	args;
@@ -90,7 +90,7 @@ std::tuple<Client &, std::string, std::vector<std::string>> Parse::parseMsg(Clie
 
 	// Command::parseCmd(user, cmd, args);
 
-	return std::tuple<Client &, std::string, std::vector<std::string>>(user, cmd, args);
+	return std::tuple<AClient &, std::string, std::vector<std::string>>(user, cmd, args);
 }
 
 

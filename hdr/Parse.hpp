@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 18:37:36 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/04 14:53:08 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/04 17:33:12 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 
 
 #include "Client.hpp"
+#include "AClient.hpp"
 #include "Command.hpp"
 #include <string>
 
 namespace Parse
 {
-    std::tuple<Client &, std::string, std::vector<std::string>> \
-    parseMsg(Client &user, std::string msg);
+    std::tuple<AClient &, std::string, std::vector<std::string>> \
+    parseMsg(AClient &user, std::string msg);
 }
 
 

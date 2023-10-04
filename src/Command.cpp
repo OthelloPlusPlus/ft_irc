@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/04 15:05:32 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/04 17:31:31 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ e_command	mapToEnum(std::string cmd){
 	return CMD_UNKNOWN;
 }
 
-void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<std::string>& args){
+void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<std::string>& args){
 	if (args.size() == 0)
 		return ;
 		
@@ -99,7 +99,7 @@ void Command::parseCmd(Client &user, const std::string& cmd, const std::vector<s
 /* ************************************************************************** *\
 *				USER														  *
 \* ************************************************************************** */
-static void	Command::user(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
+static void	Command::user(AClient &user, const std::string& cmd, const std::vector<std::string> &args) {
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (user.getIsRegistered()){
@@ -141,7 +141,7 @@ static void	Command::user(Client &user, const std::string& cmd, const std::vecto
 /* ************************************************************************** *\
 *				PASS														  *
 \* ************************************************************************** */
-static void Command::password(Client &user, const std::string& cmd, const std::vector<std::string>& args) {
+static void Command::password(AClient &user, const std::string& cmd, const std::vector<std::string>& args) {
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.empty() || args[0].empty()){
@@ -181,7 +181,7 @@ static void Command::password(Client &user, const std::string& cmd, const std::v
 /* ************************************************************************** *\
 *				NICK														  *
 \* ************************************************************************** */
-static void Command::nick(Client &user, const std::string& cmd, const std::vector<std::string> &args) {
+static void Command::nick(AClient &user, const std::string& cmd, const std::vector<std::string> &args) {
 	
 	std::string nickname = args[0];
 	std::vector<AClient*> clients = user.getServer()->getClientList();
@@ -234,7 +234,7 @@ static void Command::nick(Client &user, const std::string& cmd, const std::vecto
 /* ************************************************************************** *\
 *				PING														  *
 \* ************************************************************************** */
-static void Command::ping(Client &user, const std::string &cmd, const std::vector<std::string> &args){
+static void Command::ping(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
 	if (args.empty() || args[0].empty()){
 		std::string serverName = std::getenv("IRC_SERVNAME");
 		user.sendMsg(":" + serverName + "461 * " + cmd + " " + ERR_NEEDMOREPARAMS);
@@ -252,7 +252,7 @@ static void Command::ping(Client &user, const std::string &cmd, const std::vecto
 *				QUIT														  *
 \* ************************************************************************** */
 #include <fcntl.h>
-static void	Command::quit(Client &user, const std::string &cmd, const std::vector<std::string> &args){
+static void	Command::quit(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
@@ -283,7 +283,7 @@ static void	Command::quit(Client &user, const std::string &cmd, const std::vecto
 *				AWAY														  *
 \* ************************************************************************** */
 
-static void Command::away(Client &user, const std::string &cmd, const std::vector<std::string> &args){
+static void Command::away(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
 		user.sendMsg(":" + serverName + " " + user.getBestName()+ " " + RPL_NOWAWAY);
@@ -298,7 +298,7 @@ static void Command::away(Client &user, const std::string &cmd, const std::vecto
 /* ************************************************************************** *\
 *				OPER														  *
 \* ************************************************************************** */
-static void	Command::oper(Client &user, const std::string &cmd, const std::vector<std::string> &args){
+static void	Command::oper(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
@@ -355,7 +355,7 @@ static void	Command::oper(Client &user, const std::string &cmd, const std::vecto
 /* ************************************************************************** *\
 *				KILL														  *
 \* ************************************************************************** */
-static void	Command::kill(Client &user, const std::string &cmd, const std::vector<std::string> &args){
+static void	Command::kill(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
@@ -398,7 +398,7 @@ static void	Command::kill(Client &user, const std::string &cmd, const std::vecto
 	}
 }
 
-static void	Command::unknownCmd(Client &user, const std::string &cmd){
+static void	Command::unknownCmd(AClient &user, const std::string &cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	user.sendMsg(":" + serverName + " 421 " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
 	if (verboseCheck()	>= V_USER)	
@@ -408,7 +408,7 @@ static void	Command::unknownCmd(Client &user, const std::string &cmd){
 }
 
 
-static void	Command::userNotRegisteredMsg(Client &user, std::string cmd){
+static void	Command::userNotRegisteredMsg(AClient &user, std::string cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (verboseCheck() >= V_USER)
 		std::cout 	<< C_LRED << serverName << " User " << C_RESET << user.getBestName() 
@@ -416,7 +416,7 @@ static void	Command::userNotRegisteredMsg(Client &user, std::string cmd){
 					<< C_LRED " command" << C_RESET << std::endl;
 }
 
-static void	Command::userNotOperatorMsg(Client &user, std::string cmd){
+static void	Command::userNotOperatorMsg(AClient &user, std::string cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (verboseCheck() >= V_USER)
 		std::cout 	<< C_LRED << serverName << "User " << C_RESET << user.getBestName() 
