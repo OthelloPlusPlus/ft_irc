@@ -149,5 +149,5 @@ const std::string	&AClient::getBuffer(void) const
 
 std::string	AClient::getSourceName(void) const
 {
-	return (this->_nickName + " !~" + this->_userName + '@' + this->_clientIP);
+	return (this->_nickName + "!~" + this->_userName + '@' + this->_clientIP);
 }

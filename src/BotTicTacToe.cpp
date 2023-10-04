@@ -91,58 +91,46 @@ bool	BotTicTacToe::stillActive(void) const
 std::string	BotTicTacToe::getMsg(void)
 {
 	std::string	reply;
-	std::size_t	pos;
 
-	this->readReceive();
-	pos = this->_buffer.find('\n');
-	if (pos != std::string::npos)
+	if (!this->msgs.empty())
 	{
-		reply = this->botRespond(this->_buffer.substr(0, pos + 1));
-		this->_buffer.erase(0, pos + 1);
+		size_t	pos = this->msgs.front().find(' ') + 1;
+		std::tuple<AClient &, std::string, std::vector<std::string>> prsd = \
+			Parse::parseMsg(*this, this->msgs.front().substr(pos));
+		reply = this->botRespond(std::get<0>(prsd), std::get<1>(prsd), std::get<2>(prsd));
+		this->msgs.pop();
 	}
+	if (!reply.empty())
+	std::cout	<< "bot reply\t["	<< reply	<< ']'	<< std::endl;
 	return (reply);
 }
 
-bool	BotTicTacToe::readReceive(void)
+std::string	BotTicTacToe::botRespond(AClient &src, const std::string cmd, const std::vector<std::string> &args)
 {
-	while (!this->msgs.empty())
-	{
-		size_t spacePos = this->msgs.front().find(' ');
-		std::tuple<AClient& , std::string, std::vector<std::string>> fwd = \
-		Parse::parseMsg(*(dynamic_cast<AClient *>(this)), this->msgs.front().substr(spacePos + 1));
-		std::cout	<< "bot recv\t"	<< this->msgs.front() << std::endl;
-		std::cout	<< "Nick\t" << std::get<0>(fwd).getNickName() << std::endl;
-		std::cout	<< "cmd\t" << std::get<1>(fwd) << std::endl;
-		std::cout	<< "args\t" << std::get<2>(fwd)[0] << std::endl;
-		std::cout	<< "args\t" << std::get<2>(fwd)[1] << std::endl;
-		std::cout	<< '\t' << std::endl;
-		this->msgs.pop();
-	}
-	// char	buffer[4096];
-	// ssize_t	recvLen;
-	
-	// bzero(buffer, sizeof(buffer));
-	// std::cout	<< __func__	<< __LINE__	
-	// 			<< '\t'	<< this->pipeFD[0]	<< '\t'	<< this->pipeFD[1]
-	// 			<< std::endl;
-
-	// recvLen = recv(this->pipeFD[0], buffer, sizeof(buffer) - 1, 0);
-	// std::cout	<< __func__	<< __LINE__	
-	// 			<< '\t'	<< recvLen
-	// 			<< std::endl;
-	// if (recvLen < 0)
-	// {
-	// 	std::cerr	<< "Error read(): "	<< strerror(errno)	<< std::endl;
-	// 	return (false);
-	// }
-	// std::cout	<< __func__	<< __LINE__	<< std::endl;
-	// this->_buffer.append(buffer);
-	return (true);
+	if (cmd == "INVITE")
+		return (this->botRespondInvite(args));
+	if (cmd == "PART")
+		return (this->botRespondPart(args));
+		// return ("JOIN " + args[0]);
+		// std::cout << "I was invited to the party!"	<< std::endl;
+	return ("");
 }
 
-std::string	BotTicTacToe::botRespond(std::string msg)
+std::string	BotTicTacToe::botRespondInvite(const std::vector<std::string> &args)
 {
-	std::cout	<< "[Think]\t"	<< msg	<< std::endl;
+	Channel *channel = this->_server.getChannel(args[1]);
+
+	if (channel == nullptr)
+		return ("");
+	return ("JOIN " + channel->getName() + "\r\n");
+}
+
+std::string	BotTicTacToe::botRespondPart(const std::vector<std::string> &args)
+{
+	Channel *channel = this->_server.getChannel(args[0]);
+
+	if (channel != nullptr && channel->getSize() <= 1)
+		return ("PART " + channel->getName() + "\r\n");
 	return ("");
 }
 

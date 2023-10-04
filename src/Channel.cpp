@@ -77,6 +77,7 @@ void	Channel::addClient(AClient &newClient, bool admin, const std::string passwo
 	newUser.admin = admin;
 	newUser.timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());;
 	this->users.push_back(newUser);
+	std::cout	<< __func__ << __LINE__	<< newClient.getSourceName()<< std::endl;
 	this->sendToChannel(":" + newClient.getSourceName() + " JOIN " + this->name + "\r\n");
 	if (newUser.admin)
 		this->sendToChannel(":" + this->server->getIP() + " MODE " + this->name + " +o " + newUser.client->getNickName() + "\r\n");
