@@ -31,6 +31,7 @@ class BotTicTacToe: public AClient
 		bool	enterMove(std::string dest, std::string arg);
 		void	counterMove(std::string key);
 		int		counterMoveWin(game_t &game, char player);
+		int		counterMoveSmart(game_t &game);
 		int		counterMoveRandom(game_t &game);
 		int		countMoves(std::string key);
 		int		countMoves(game_t &game);

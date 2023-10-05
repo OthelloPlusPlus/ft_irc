@@ -27,6 +27,10 @@
 // char *strerror(int errnum);
 #include <tuple>
 // std::tuple
+#include <cstdlib>
+// int rand();
+#include <ctime>
+// std::time_t time( std::time_t* arg );
 
 /** ************************************************************************ **\
  * 
@@ -41,6 +45,7 @@ BotTicTacToe::BotTicTacToe(Server &server): AClient(server)
 	this->_realName = "Tic-Tac-Toe playing Bot";
 	this->_isRegistered = true;
 	this->_isOperator = false;
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	// if (pipe(this->pipeFD) == -1)
 	// 	throw(std::runtime_error("pipe(): "));
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -164,8 +169,6 @@ void	BotTicTacToe::think(std::string dest, const std::vector<std::string> &args)
 {
 	std::string	cmd = args[1].substr(0, args[1].find(' '));
 
-	// std::cout	<< '['<<args[0]<<']'<<std::endl;
-
 	if (cmd == "//play")
 	{
 		if (this->enterMove(dest, args[1]))
@@ -262,8 +265,8 @@ void	BotTicTacToe::counterMove(std::string key)
 	}
 	if (game.level >= 4 && spot == 0)
 	{
-		spot = spot;
-		// std::cout	<< "counterMoveWin()\t"	<< spot	<< std::endl;
+		spot = this->counterMoveSmart(game);
+		std::cout	<< "counterMoveSmart()\t"	<< spot	<< std::endl;
 	}
 	if (spot == 0)
 	{
@@ -303,41 +306,59 @@ void	BotTicTacToe::counterMove(std::string key)
 
 int	BotTicTacToe::counterMoveWin(game_t &game, char player)
 {
+	int hor[3] = {0, 0, 0};
+	int vert[3] = {0, 0, 0};
+	int	diag[2] = {0, 0};
+
 	for (int x = 0; x < 3; ++x)
-	{
-		int match = 0;
-		int empty = 0;
-		int spot;
 		for (int y = 0; y < 3; ++y)
 		{
+			int add = 0;
 			if (game.field[x][y] == player)
-				match++;
-			else if (game.field[x][y] == ' ')
-			{
-				empty++;
-				spot = y;
-			}
+				add = 1;
+			else if (game.field[x][y] != ' ')
+				add = -3;
+			hor[x] += add;
+			vert[y] += add;
+			if (x == y)
+				diag[0] += add;
+			if (x + y == 2)
+				diag[1] += add;
 		}
-		if (match == 2 && empty == 1)
-			return (x * 3 + spot + 1);
-	}
-	for (int y = 0; y < 3; ++y)
+	for (int i = 0; i < 3; ++i)
 	{
-		int match = 0;
-		int empty = 0;
-		int spot;
-		for (int x = 0; x < 3; ++x)
-		{
-			if (game.field[x][y] == player)
-				match++;
-			else if (game.field[x][y] == ' ')
-			{
-				empty++;
-				spot = x;
-			}
-		}
-		if (match == 2 && empty == 1)
-			return (spot * 3 + y + 1);
+		if (hor[i] == 2)
+			for (int y = 0; y < 3; ++y)
+				if (game.field[i][y] == ' ')
+					return (i * 3 + y + 1);
+		if (vert[i] == 2)
+			for (int x = 0; x < 3; ++x)
+				if (game.field[x][i] == ' ')
+					return (x * 3 + i + 1);
+	}
+	if (diag[0] == 2)
+		for (int i = 0; i < 3; ++i)
+			if (game.field[i][i] == ' ')
+				return (i * 3 + i + 1);
+	if (diag[1] == 2)
+		for (int i = 0; i < 3; ++i)
+			if (game.field[i][2 - i] == ' ')
+				return (i * 3 - i + 3);
+	return (0);
+}
+
+int	BotTicTacToe::counterMoveSmart(game_t &game)
+{
+	int moves = this->countMoves(game);
+
+	if (moves == 1 && game.field[1][1] == ' ')
+		return (5);
+	if (moves <= 1)
+	{
+		int rand = std::rand() % 4;
+		if (rand >= 2)
+			++rand;
+		return (rand * 2 + 1);
 	}
 	return (0);
 }
@@ -374,7 +395,7 @@ void	BotTicTacToe::newGame(std::string key)
 {
 	game_t	newGame;
 
-	newGame.level = 3;
+	newGame.level = 4;
 	newGame.field[0][0] = ' ';
 	newGame.field[0][1] = ' ';
 	newGame.field[0][2] = ' ';
