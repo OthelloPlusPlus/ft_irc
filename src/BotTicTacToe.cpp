@@ -232,28 +232,64 @@ int	BotTicTacToe::countMoves(std::string key)
 	return (i);
 }
 
+int	BotTicTacToe::countMoves(game_t &game)
+{
+	int	i = 0;
+
+	for (int x = 0; x < 3; ++x)
+		for (int y = 0; y < 3; ++y)
+			if (game.field[x][y] != ' ')
+				++i;
+	return (i);
+}
+
 void	BotTicTacToe::counterMove(std::string key)
 {
 	game_t	game = this->findGame(key);
+	int		spot = 0;
 
 	if (this->gameOver(key))
 		return ;
-	if (game.level > 0)
+	if (game.level >= 2 && spot == 0)
 	{
-		int moves = rand() % (9 - this->countMoves(key));
-		for (int x = 0; x < 3; ++x)
-			for (int y = 0; y < 3; ++y)
-				if (game.field[x][y] == ' ')
-				{
-					if (moves == 0)
-					{
-						game.field[x][y] = 'O';
-						x = 3;
-						break ;
-					}
-					--moves;
-				}
+		spot = this->counterMoveWin(game, 'O');
+		std::cout	<< "counterMoveWin()\t"	<< spot	<< std::endl;
 	}
+	if (game.level >= 3 && spot == 0)
+	{
+		spot = this->counterMoveWin(game, 'X');
+		std::cout	<< "counterMoveLose()\t"	<< spot	<< std::endl;
+	}
+	if (game.level >= 4 && spot == 0)
+	{
+		spot = spot;
+		// std::cout	<< "counterMoveWin()\t"	<< spot	<< std::endl;
+	}
+	if (spot == 0)
+	{
+		spot = this->counterMoveRandom(game);
+		std::cout	<< "counterMoveRandom()\t"	<< spot	<< std::endl;
+	}
+	if (spot == 0)
+		return ;
+	spot--;
+	game.field[spot / 3][spot % 3] = 'O';
+	// if (game.level > 0)
+	// {
+	// 	int moves = rand() % (9 - this->countMoves(key));
+	// 	for (int x = 0; x < 3; ++x)
+	// 		for (int y = 0; y < 3; ++y)
+	// 			if (game.field[x][y] == ' ')
+	// 			{
+	// 				if (moves == 0)
+	// 				{
+	// 					game.field[x][y] = 'O';
+	// 					x = 3;
+	// 					break ;
+	// 				}
+	// 				--moves;
+	// 			}
+	// }
 	// for (int x = 0; x < 3; ++x)
 	// 	for (int y = 0; y < 3; ++y)
 	// 		if (game.field[x][y] == ' ')
@@ -263,6 +299,64 @@ void	BotTicTacToe::counterMove(std::string key)
 	// 			break ;
 	// 		}
 	this->updateGame(key, game);
+}
+
+int	BotTicTacToe::counterMoveWin(game_t &game, char player)
+{
+	for (int x = 0; x < 3; ++x)
+	{
+		int match = 0;
+		int empty = 0;
+		int spot;
+		for (int y = 0; y < 3; ++y)
+		{
+			if (game.field[x][y] == player)
+				match++;
+			else if (game.field[x][y] == ' ')
+			{
+				empty++;
+				spot = y;
+			}
+		}
+		if (match == 2 && empty == 1)
+			return (x * 3 + spot + 1);
+	}
+	for (int y = 0; y < 3; ++y)
+	{
+		int match = 0;
+		int empty = 0;
+		int spot;
+		for (int x = 0; x < 3; ++x)
+		{
+			if (game.field[x][y] == player)
+				match++;
+			else if (game.field[x][y] == ' ')
+			{
+				empty++;
+				spot = x;
+			}
+		}
+		if (match == 2 && empty == 1)
+			return (spot * 3 + y + 1);
+	}
+	return (0);
+}
+
+int	BotTicTacToe::counterMoveRandom(game_t &game)
+{
+	int	moves = rand() % (9 - countMoves(game));
+	for (int x = 0; x < 3; ++x)
+		for (int y = 0; y < 3; ++y)
+		{
+			if (game.field[x][y] == ' ')
+			{
+				if (moves == 0)
+					return (x * 3 + y + 1);
+				else
+					--moves;
+			}
+		}
+	return (0);
 }
 
 game_t	BotTicTacToe::findGame(std::string key)
@@ -280,7 +374,7 @@ void	BotTicTacToe::newGame(std::string key)
 {
 	game_t	newGame;
 
-	newGame.level = 1;
+	newGame.level = 3;
 	newGame.field[0][0] = ' ';
 	newGame.field[0][1] = ' ';
 	newGame.field[0][2] = ' ';

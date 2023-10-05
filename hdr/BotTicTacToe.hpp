@@ -30,7 +30,10 @@ class BotTicTacToe: public AClient
 		void	think(std::string dest, const std::vector<std::string> &args);
 		bool	enterMove(std::string dest, std::string arg);
 		void	counterMove(std::string key);
+		int		counterMoveWin(game_t &game, char player);
+		int		counterMoveRandom(game_t &game);
 		int		countMoves(std::string key);
+		int		countMoves(game_t &game);
 		game_t	findGame(std::string key);
 		void	newGame(std::string key);
 		void	clearGame(std::string key);
