@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/04 19:17:31 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/06 18:03:53 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ static void	Command::user(AClient &user, const std::string& cmd, const std::vect
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (user.getIsRegistered()){
-		user.sendMsg(":" + serverName + user.getNickName() + " " + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + serverName + " 462 * " + user.getNickName() + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
 						<<	C_RESET	<<	user.getNickName()
@@ -113,7 +113,7 @@ static void	Command::user(AClient &user, const std::string& cmd, const std::vect
 	}
 
 	if (args.size() < 4){
-		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + " 461 * " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error: format required: USER <user name> * <host> :<realname>" 
 						<<	C_RESET	<<	std::endl;
@@ -123,7 +123,7 @@ static void	Command::user(AClient &user, const std::string& cmd, const std::vect
 	user.setUserName(args[0]);
 	if (args[1] != "*"){
 		if (verboseCheck()	>= V_USER)
-			std::cout	<<	C_LRED	<<	"Error: format required: USER <user name> * <host> :<realname>" 
+			std::cout	<<	C_LRED	<<	"Error: format required: USER <username> * <host> :<realname>" 
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
@@ -145,7 +145,7 @@ static void Command::password(AClient &user, const std::string& cmd, const std::
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.empty() || args[0].empty()){
-		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + " 461 * " + user.getBestName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Password not submitted. No imput provided"
 						<<	C_RESET	<<	std::endl;
@@ -153,7 +153,7 @@ static void Command::password(AClient &user, const std::string& cmd, const std::
 		return ;
 	}
 	if (user.getIsRegistered() == true){
-		user.sendMsg(":" + serverName + user.getNickName() + " " + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + serverName + " 462 * " + user.getNickName() + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
 						<<	C_RESET	<<	user.getNickName()
@@ -163,7 +163,7 @@ static void Command::password(AClient &user, const std::string& cmd, const std::
 	}
 	
 	if (user.getServer()->validatePassword(args[0]) == 0 ){
-		user.sendMsg(":" + serverName + user.getBestName() + " " + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + serverName + " 464 * " + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cerr	<<	C_LRED	<<	"Wrong password " 
 						<<	C_RESET	<<	user.getBestName() 
@@ -187,7 +187,7 @@ static void Command::nick(AClient &user, const std::string& cmd, const std::vect
 	std::vector<AClient*> clients = user.getServer()->getClientList();
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (nickname.empty()) {
-		user.sendMsg(":" + serverName + ERR_NONICKNAMEGIVEN);
+		user.sendMsg(":" + serverName + " 431 * " + ERR_NONICKNAMEGIVEN);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Nick name not provided " 
 						<<	C_RESET	<<	user.getBestName() 
@@ -198,7 +198,7 @@ static void Command::nick(AClient &user, const std::string& cmd, const std::vect
 	
 	AClient	*clientName = user.getServer()->getClient(nickname);
 	if (clientName != nullptr && clientName != &user){
-		user.sendMsg(":" + serverName + " 433 * " + nickname + " " +  ERR_NICKNAMEINUSE);
+		user.sendMsg(":" + serverName + " 433 * " + nickname +  ERR_NICKNAMEINUSE);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Nick name not available. [" 
 						<<	C_RESET	<<	nickname
@@ -208,7 +208,7 @@ static void Command::nick(AClient &user, const std::string& cmd, const std::vect
 	}
 
 	if (isdigit(nickname.at(0))){
-		user.sendMsg(":" + serverName + " 432 * " + nickname + " " + ERR_ERRONEUSNICKNAME);
+		user.sendMsg(":" + serverName + " 432 * " + nickname  + ERR_ERRONEUSNICKNAME);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong character in name [" 
 						<<	C_RESET	<<	nickname
@@ -218,7 +218,7 @@ static void Command::nick(AClient &user, const std::string& cmd, const std::vect
 	}
 	for (int i = 1; i < nickname.size(); i++){
 		if (!isalnum(nickname[i])){
-			user.sendMsg(":" + serverName + "432 * " + nickname + " " + ERR_ERRONEUSNICKNAME);
+			user.sendMsg(":" + serverName + "432 * " + nickname + ERR_ERRONEUSNICKNAME);
 			if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_LRED	<<	"Wrong character in name [" 
 							<<	C_RESET	<<	nickname
@@ -286,7 +286,7 @@ static void	Command::quit(AClient &user, const std::string &cmd, const std::vect
 static void Command::away(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
-		user.sendMsg(":" + serverName + " " + user.getBestName()+ " " + RPL_NOWAWAY);
+		user.sendMsg(":" + serverName + " 306 * " + user.getBestName() + RPL_NOWAWAY);
 		if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_RESET	<<	"User "
 							<<	C_LCYAN	<<	user.getBestName()
@@ -302,7 +302,7 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
-		user.sendMsg(":" + serverName + " 461 * " + user.getNickName() + " " + cmd + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"No imput provided. User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -312,7 +312,7 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 	}
 		
 	if (user.getServer()->validatePassword(args[1]) != 2){
-		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + " " + cmd + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong password. Command " 
 						<<	C_RESET	<<	cmd 
@@ -321,7 +321,7 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 		return ;
 	}
 	if (user.getIsOperator() == false){
-		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + " " + cmd + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -332,7 +332,7 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 	
 	AClient	*clientName = user.getServer()->getClient(args[0]);
 	if (clientName == nullptr){
-		user.sendMsg(":" + serverName + " 491 * " + args[0] + " " + cmd + ERR_NOOPERHOST);
+		user.sendMsg(":" + serverName + " 491 * " + args[0] + ERR_NOOPERHOST);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	serverName
@@ -342,7 +342,7 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 	}
 	else if (user.getIsOperator() == true) {
 		clientName->setIsOperator(true);
-		user.sendMsg(":" + serverName + " 381 * " + clientName->getNickName() + " " + RPL_YOUREOPER);
+		user.sendMsg(":" + serverName + " 381 * " + clientName->getNickName() + RPL_YOUREOPER);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_RESET	<<	"User "
 						<<	C_LCYAN	<<	clientName->getNickName()
@@ -358,14 +358,14 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 static void	Command::kill(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
-		user.sendMsg(":" + serverName + " 461 * " + user.getNickName() + " " + cmd + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"Target not submitted. No imput provided" 
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
 	if (user.getIsOperator() == false){
-		user.sendMsg(":" + serverName + " 481 * " + user.getNickName() + " " + cmd + ERR_NOPRIVILEGES);
+		user.sendMsg(":" + serverName + " 481 * " + user.getNickName() + ERR_NOPRIVILEGES);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -375,7 +375,6 @@ static void	Command::kill(AClient &user, const std::string &cmd, const std::vect
 	}
 	AClient	*clientName = user.getServer()->getClient(args[0]);
 	if (clientName != nullptr){
-		std::cout << " test *** " << clientName->getNickName() << std::endl;
 		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + clientName->getNickName() + ": " + args[args.size() - 1] + "\r\n");
 		clientName->closeFD();
 		if (verboseCheck()	>= V_USER)
@@ -401,7 +400,7 @@ static void	Command::kill(AClient &user, const std::string &cmd, const std::vect
 
 static void	Command::unknownCmd(AClient &user, const std::string &cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
-	user.sendMsg(":" + serverName + " 421 " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
+	user.sendMsg(":" + serverName + " 421 * " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
 	if (verboseCheck()	>= V_USER)	
 		std::cout	<<	C_LRED	<<	"The command typed is unknown" 
 					<<	C_RESET	<<	std::endl;
