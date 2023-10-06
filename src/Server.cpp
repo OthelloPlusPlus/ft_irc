@@ -54,8 +54,7 @@
 
 Server::Server(int argc, char **argv)
 {
-	std::cout	<< std::left
-				<< C_HEADER	<< std::setw(76)	<< "Setting up server "
+	std::cout	<< C_HEADER	<< std::setw(76)	<< "Setting up server "
 				<< C_RESET	<< "\n";
 
 	this->pollInfo.fd = -1;
@@ -68,9 +67,9 @@ Server::Server(int argc, char **argv)
 	this->readEnv();
 	this->setLocalIP();
 	this->bootUpServer();
+	this->addBots();
 
-	std::cout	<< "\n"
-				<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
+	std::cout	<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
 				<< std::setw(23)	<< " - Server name: "	<< this->serverName	<< "\n"
 				<< std::setw(23)	<< " - Hostname: "	<< this->publicIP	<< "\n"//https://www.whatsmyip.org/	185-61-55-68.185-61-55-ip.fmo-solutions.nl
 				<< std::setw(23)	<< " - Local IP address: "	<< this->localIP	<< "\n"
@@ -206,6 +205,9 @@ void	Server::readEnv(void)
 
 void	Server::addBots(void)
 {
+	std::cout	<< std::left
+				<< C_HEADER	<< std::setw(76)	<< "Adding bots "
+				<< C_RESET	<< "\n";
 	for (int i = 0; i >= 0; ++i)
 	{
 		try
