@@ -9,6 +9,7 @@ class Server;
 class AClient
 {
 	private:
+		bool		_isOperator;
 
 	protected:
 		Server		&_server;
@@ -18,7 +19,6 @@ class AClient
 		std::string	_userName; //Ident Name
 		std::string	_realName;
 		bool		_isRegistered;
-		bool		_isOperator;
 	
 		std::string	_buffer;
 

@@ -6,30 +6,32 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/04 17:29:11 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/06 19:28:19 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
-#include "AClient.hpp"
 #include "colors.hpp"
-
-#include <iostream>
+#include "Parse.hpp"
+#include "Command.hpp"
+// namespace Command
 
 #include <iomanip>
 #include <string.h>
 // void bzero(void *s, size_t n);
 // char *strerror(int errnum);
-#include <string>
-// std::
 #include <unistd.h>
 //	int	close(int fildes);
 #include <arpa/inet.h>
 // char	*inet_ntoa(struct in_addr);
-
-#include "Command.hpp"
-// namespace Command
-#include "Parse.hpp"
+#include <poll.h>
+// struct pollfd
+#include <iostream>
+// std::
+#include <vector>
+// std::vector
+#include <tuple>   
+// for std::tuple
 
 /** ************************************************************************ **\
  * 
@@ -175,24 +177,16 @@ std::string Client::getSourceName(void) const {
     return info.str();
 }
 
-// void Client::setClientIP(std::string clientIP){
-// 	this->_clientIP = clientIP;
-// }
 
 void Client::setPollInfofd(int val){
 	this->pollInfo.fd = val;
 }
 
-// void Client::setIpHostName(std::string ipAddress){
-// 	this->_IpHostName = ipAddress;
-// }
 
 void Client::passwordValidation(bool val){
 	this->_password = val;
 }
-// void Client::setIsRegistered(bool val){
-// 	this->_isRegistered = val;
-// }
+
 
 void	Client::setIsRegistered(bool val){
 	if (hasPassword() == true && !getNickName().empty() && !getUserName().empty()){
@@ -208,22 +202,6 @@ void	Client::setIsRegistered(bool val){
 		printInfo();
 	}
 }
-
-// void	Client::userNotRegisteredMsg(std::string cmd){
-// 	std::string serverName = std::getenv("IRC_SERVNAME");
-// 	if (verboseCheck() >= V_USER)
-// 		std::cout 	<< C_LRED << serverName << " User " << C_RESET << this->getBestName() 
-// 					<< C_LRED " needs to be registered for the " << C_RESET << cmd 
-// 					<< C_LRED " command" << C_RESET << std::endl;
-// }
-
-// void	Client::userNotOperatorMsg(std::string cmd){
-// 	std::string serverName = std::getenv("IRC_SERVNAME");
-// 	if (verboseCheck() >= V_USER)
-// 		std::cout 	<< C_LRED << serverName << "User " << C_RESET << this->getBestName() 
-// 					<< C_LRED " needs to be operator for the " << C_RESET << cmd 
-// 					<< C_LRED " command" << C_RESET << std::endl;
-// }
 
 void	Client::printInfo(void) const {
 
@@ -273,40 +251,3 @@ Client	&Client::operator=(const Client &src) {
 
 	return (*this);
 }
-
-// std::string	const & Client::getMessage(void)const { return _message;}
-// std::string const & Client::getUserName(void) const  { return _userName; }
-// std::string const & Client::getRealName(void) const  { return _realName; }
-// std::string const & Client::getNickName(void) const  { return _nickName; }
-// bool Client::getIsRegistered(void) const  { return _isRegistered; }
-// bool Client::getIsOperator(void) const  { return _isOperator; }
-
-// void Client::setMessage(std::string message){
-// 	this->_message = message;
-// }
-
-// void Client::setUserName(std::string username){
-// 	this->_userName = username;
-// }
-
-
-// void Client::setRealName(std::string realname){
-// 	this->_realName = realname;
-// }
-
-// void Client::setNickName(std::string nickname){
-// 	this->_nickName = nickname;
-// }
-
-
-
-// void Client::setIsOperator(bool val){
-// 	this->_isOperator = val;
-// }
-
-// std::cout	<< "socketAddress.sin_addr.s_addr\t"	
-//				<< this->socketAddress.sin_addr.s_addr	<< "\n"
-// 				<< "PollInfo.fd\t"	<< this->pollInfo.fd	<< "\n"
-// 				<< std::flush;
-// std::cout	<< __func__	<< " " <<  __LINE__	<< std::endl;
-// this->sendMsg(":Bot!communicate@localhost NOTICE" + this->getNickName() + " Message received\r\n");

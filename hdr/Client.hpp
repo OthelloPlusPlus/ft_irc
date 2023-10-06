@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/09/30 19:19:17 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/06 19:23:37 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,17 @@
 #include <netinet/in.h>
 // struct sockaddr_in
 // socklen_t
+
 #include <poll.h>
 // struct pollfd
 #include <iostream>
 // std::
+#include <string>
+// std::string
 #include <vector>
+// std::vector
+#include <tuple>   
+// for std::tuple
 
 struct FileTransfer
 {

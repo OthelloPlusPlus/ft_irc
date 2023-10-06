@@ -12,9 +12,13 @@
 
 #include "Parse.hpp"
 #include "colors.hpp"
+
 #include <string>
+// std::string
 #include <vector>
-#include <tuple>   // for std::tuple
+// std::vector
+#include <tuple>   
+// for std::tuple
 
 namespace
 {
@@ -87,8 +91,6 @@ std::tuple<AClient &, std::string, std::vector<std::string>> Parse::parseMsg(ACl
 			args.push_back(arguments);
 		}
 	}
-
-	// Command::parseCmd(user, cmd, args);
 
 	return std::tuple<AClient &, std::string, std::vector<std::string>>(user, cmd, args);
 }
