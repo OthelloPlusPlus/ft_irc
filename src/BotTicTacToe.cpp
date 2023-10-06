@@ -205,7 +205,7 @@ bool	BotTicTacToe::enterMove(game_t &game, std::string arg)
 
 	if (pos1 == pos2)
 	{
-		if (game.field[3][3] == 0)
+		if (game.moves == 0)
 			return (true);
 		return (false);
 	}
@@ -267,7 +267,7 @@ void	BotTicTacToe::counterMove(game_t &game)
 		spot = this->counterMoveOpen(game);
 		std::cout	<< "counterMoveOpen()\t"	<< spot	<< std::endl;
 	}
-	if (game.level >= 4 && spot == 0)
+	if (game.level >= 5 && spot == 0)
 	{
 		spot = this->counterMoveSmart(game);
 		std::cout	<< "counterMoveSmart()\t"	<< spot	<< std::endl;
@@ -320,18 +320,32 @@ int	BotTicTacToe::counterMoveOpen(game_t &game)
 
 int BotTicTacToe::counterMoveSmart(game_t &game)
 {
-	int	spot[3][3];
-	int	move = 0;
-	int	high = -7;
+	int	pos[3][3];
+	int	current = 9;
 
-	for (int x = 0; x < 3; ++x)
+	for (int x = 0; x < 3; ++x)//calculate values
 		for (int y = 0; y < 3; ++y)
-			if (game.field[x][y] == ' ' && game.field[x][3] + game.field[3][y] > high)
-			{
-				high = game.field[x][3] + game.field[3][y];
-				move = x * 3 + y + 1;
-			}
-	return (move);
+		{
+			if (game.field[x][y] == ' ')
+				pos[x][y] = game.field[x][3] + game.field[3][y];
+			else
+				pos[x][y] = 9;
+			if (pos[x][y] < current)
+				current = pos[x][y];
+		}
+	for (int x = 0; x < 3; ++x)//set lowest value to true
+		for (int y = 0; y < 3; ++y)
+			if (pos[x][y] == current)
+				pos[x][y] = true;
+			else
+				pos[x][y] = false;
+	for (int i = 0; i < 9; i = i + 2)//prioritise corners and middle
+		if (pos[i / 3][i % 3] == true)
+			return (i + 1);
+	for (int i = 1; i < 9; i = i + 2)//check remaining fields
+		if (pos[i / 3][i % 3] == true)
+			return (i + 1);
+	return (0);
 }
 
 int	BotTicTacToe::counterMoveRandom(game_t &game)
@@ -366,7 +380,7 @@ void	BotTicTacToe::newGame(std::string key)
 {
 	game_t	newGame;
 
-	newGame.level = 4;
+	newGame.level = 5;
 	this->clearGame(newGame);
 	this->updateGame(key, newGame);
 }
@@ -459,7 +473,7 @@ void	BotTicTacToe::setLevel(std::string arg, std::string dest)
 		try
 		{
 			int	level = std::stoi(arg.substr(pos1 + 1, pos2));
-			if (level >= 0 && level <= 4)
+			if (level >= 0 && level <= 5)
 				game.level = level;
 			else
 				throw (std::range_error(""));
