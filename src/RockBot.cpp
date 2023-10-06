@@ -1,4 +1,5 @@
 #include "RockPaperScissors.hpp"
+#include "Command.hpp"
 #include "colors.hpp"
 #include "Parse.hpp"
 
@@ -44,8 +45,8 @@ void	RockBot::rockBotRespond(std::string name, AClient &src, const std::string c
 		this->botRespondJoin(args);
 	// else if (cmd == "PART")
 	// 	this->botRespondPart(args);
-	// else if (cmd == "PRIVMSG")
-	// 	this->botRespondPrivMsg(name, args);
+	else if (cmd == "PRIVMSG")
+		this->botRespondPrivMsg(name, args);
 }
 
 void	RockBot::botRespondInvite(const std::vector<std::string> &args){
@@ -61,7 +62,35 @@ void	RockBot::botRespondJoin(const std::vector<std::string> &args){
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :?\r\n");
+	this->send.push("PRIVMSG " + channel->getName() + " :Rock, paper or scissors?\r\n");
+}
+
+void	RockBot::botRespondPart(const std::vector<std::string> &args)
+{
+	Channel *channel = this->_server.getChannel(args[0]);
+
+	if (channel != nullptr && channel->getSize() <= 1)
+		this->send.push("PART " + channel->getName() + "\r\n");
+}
+
+void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string> &args) {
+	std::string	dest;
+
+	if (args[0][0] == '#')
+	{
+		Channel *channel = this->_server.getChannel(args[0]);
+		if (channel != nullptr)
+			dest = channel->getName();
+	}
+	else
+	{
+		AClient *client = this->_server.getClient(name);
+		if (client != nullptr)
+			dest = client->getBestName();
+	}
+	if (!dest.empty())
+	// this->think(dest, args[1]);
+		this->send.push("PRIVMSG " + dest + " :Huh?\r\n");
 }
 
 std::string	RockBot::getMsg(void) {

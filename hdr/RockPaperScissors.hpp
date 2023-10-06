@@ -24,6 +24,8 @@ class RockBot: public AClient
 		void	rockBotRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args);
 		void	botRespondInvite(const std::vector<std::string> &args);
 		void	botRespondJoin(const std::vector<std::string> &args);
+		void	botRespondPart(const std::vector<std::string> &args);
+		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
 
 
 	public:

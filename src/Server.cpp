@@ -17,6 +17,8 @@
 #include "IRCReplyCodes.hpp"
 #include "verboseCheck.hpp"
 #include "BotTicTacToe.hpp"
+#include "RockPaperScissors.hpp"
+
 
 #include <iostream>
 // std::cout
@@ -216,6 +218,7 @@ void	Server::addBots(void)
 			switch (i)
 			{
 				case 0:	bot = new BotTicTacToe(*this);	break;
+				case 1:	bot = new RockBot(*this);	break;
 				default:	i = -2;
 			}
 			if (!bot)
