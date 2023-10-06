@@ -1,8 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   setEnv.cpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/08/16 15:46:37 by ohengelm      #+#    #+#                 */
+/*   Updated: 2023/09/29 19:08:56 by emlicame      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "colors.hpp"
 
 #include <iostream>
-// std::
+// std::cout
 // std::string
 // std::exception
 #include <fstream>
@@ -11,6 +22,9 @@
 // int	setenv(const char *__name, const char *__value, int __overwrite)
 #include <string.h>
 // char *strerror(int errnum);
+#include <sys/stat.h>
+// struct stat
+// time_t
 
 static bool			newInfo(std::string file);
 static void			readAndSet(std::string file);
@@ -32,14 +46,11 @@ bool	setEnv(void)
 	}
 	return (true);
 }
-#include <sys/stat.h>
-// struct stat
-// time_t
 
 static bool	newInfo(std::string file)
 {
 	static time_t	last = 0;
-	struct stat	fileInfo;
+	struct stat		fileInfo;
 
 	if (stat(file.c_str(), &fileInfo) != 0)
 		throw (std::runtime_error("Failed to read meta-data of " + file + "."));

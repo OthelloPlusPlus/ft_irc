@@ -15,21 +15,28 @@
 
 #include <iostream>
 // std::
+#include <ios>
+// std::left
+#include <iomanip>
+// std::setw()
 #include <string.h>
 // char *strerror(int errnum);
 #include <errno.h>
+// char *strerror(int errnum);
 
 bool	setEnv(void);
 
 int	main(int argc, char **argv)
 {
+	std::cout	<< CC_CLEAR	<< std::left
+				<< C_HEADER	<< std::setw(76)	<< "ft_irc "
+				<< C_RESET	<< "\n";
 	if (!setEnv())
 		return (false);
 	try
 	{
 		Server	server(argc, argv);
 
-		server.addBots();
 		while (true)
 		{
 			server.checkNewClient();
