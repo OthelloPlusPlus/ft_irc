@@ -112,8 +112,6 @@ std::string	BotTicTacToe::getMsg(void)
 		reply = this->send.front();
 		this->send.pop();
 	}
-	// if (!reply.empty())
-	// std::cout	<< "bot reply\t["	<< reply	<< ']'	<< std::endl;
 	return (reply);
 }
 
@@ -171,9 +169,20 @@ void	BotTicTacToe::think(std::string dest, const std::vector<std::string> &args)
 
 	if (cmd == "//play")
 	{
-		if (this->enterMove(dest, args[1]))
-			this->counterMove(dest);
-		this->sendGame(dest);
+		try
+		{
+			game_t	game = this->findGame(dest);
+
+			if (this->enterMove(game, args[1]))
+				this->counterMove(game);
+			this->sendGame(dest, game);
+			this->updateGame(dest, game);
+		}
+		catch(const std::exception& e)
+		{
+			this->send.push("PRIVMSG " + dest + " :" + e.what() + "\r\n");
+		}
+		
 	}
 	else if (cmd == "//show")
 	{
@@ -188,80 +197,75 @@ void	BotTicTacToe::think(std::string dest, const std::vector<std::string> &args)
 		this->send.push("PRIVMSG " + dest + " :Huh?\r\n");
 }
 
-bool	BotTicTacToe::enterMove(std::string dest, std::string arg)
+bool	BotTicTacToe::enterMove(game_t &game, std::string arg)
 {
-	game_t		game = this->findGame(dest);
-	size_t		pos1 = arg.find(' ');
-	size_t		pos2 = arg.find(' ', pos1 + 1);
+	size_t	pos1 = arg.find(' ');
+	size_t	pos2 = arg.find(' ', pos1 + 1);
+	int		playerPos;
 
 	if (pos1 == pos2)
 	{
-		if (this->countMoves(dest) == 0)
+		if (game.field[3][3] == 0)
 			return (true);
 		return (false);
 	}
 	try
 	{
-		int	playerPos = std::stoi(arg.substr(pos1 + 1, pos2)) - 1;
-		if (playerPos < 0 || playerPos > 8)
-			throw (std::range_error("Number " + std::to_string(playerPos + 1) + " is outside the field."));
-		else if (game.field[playerPos / 3][playerPos % 3] != ' ')
-			throw (std::range_error("Field is already taken"));
-		game.field[playerPos / 3][playerPos % 3] = 'X';
-		this->updateGame(dest, game);
-	}
-	catch(const std::range_error &e)
-	{
-		this->send.push("PRIVMSG " + dest + " :" + e.what() + "\r\n");
-		return (false);
+		playerPos = std::stoi(arg.substr(pos1 + 1, pos2)) - 1;
 	}
 	catch(const std::exception &e)
 	{
-		this->send.push("PRIVMSG " + dest + " :I don't recognise command: " + arg.substr(pos1 + 1, pos2) + "\r\n");
-		return (false);
+		throw(std::runtime_error("I don't recognise command: " + arg.substr(pos1 + 1, pos2)));
 	}
+	this->fillField(game, playerPos, 'X');
 	return (true);
 }
 
-int	BotTicTacToe::countMoves(std::string key)
+bool	BotTicTacToe::fillField(game_t &game, int spot, char put)
 {
-	game_t	game = this->findGame(key);
-	int	i = 0;
+	if (spot < 0 || spot > 8)
+		throw(std::range_error("Invalid spot " + std::to_string(spot + 1)));
+	if (game.field[spot / 3][spot % 3] != ' ')
+		throw(std::range_error("Spot " + std::to_string(spot + 1)+ " is already taken"));
+	if (put != 'X' && put != 'O')
+		throw(std::range_error("Trying to fill invalid character " + std::to_string(put)));
 
-	for (int x = 0; x < 3; ++x)
-		for (int y = 0; y < 3; ++y)
-			if (game.field[x][y] != ' ')
-				++i;
-	return (i);
+	game.field[spot / 3][spot % 3] = put;
+	int add;
+	if (put == 'X')
+		add = 1;
+	else
+		add = -1;
+	game.field[spot / 3][3] += add;
+	game.field[3][spot % 3] += add;
+	if (spot / 3 == spot % 3)
+		game.diag[0] += add;
+	if (spot / 3 + spot % 3 == 2)
+		game.diag[1] += add;
+	++game.moves;
+	return (true);
 }
 
-int	BotTicTacToe::countMoves(game_t &game)
+void	BotTicTacToe::counterMove(game_t &game)
 {
-	int	i = 0;
-
-	for (int x = 0; x < 3; ++x)
-		for (int y = 0; y < 3; ++y)
-			if (game.field[x][y] != ' ')
-				++i;
-	return (i);
-}
-
-void	BotTicTacToe::counterMove(std::string key)
-{
-	game_t	game = this->findGame(key);
 	int		spot = 0;
 
-	if (this->gameOver(key))
+	if (this->gameOver(game))
 		return ;
 	if (game.level >= 2 && spot == 0)
 	{
-		spot = this->counterMoveWin(game, 'O');
+		spot = this->counterMoveWin(game, -1);
 		std::cout	<< "counterMoveWin()\t"	<< spot	<< std::endl;
 	}
 	if (game.level >= 3 && spot == 0)
 	{
-		spot = this->counterMoveWin(game, 'X');
+		spot = this->counterMoveWin(game, 1);
 		std::cout	<< "counterMoveLose()\t"	<< spot	<< std::endl;
+	}
+	if (game.level >= 4 && spot == 0)
+	{
+		spot = this->counterMoveOpen(game);
+		std::cout	<< "counterMoveOpen()\t"	<< spot	<< std::endl;
 	}
 	if (game.level >= 4 && spot == 0)
 	{
@@ -273,87 +277,38 @@ void	BotTicTacToe::counterMove(std::string key)
 		spot = this->counterMoveRandom(game);
 		std::cout	<< "counterMoveRandom()\t"	<< spot	<< std::endl;
 	}
-	if (spot == 0)
-		return ;
-	spot--;
-	game.field[spot / 3][spot % 3] = 'O';
-	// if (game.level > 0)
-	// {
-	// 	int moves = rand() % (9 - this->countMoves(key));
-	// 	for (int x = 0; x < 3; ++x)
-	// 		for (int y = 0; y < 3; ++y)
-	// 			if (game.field[x][y] == ' ')
-	// 			{
-	// 				if (moves == 0)
-	// 				{
-	// 					game.field[x][y] = 'O';
-	// 					x = 3;
-	// 					break ;
-	// 				}
-	// 				--moves;
-	// 			}
-	// }
-	// for (int x = 0; x < 3; ++x)
-	// 	for (int y = 0; y < 3; ++y)
-	// 		if (game.field[x][y] == ' ')
-	// 		{
-	// 			game.field[x][y] = 'O';
-	// 			x = 3;
-	// 			break ;
-	// 		}
-	this->updateGame(key, game);
+	this->fillField(game, spot - 1, 'O');
 }
 
-int	BotTicTacToe::counterMoveWin(game_t &game, char player)
+int	BotTicTacToe::counterMoveWin(game_t &game, int player)
 {
-	int hor[3] = {0, 0, 0};
-	int vert[3] = {0, 0, 0};
-	int	diag[2] = {0, 0};
-
-	for (int x = 0; x < 3; ++x)
-		for (int y = 0; y < 3; ++y)
-		{
-			int add = 0;
-			if (game.field[x][y] == player)
-				add = 1;
-			else if (game.field[x][y] != ' ')
-				add = -3;
-			hor[x] += add;
-			vert[y] += add;
-			if (x == y)
-				diag[0] += add;
-			if (x + y == 2)
-				diag[1] += add;
-		}
 	for (int i = 0; i < 3; ++i)
 	{
-		if (hor[i] == 2)
+		if (game.field[i][3] * player == 2)
 			for (int y = 0; y < 3; ++y)
 				if (game.field[i][y] == ' ')
 					return (i * 3 + y + 1);
-		if (vert[i] == 2)
+		if (game.field[3][i] * player == 2)
 			for (int x = 0; x < 3; ++x)
 				if (game.field[x][i] == ' ')
 					return (x * 3 + i + 1);
 	}
-	if (diag[0] == 2)
+	if (game.diag[0] * player == 2)
 		for (int i = 0; i < 3; ++i)
 			if (game.field[i][i] == ' ')
-				return (i * 3 + i + 1);
-	if (diag[1] == 2)
+				return (i * 4 + 1);
+	if (game.diag[1] * player == 2)
 		for (int i = 0; i < 3; ++i)
 			if (game.field[i][2 - i] == ' ')
-				return (i * 3 - i + 3);
+				return (i * 2 + 3);
 	return (0);
 }
 
-int	BotTicTacToe::counterMoveSmart(game_t &game)
+int	BotTicTacToe::counterMoveOpen(game_t &game)
 {
-	int moves = this->countMoves(game);
-
-	if (moves == 1 && game.field[1][1] == ' ')
+	if (game.moves == 1 && game.field[1][1] == ' ')
 		return (5);
-	if (moves <= 1)
+	if (game.moves <= 1)
 	{
 		int rand = std::rand() % 4;
 		if (rand >= 2)
@@ -363,9 +318,25 @@ int	BotTicTacToe::counterMoveSmart(game_t &game)
 	return (0);
 }
 
+int BotTicTacToe::counterMoveSmart(game_t &game)
+{
+	int	spot[3][3];
+	int	move = 0;
+	int	high = -7;
+
+	for (int x = 0; x < 3; ++x)
+		for (int y = 0; y < 3; ++y)
+			if (game.field[x][y] == ' ' && game.field[x][3] + game.field[3][y] > high)
+			{
+				high = game.field[x][3] + game.field[3][y];
+				move = x * 3 + y + 1;
+			}
+	return (move);
+}
+
 int	BotTicTacToe::counterMoveRandom(game_t &game)
 {
-	int	moves = rand() % (9 - countMoves(game));
+	int	moves = rand() % (9 - game.moves);
 	for (int x = 0; x < 3; ++x)
 		for (int y = 0; y < 3; ++y)
 		{
@@ -396,43 +367,42 @@ void	BotTicTacToe::newGame(std::string key)
 	game_t	newGame;
 
 	newGame.level = 4;
-	newGame.field[0][0] = ' ';
-	newGame.field[0][1] = ' ';
-	newGame.field[0][2] = ' ';
-	newGame.field[1][0] = ' ';
-	newGame.field[1][1] = ' ';
-	newGame.field[1][2] = ' ';
-	newGame.field[2][0] = ' ';
-	newGame.field[2][1] = ' ';
-	newGame.field[2][2] = ' ';
+	this->clearGame(newGame);
 	this->updateGame(key, newGame);
 }
 
-void	BotTicTacToe::clearGame(std::string key)
+void	BotTicTacToe::clearGame(game_t &game)
 {
-	game_t	freshGame = this->findGame(key);
-
-	freshGame.field[0][0] = ' ';
-	freshGame.field[0][1] = ' ';
-	freshGame.field[0][2] = ' ';
-	freshGame.field[1][0] = ' ';
-	freshGame.field[1][1] = ' ';
-	freshGame.field[1][2] = ' ';
-	freshGame.field[2][0] = ' ';
-	freshGame.field[2][1] = ' ';
-	freshGame.field[2][2] = ' ';
-	updateGame(key, freshGame);
+	game.field[0][0] = ' ';
+	game.field[0][1] = ' ';
+	game.field[0][2] = ' ';
+	game.field[0][3] = 0;
+	game.field[1][0] = ' ';
+	game.field[1][1] = ' ';
+	game.field[1][2] = ' ';
+	game.field[1][3] = 0;
+	game.field[2][0] = ' ';
+	game.field[2][1] = ' ';
+	game.field[2][2] = ' ';
+	game.field[2][3] = 0;
+	game.field[3][0] = 0;
+	game.field[3][1] = 0;
+	game.field[3][2] = 0;
+	game.field[3][3] = 0;
+	game.diag[0] = 0;
+	game.diag[1] = 0;
+	game.moves = 0;
+	game.winner = 'C';
 }
 
-void	BotTicTacToe::updateGame(std::string key, game_t update)
+void	BotTicTacToe::updateGame(std::string key, game_t &update)
 {
 	this->game[key] = update;
 }
 
-void	BotTicTacToe::sendGame(std::string dest)
+void	BotTicTacToe::sendGame(std::string dest, game_t &game)
 {
-	this->gameOver(dest);
-	game_t	game = this->findGame(dest);
+	this->gameOver(game);
 
 	this->send.push("PRIVMSG " + dest + " : " + game.field[0][0] + " | " + game.field[0][1] + " | " + game.field[0][2] + "\r\n");
 	this->send.push("PRIVMSG " + dest + " : " + game.field[1][0] + " | " + game.field[1][1] + " | " + game.field[1][2] + "\r\n");
@@ -445,33 +415,36 @@ void	BotTicTacToe::sendGame(std::string dest)
 			this->send.push("PRIVMSG " + dest + " :I won!\r\n");
 		else if (game.winner == 'T')
 			this->send.push("PRIVMSG " + dest + " :We tied!\r\n");
-		this->clearGame(dest);
+		this->clearGame(game);
 	}
 }
 
-bool	BotTicTacToe::gameOver(std::string dest)
+void	BotTicTacToe::sendGame(std::string dest)
 {
 	game_t	game = this->findGame(dest);
+	this->sendGame(dest, game);
+}
 
+bool	BotTicTacToe::gameOver(game_t &game)
+{
 	game.winner = 'C';
-	if (game.field[0][0] != ' ' && \
-		((game.field[0][0] == game.field[0][1] && game.field[0][0] == game.field[0][2]) || \
-		(game.field[0][0] == game.field[1][0] && game.field[0][0] == game.field[2][0])))
-		game.winner = game.field[0][0];
-	else if (game.field[1][1] != ' ' && \
-		((game.field[1][1] == game.field[1][0] && game.field[1][1] == game.field[1][2]) || \
-		(game.field[1][1] == game.field[0][1] && game.field[1][1] == game.field[2][1]) || \
-		(game.field[1][1] == game.field[0][0] && game.field[1][1] == game.field[2][2]) || \
-		(game.field[1][1] == game.field[0][2] && game.field[1][1] == game.field[2][0])))
+	if (game.moves >= 9)
+		game.winner = 'T';
+	for (int i = 0; i < 3; ++i)
+	{
+		if (std::abs(game.field[3][i]) == 3)
+		{
+			game.winner = game.field[0][i];
+			break ;
+		}
+		else if (std::abs(game.field[i][3]) == 3)
+		{
+			game.winner = game.field[i][0];
+			break ;
+		}
+	}
+	if (std::abs(game.diag[0]) == 3 || std::abs(game.diag[1]) == 3)
 		game.winner = game.field[1][1];
-	else if (game.field[2][2] != ' ' && \
-		((game.field[2][2] == game.field[2][1] && game.field[2][2] == game.field[2][0]) || \
-		(game.field[2][2] == game.field[1][2] && game.field[2][2] == game.field[0][2])))
-		game.winner = game.field[2][2];
-	else if (this->countMoves(dest) == 9)
-				game.winner = 'T';
-
-	this->updateGame(dest, game);
 	return (game.winner != 'C');
 }
 
