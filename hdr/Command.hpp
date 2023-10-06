@@ -6,14 +6,14 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/04 17:33:34 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/06 17:35:37 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMAND_HPP
 # define COMMAND_HPP
 
-#include "Client.hpp"
+#include "AClient.hpp"
 #include "Server.hpp"
 #include "IRCReplyCodes.hpp"
 #include "verboseCheck.hpp"
