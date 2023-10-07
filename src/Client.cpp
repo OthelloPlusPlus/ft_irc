@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/06 19:28:19 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/07 18:58:12 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ Client::Client(Server &server) : AClient(server), _password(false) {
 	std::cout	<< C_DGREEN	<< "Param constructor "
 				<< C_GREEN	<< "Client"
 				<< C_DGREEN	<< " called.\n"
-				<< C_LMGNT	<< "IRC OMS: To register please use commands PASS - NICK - USER(user_name * host :realname)."
 				<< C_RESET	<< std::endl;
 	initialize(server.getFD());
+	this->sendMsg(":" + this->_server.getName() + " NOTICE * :*** To register please use commands\n- PASS\n- NICK\n- USER(user_name * host :realname)\r\n");
 }
 
 Client::Client(const Client &src) : AClient(src._server), _password(src._password) {
@@ -56,7 +56,7 @@ Client::Client(const Client &src) : AClient(src._server), _password(src._passwor
 				<< C_RESET	<< std::endl;
 }
 
-/** ************************************************************************ **\
+/******************************************************************************\
  * 
  * 	Deconstructors
  * 

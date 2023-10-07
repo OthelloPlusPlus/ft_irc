@@ -10,8 +10,9 @@ class Server;
 
 typedef struct hand_s
 {
-	int level;
-	int moves[2];
+	int 		level;
+	int 		moves;
+	std::string shapes[2];
 }	hand_t;
 
 class RockBot: public AClient
@@ -26,8 +27,15 @@ class RockBot: public AClient
 		void	botRespondJoin(const std::vector<std::string> &args);
 		void	botRespondPart(const std::vector<std::string> &args);
 		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
+		void	think(std::string dest, std::string arg);
+		
+		void	thinkPlay(std::string dest, std::string arg);
+		bool	getPlayerMove(hand_t &hand, std::string arg);
 
-
+		hand_t	findGame(std::string key);
+		void	newGame(std::string key);
+		void	updateGame(std::string key, hand_t &update);
+		
 	public:
 		RockBot(Server &server);
 		~RockBot(void);

@@ -62,7 +62,7 @@ void	RockBot::botRespondJoin(const std::vector<std::string> &args){
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :Rock, paper or scissors?\r\n");
+	this->send.push("PRIVMSG " + channel->getName() + " :Let's play! Rock, paper or scissors?\r\n");
 }
 
 void	RockBot::botRespondPart(const std::vector<std::string> &args)
@@ -89,8 +89,114 @@ void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string>
 			dest = client->getBestName();
 	}
 	if (!dest.empty())
-	// this->think(dest, args[1]);
+		this->think(dest, args[1]);
+		// this->send.push("PRIVMSG " + dest + " :Huh?\r\n");
+}
+
+void	RockBot::think(std::string dest, std::string arg) {
+	std::string	cmd = arg.substr(0, arg.find(' '));
+
+	if (cmd == "//play")
+		this->thinkPlay(dest, arg);
+	else if (dest[0] != '#')
 		this->send.push("PRIVMSG " + dest + " :Huh?\r\n");
+}
+
+void	RockBot::thinkPlay(std::string dest, std::string arg){
+	try 
+	{
+		hand_t	hand = this->findGame(dest);
+
+		if (this->getPlayerMove(hand, arg))
+			this->send.push("PRIVMSG " + dest + " :test?\r\n");
+		this->updateGame(dest, hand);
+		// 	this->counterMove(game); ++game.moves
+		// this->sendGame(dest, game);
+		// this->updateGame(dest, game);
+	}
+	catch(const std::exception& e)
+	{
+		this->send.push("PRIVMSG " + dest + " :" + e.what() + "\r\n");
+	}
+}
+
+bool	RockBot::getPlayerMove(hand_t &hand, std::string arg){
+	size_t	pos1 = arg.find(' ');
+	size_t	pos2 = arg.find(' ', pos1 + 1);
+	std::string	shape;
+
+	std::cout << C_BLUE "arg [" << arg << "]" C_RESET << std::endl;
+	if (pos1 == pos2){
+		if (hand.moves == 0){
+			throw(std::runtime_error("Rock, paper or scissors?"));
+			return (false);
+		}
+	}
+	// try
+	// {
+		std::cout	<< __func__ << __LINE__	<< std::endl;
+		shape = arg.substr(pos1 + 1, pos2 + 1);
+		std::cout	<< __func__ << __LINE__	<< std::endl;
+		std::cout << C_AZURE "shape [" << shape << "]" C_RESET << std::endl;
+		if (shape.empty()){
+			std::cout	<< __func__ << __LINE__	<< std::endl;
+			throw(std::runtime_error("Rock, paper or scissors?"));
+			return (false);
+		}
+		else {
+			std::cout	<< __func__ << __LINE__	<< std::endl;
+			size_t	notSpace = shape.find_first_not_of(' ');
+			std::cout	<< __func__ << __LINE__	<< std::endl;
+			if (notSpace != std::string::npos) {
+				std::cout << "not empty" << std::endl;
+				std::cout	<< __func__ << __LINE__	<< std::endl;
+				throw(std::runtime_error("Not empty"));
+				std::cout	<< __func__ << __LINE__	<< std::endl;
+				return (true);
+				std::cout	<< __func__ << __LINE__	<< std::endl;
+			}
+			else {
+				std::cout	<< __func__ << __LINE__	<< std::endl;
+				std::cout << "only spaces" <<std::endl;
+				std::cout	<< __func__ << __LINE__	<< std::endl;
+				throw(std::runtime_error("Huh?"));
+				std::cout	<< __func__ << __LINE__	<< std::endl;
+				return (false);
+				std::cout	<< __func__ << __LINE__	<< std::endl;
+			}
+		}
+	// }
+	// catch(const std::exception &e)
+	// {
+	// 	std::cout	<< __func__ << __LINE__	<< std::endl;
+	// 	throw(std::runtime_error("I don't recognise command: " + arg.substr(pos1 + 1, pos2 + 1)));
+	// }
+	// std::cout	<< __func__ << __LINE__	<< std::endl;
+	return (true);
+}
+
+
+hand_t	RockBot::findGame(std::string key) {
+	std::map<std::string, hand_t>::const_iterator i = this->hand.find(key);
+	if (i == this->hand.end())
+	{
+		this->newGame(key);
+		i = this->hand.find(key);
+	}
+	return (i->second);
+}
+
+void	RockBot::newGame(std::string key){
+	hand_t	newGame;
+
+	// newGame.level = 1;
+	// this->clearGame(newGame);
+	this->updateGame(key, newGame);
+}
+
+void	RockBot::updateGame(std::string key, hand_t &update)
+{
+	this->hand[key] = update;
 }
 
 std::string	RockBot::getMsg(void) {
