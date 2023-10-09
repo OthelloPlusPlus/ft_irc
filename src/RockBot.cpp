@@ -9,6 +9,8 @@
 // int rand();
 #include <ctime>
 // std::time_t time( std::time_t* arg );
+#include <algorithm>
+//std::transform
 
 /****************************************************************************************\
 *			Constructor 																 *
@@ -43,8 +45,8 @@ void	RockBot::rockBotRespond(std::string name, AClient &src, const std::string c
 		this->botRespondInvite(args);
 	else if (cmd == "JOIN")
 		this->botRespondJoin(args);
-	// else if (cmd == "PART")
-	// 	this->botRespondPart(args);
+	else if (cmd == "PART")
+		this->botRespondPart(args);
 	else if (cmd == "PRIVMSG")
 		this->botRespondPrivMsg(name, args);
 }
@@ -62,7 +64,7 @@ void	RockBot::botRespondJoin(const std::vector<std::string> &args){
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :Let's play! Rock, paper or scissors?\r\n");
+	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand!Wanna //play Rock, paper or scissors?\r\n");
 }
 
 void	RockBot::botRespondPart(const std::vector<std::string> &args)
@@ -90,14 +92,13 @@ void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string>
 	}
 	if (!dest.empty())
 		this->think(dest, args[1]);
-		// this->send.push("PRIVMSG " + dest + " :Huh?\r\n");
 }
 
 void	RockBot::think(std::string dest, std::string arg) {
 	std::string	cmd = arg.substr(0, arg.find(' '));
-
-	if (cmd == "//play")
+	if (cmd == "//play"){
 		this->thinkPlay(dest, arg);
+	}
 	else if (dest[0] != '#')
 		this->send.push("PRIVMSG " + dest + " :Huh?\r\n");
 }
@@ -106,13 +107,11 @@ void	RockBot::thinkPlay(std::string dest, std::string arg){
 	try 
 	{
 		hand_t	hand = this->findGame(dest);
-
 		if (this->getPlayerMove(hand, arg))
-			this->send.push("PRIVMSG " + dest + " :test?\r\n");
+			// this->send.push("PRIVMSG " + dest + " :test?\r\n");
+			this->rockMove(dest, hand);
+			// this->sendGame(dest, game);
 		this->updateGame(dest, hand);
-		// 	this->counterMove(game); ++game.moves
-		// this->sendGame(dest, game);
-		// this->updateGame(dest, game);
 	}
 	catch(const std::exception& e)
 	{
@@ -122,59 +121,67 @@ void	RockBot::thinkPlay(std::string dest, std::string arg){
 
 bool	RockBot::getPlayerMove(hand_t &hand, std::string arg){
 	size_t	pos1 = arg.find(' ');
-	size_t	pos2 = arg.find(' ', pos1 + 1);
-	std::string	shape;
-
-	std::cout << C_BLUE "arg [" << arg << "]" C_RESET << std::endl;
-	if (pos1 == pos2){
-		if (hand.moves == 0){
+	size_t	notSpace = arg.find_first_not_of(' ', pos1);
+	size_t	lastNotSpace = arg.find_last_not_of(' ');
+	std::string	input;
+	
+	if (notSpace == std::string::npos){
+		if (hand.moves == 0)
 			throw(std::runtime_error("Rock, paper or scissors?"));
-			return (false);
-		}
+		else
+			throw(std::runtime_error("Ok, I'm ready"));
+		return (false);
 	}
-	// try
-	// {
-		std::cout	<< __func__ << __LINE__	<< std::endl;
-		shape = arg.substr(pos1 + 1, pos2 + 1);
-		std::cout	<< __func__ << __LINE__	<< std::endl;
-		std::cout << C_AZURE "shape [" << shape << "]" C_RESET << std::endl;
-		if (shape.empty()){
-			std::cout	<< __func__ << __LINE__	<< std::endl;
-			throw(std::runtime_error("Rock, paper or scissors?"));
-			return (false);
-		}
-		else {
-			std::cout	<< __func__ << __LINE__	<< std::endl;
-			size_t	notSpace = shape.find_first_not_of(' ');
-			std::cout	<< __func__ << __LINE__	<< std::endl;
-			if (notSpace != std::string::npos) {
-				std::cout << "not empty" << std::endl;
-				std::cout	<< __func__ << __LINE__	<< std::endl;
-				throw(std::runtime_error("Not empty"));
-				std::cout	<< __func__ << __LINE__	<< std::endl;
-				return (true);
-				std::cout	<< __func__ << __LINE__	<< std::endl;
-			}
-			else {
-				std::cout	<< __func__ << __LINE__	<< std::endl;
-				std::cout << "only spaces" <<std::endl;
-				std::cout	<< __func__ << __LINE__	<< std::endl;
-				throw(std::runtime_error("Huh?"));
-				std::cout	<< __func__ << __LINE__	<< std::endl;
-				return (false);
-				std::cout	<< __func__ << __LINE__	<< std::endl;
-			}
-		}
-	// }
-	// catch(const std::exception &e)
-	// {
-	// 	std::cout	<< __func__ << __LINE__	<< std::endl;
-	// 	throw(std::runtime_error("I don't recognise command: " + arg.substr(pos1 + 1, pos2 + 1)));
-	// }
-	// std::cout	<< __func__ << __LINE__	<< std::endl;
+
+	input = arg.substr(notSpace, lastNotSpace - notSpace + 1);
+
+	std::string	shape = input;
+	std::transform(shape.begin(), shape.end(), shape.begin(), ::tolower);
+
+	if (shape.compare("rock") != 0 && shape.compare("paper") != 0  && shape.compare("scissors") != 0 ){
+		throw(std::runtime_error("Mmmhh...I don't recognise this shape: " + input ));
+		return (false);
+	}
+	hand.shapes[0] = shape;
+	hand.moves++;
 	return (true);
 }
 
+//		std::cout	<< __func__ << __LINE__	<< std::endl;
+
+e_move	mapToeMove(std::string shape){
+	if (shape == "rock") return e_move::ROCK;
+	if (shape == "paper") return e_move::PAPER;
+	if (shape == "scissors") return e_move::SCISSORS;
+	return e_move::ROCK;
+}
+
+void	RockBot::rockMove(std::string dest, hand_t &hand){
+	if (hand.shapes[0].empty())
+		return ;
+
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+	int rockMoveIndex = std::rand() % 3;
+	hand.shapes[1] = hand.options[rockMoveIndex];
+	
+	e_move playerMove = mapToeMove(hand.shapes[0]);
+	e_move botMove = mapToeMove(hand.shapes[1]);
+
+	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[0] + " and I reply " + hand.shapes[1] + "\r\n");
+	if (playerMove == botMove){
+		this->send.push("PRIVMSG " + dest + " :We tied!\r\n");
+		return ;
+	}
+
+	if (playerMove == e_move::ROCK && botMove == e_move::SCISSORS|| \
+		playerMove == e_move::PAPER && botMove == e_move::ROCK	||  \
+		playerMove == e_move::SCISSORS  && botMove == e_move::PAPER )
+		this->send.push("PRIVMSG " + dest + " :You won!\r\n");
+	else
+		this->send.push("PRIVMSG " + dest + " :I won!\r\n");
+	
+	return ;
+}
 
 hand_t	RockBot::findGame(std::string key) {
 	std::map<std::string, hand_t>::const_iterator i = this->hand.find(key);
@@ -189,7 +196,11 @@ hand_t	RockBot::findGame(std::string key) {
 void	RockBot::newGame(std::string key){
 	hand_t	newGame;
 
-	// newGame.level = 1;
+	newGame.level = 1;
+	newGame.moves = 0;
+	newGame.options[0] = "rock";
+	newGame.options[1] = "paper";
+	newGame.options[2] = "scissors";
 	// this->clearGame(newGame);
 	this->updateGame(key, newGame);
 }

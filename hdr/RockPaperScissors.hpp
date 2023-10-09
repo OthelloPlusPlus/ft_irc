@@ -8,11 +8,17 @@ class Server;
 # include <queue>
 # include <map>
 
+#define USER 0;
+#define BOT 1;
+
+enum class e_move { ROCK, PAPER, SCISSORS};
+
 typedef struct hand_s
 {
 	int 		level;
 	int 		moves;
 	std::string shapes[2];
+	std::string options[3];
 }	hand_t;
 
 class RockBot: public AClient
@@ -31,6 +37,7 @@ class RockBot: public AClient
 		
 		void	thinkPlay(std::string dest, std::string arg);
 		bool	getPlayerMove(hand_t &hand, std::string arg);
+		void	rockMove(std::string dest, hand_t &hand);
 
 		hand_t	findGame(std::string key);
 		void	newGame(std::string key);
