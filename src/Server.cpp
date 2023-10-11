@@ -272,10 +272,10 @@ void	Server::sendWelcome(Client &client)
 {
 	std::string	msg;
 
-	msg = ":" + this->localIP;
-	client.sendMsg(msg + " 375 " + client.getNickName() + " :- ft_irc Message of the Day - \r\n");
-	client.sendMsg(msg + " 372 " + client.getNickName() + " :- We know what we're doing! We swear!\r\n");
-	client.sendMsg(msg + " 376 " + client.getNickName() + " :End of /MOTD command.\r\n");
+	msg = ':' + *this;
+	client.sendMsg(msg + " 375 " + client.getNickName() + " :- ft_irc Message of the Day - ");
+	client.sendMsg(msg + " 372 " + client.getNickName() + " :- We know what we're doing! We swear!");
+	client.sendMsg(msg + " 376 " + client.getNickName() + " :End of /MOTD command.");
 	this->joinChannel(client, "#WelcomeChannel");
 }
 
@@ -283,15 +283,15 @@ void	Server::sendChannelList(AClient &client) const
 {
 	std::string	msg;
 
-	msg = ":" + this->publicIP + " 321 " + client.getNickName() + " ";
-	client.sendMsg(msg + "Channel :Users  Name \r\n");
+	msg = ':' + *this + " 321 " + client.getNickName() + ' ';
+	client.sendMsg(msg + "Channel :Users Name");
 
 	msg.replace(msg.find(" 321 "), 5, " 322 ");
 	for (std::vector<Channel *>::const_iterator channel = this->channels.begin(); channel != this->channels.end(); ++channel)
-		client.sendMsg(msg + (*channel)->getName() + " " + std::to_string((*channel)->getSize()) + " :" + (*channel)->getTopic() + "\r\n");
+		client.sendMsg(msg + **channel + ' ' + std::to_string((*channel)->getSize()) + " :" + (*channel)->getTopic());
 
 	msg.replace(msg.find(" 322 "), 5, " 323 ");
-	client.sendMsg(msg + ":END of /LIST\r\n");
+	client.sendMsg(msg + ":END of /LIST");
 }
 
 void	Server::sendWho(AClient &client, const std::string who) const
@@ -301,8 +301,8 @@ void	Server::sendWho(AClient &client, const std::string who) const
 
 		if (whoClient != nullptr)
 		{
-			whoClient->sendMsg(":" + this->serverName + " 352 " + client.getNickName() + "~" + whoClient->getNickName() + "\r\n");
-			client.sendMsg(":" + this->serverName + " 315 " + client.getNickName() + + " " + who + " :End of /WHO list\r\n");
+			whoClient->sendMsg(':' + *this + " 352 " + client.getNickName() + "~" + whoClient->getNickName());
+			client.sendMsg(':' + *this + " 315 " + client.getNickName() + ' ' + who + " :End of /WHO list");
 			return ;
 		}
 	}
@@ -319,23 +319,23 @@ void	Server::sendWhoIs(AClient &client, const std::string who) const
 	std::string	msg;
 	AClient		*whoClient;
 
-	msg = ":" + this->publicIP + " 000 " + client.getNickName() + " " + who + " ";
+	msg = ':' + *this + " 000 " + client.getNickName() + ' ' + who + ' ';
 	whoClient = this->getClient(who);
 	if (whoClient)
 	{
 		msg.replace(msg.find(" 000 "), 5, " 311 ");
-		client.sendMsg(msg + whoClient->getUserName() + " " + whoClient->getClientIP() + " * :" + whoClient->getRealName() + "\r\n");
+		client.sendMsg(msg + whoClient->getUserName() + ' ' + whoClient->getClientIP() + " * :" + whoClient->getRealName());
 		msg.replace(msg.find(" 311 "), 5, " 312 ");
-		client.sendMsg(msg + this->publicIP + "\r\n");
+		client.sendMsg(msg + *whoClient->getServer());
 		msg.replace(msg.find(" 312 "), 5, " 318 ");
 	}
 	else
 	{
 		msg.replace(msg.find(" 000 "), 5, " 401 ");
-		client.sendMsg(msg + ":No such nick/channel\r\n");
+		client.sendMsg(msg + ":No such nick/channel");
 		msg.replace(msg.find(" 401 "), 5, " 318 ");
 	}
-	client.sendMsg(msg + ":End of /WHOIS list.\r\n");
+	client.sendMsg(msg + ":End of /WHOIS list.");
 }
 
 void	Server::sendInvite(AClient &client, const std::vector<std::string> &args)
@@ -351,7 +351,7 @@ void	Server::sendInvite(AClient &client, const std::vector<std::string> &args)
 			if (add != nullptr)
 				channel.insert(add);
 			else
-				client.sendMsg(':' + this->publicIP + " 401 " + client.getNickName() + ' ' + *i + " :No such channel\r\n");
+				client.sendMsg(':' + *this + " 401 " + client.getNickName() + ' ' + *i + " :No such channel");
 		}
 		else
 		{
@@ -359,7 +359,7 @@ void	Server::sendInvite(AClient &client, const std::vector<std::string> &args)
 			if (add != nullptr && add != &client)
 				name.insert(add);
 			else
-				client.sendMsg(':' + this->publicIP + " 401 " + client.getNickName() + ' ' + *i + " :No such nick\r\n");
+				client.sendMsg(':' + *this + " 401 " + client.getNickName() + ' ' + *i + " :No such nick");
 		}
 	}
 	for (std::set<Channel *>::iterator i = channel.begin(); i != channel.end(); ++i)
@@ -367,9 +367,9 @@ void	Server::sendInvite(AClient &client, const std::vector<std::string> &args)
 		for (std::set<AClient *>::iterator j = name.begin(); j != name.end(); ++j)
 		{
 			if (!(*i)->userIsInChannel(**j))
-				(*j)->sendMsg(':' + client.getNickName() + "!~" + client.getUserName() + '@' + client.getClientIP() + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName() + "\r\n");
+				(*j)->sendMsg(':' + client + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName());
 			else
-				client.sendMsg(':' + this->publicIP + " 443 " + client.getNickName() + ' ' + (*j)->getNickName() + ' ' + (*i)->getName() + " :is already on channel\r\n");
+				client.sendMsg(':' + *this + " 443 " + client.getNickName() + ' ' + (*j)->getNickName() + ' ' + (*i)->getName() + " :is already on channel");
 		}
 	}
 }
@@ -379,12 +379,12 @@ void	Server::sendPong(AClient &client) const
 	std::string	time;
 
 	time = std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
-	client.sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + time + "\r\n");
+	client.sendMsg(':' + *this + " PONG " + *this + " :" + time);
 }
 
 void	Server::sendPong(AClient &client, const std::string token) const
 {
-	client.sendMsg(":" + this->localIP + " PONG " + this->localIP + " :" + token + "\r\n");
+	client.sendMsg(':' + *this + " PONG " + *this + " :" + token);
 }
 
 void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &args)
@@ -399,14 +399,14 @@ void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &
 		Channel *channel = getChannel(name);
 
 		if (channel != nullptr)
-			channel->sendToChannel(client, ":" + client.getSourceName() + " PRIVMSG " + channel->getName() + " :" + msg + "\r\n");
+			channel->sendToChannel(client, ':' + client + " PRIVMSG " + *channel + " :" + msg);
 	}
 	else
 	{
 		AClient	*user = getClient(name);
 
 		if (user != nullptr)
-			user->sendMsg(":" + client.getSourceName() + " PRIVMSG " + user->getNickName() + " :" + msg + "\r\n");	
+			user->sendMsg(':' + client + " PRIVMSG " + user->getNickName() + " :" + msg);	
 	}
 }
 
@@ -419,24 +419,18 @@ void	Server::checkClients(void)
 			std::string	msg = (*client)->getMsg();
 			if (!msg.empty())
 			{
-				bool	welcome = (*client)->getNickName().empty();
+				bool	welcome = (*client)->getIsRegistered();
 				if (verboseCheck() >= V_MSG)
 					std::cout	<< "Recv ["	<< msg.length()	<< "]\t"
 								<< C_ORANGE	<< msg
 								<< C_RESET	<< std::flush;
-				// if ((*client)->getNickName().empty())
+				std::tuple<AClient& , std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<AClient *>(*client)), msg);
+				Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
+				if (welcome == false && (*client)->getIsRegistered())
 				// {
-					std::tuple<AClient& , std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<AClient *>(*client)), msg);
-					Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
-					if (welcome == true && !(*client)->getNickName().empty())
-						this->sendWelcome(*(dynamic_cast<Client *>(*client)));
-					// if (verboseCheck() >= V_USER)
-					// 	(*client)->printInfo();
-				// }
-				// else
-				// {
-				// 	std::tuple<AClient&, std::string, std::vector<std::string>> fwd = Parse::parseMsg(*(dynamic_cast<AClient *>(*client)), msg);
-				// 	Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
+					this->sendWelcome(*(dynamic_cast<Client *>(*client)));
+				// 	if (verboseCheck() >= V_USER)
+				// 		(*client)->printInfo();
 				// }
 			}
 			++client;
@@ -586,7 +580,7 @@ void	Server::setChannelMode(AClient &client, const std::vector<std::string> &arg
 
 	if (channel == nullptr)
 	{
-		client.sendMsg(':' + this->localIP + " 403 " + client.getNickName() + ' ' + args[0] + " :No such channel\r\n");
+		client.sendMsg(':' + *this + " 403 " + client.getNickName() + ' ' + args[0] + " :No such channel");
 		return ;
 	}
 	else if (args.size() == 1)

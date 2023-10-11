@@ -77,10 +77,10 @@ void	Channel::addClient(AClient &newClient, bool admin, const std::string passwo
 	newUser.admin = admin;
 	newUser.timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());;
 	this->users.push_back(newUser);
-	std::cout	<< __func__ << __LINE__	<< newClient.getSourceName()<< std::endl;
-	this->sendToChannel(":" + newClient.getSourceName() + " JOIN " + this->name + "\r\n");
+	// std::cout	<< __func__ << __LINE__	<< newClient.getSourceName()<< std::endl;
+	this->sendToChannel(':' + newClient.getSourceName() + " JOIN " + this->name);
 	if (newUser.admin)
-		this->sendToChannel(":" + this->server->getIP() + " MODE " + this->name + " +o " + newUser.client->getNickName() + "\r\n");
+		this->sendToChannel(':' + this->server->getIP() + " MODE " + this->name + " +o " + newUser.client->getNickName());
 	if (!this->topic.empty())
 		this->sendTopic(*newUser.client);
 	this->sendNames(*newUser.client);
@@ -139,7 +139,7 @@ void	Channel::removeUser(const AClient &client)
 {
 	if (this->userIsInChannel(client))
 	{
-		this->sendToChannel(":" + client.getSourceName() + " PART " + this->name + "\r\n");
+		this->sendToChannel(':' + client.getSourceName() + " PART " + this->name);
 		for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end();)
 		{
 			if ((*i).client == &client)
@@ -162,12 +162,12 @@ void	Channel::promoteOldestUser(void)
 		if ((*user).timestamp < (*oldest).timestamp)
 			oldest = user;
 	(*oldest).admin = true;
-	this->sendToChannel(":" + this->server->getName() + " MODE " + this->name + " +o " + (*oldest).client->getNickName() + "\r\n");
+	this->sendToChannel(':' + this->server->getName() + " MODE " + this->name + " +o " + (*oldest).client->getNickName());
 }
 
 void	Channel::sendMode(AClient &client) const
 {
-	std::string	msg = ':' + this->server->getName() + " 324 " + client.getNickName() + ' ' + this->name + " \n";
+	std::string	msg = ':' + *this->server + " 324 " + client.getBestName() + ' ' + *this + " \n";
 	if (this->modeInvite)
 		msg += "+i\t Private channel, invite only\n";
 	else
@@ -189,7 +189,7 @@ void	Channel::sendMode(AClient &client) const
 		msg += "+l\t Channel size limit: " + std::to_string(this->userLimit);
 	else
 		msg += "-l\t Channel has no size limit";
-	client.sendMsg(msg + "\r\n");
+	client.sendMsg(msg);
 }
 
 void	Channel::setMode(AClient &client, std::string flag, std::string arg)
@@ -265,14 +265,12 @@ void	Channel::setModeK(AClient &client, std::string flag, std::string newPass)
 {
 	if (newPass.empty())
 		return ;
-	std::string	clientAdr = ":" + client.getNickName() + "!~" + \
-							client.getUserName() + '@' + client.getClientIP();
 	if (flag[0] == '-')
 	{
 		if (this->key == newPass)
 		{
 			this->key.clear();
-			client.sendMsg(clientAdr + " MODE " + this->name + ' ' + flag + " * \r\n");
+			client.sendMsg(':' + client + " MODE " + this->name + ' ' + flag + " * ");
 			if (verboseCheck() >= V_CHANNEL)
 				std::cout	<< C_RESET	<< "Channel "
 							<< C_LCYAN	<< this->name
@@ -294,7 +292,7 @@ void	Channel::setModeK(AClient &client, std::string flag, std::string newPass)
 	else if (flag[0] == '+')
 	{
 		this->key = newPass;
-		client.sendMsg(clientAdr + " MODE " + this->name + ' ' + flag + ' ' + this->key + "\r\n");
+		client.sendMsg(':' + client + " MODE " + this->name + ' ' + flag + ' ' + this->key);
 		if (verboseCheck() >= V_CHANNEL)
 			std::cout	<< C_RESET	<< "Channel "
 						<< C_LCYAN	<< this->name
@@ -349,7 +347,7 @@ void	Channel::setModeO(AClient &client, std::string flag, std::string clientName
 						<< C_RESET	<< this->name
 						<< C_RESET	<< std::endl;
 	}
-	this->sendToChannel(':' + client.getNickName() + "!~" + client.getUserName() + '@' + client.getClientIP() + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName() + "\r\n");
+	this->sendToChannel(':' + client + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName());
 }
 
 void	Channel::setModeL(AClient &client, std::string flag, std::string count)
@@ -400,7 +398,7 @@ void	Channel::setTopic(AClient &client, const std::string newTopic)
 			this->topic = "";
 		else
 			this->topic = newTopic;
-		this->sendToChannel(":" + client.getNickName() + " TOPIC " + this->name + " :" + this->topic + "\r\n");
+		this->sendToChannel(':' + client.getNickName() + " TOPIC " + this->name + " :" + this->topic);
 		if (verboseCheck() >= V_CHANNEL)
 		{
 			std::cout	<< C_RESET	<< "User "
@@ -431,48 +429,43 @@ void	Channel::setTopic(AClient &client, const std::string newTopic)
 
 void	Channel::sendTopic(AClient &client) const
 {
-	std::string	msg;
-
-	msg = ": 332 " + client.getNickName() + " " + this->name + " :" + this->topic + "\r\n";
-	client.sendMsg(msg);
+	client.sendMsg(':' + *this->server + " 332 " + client.getNickName() + ' ' + *this + " :" + this->topic);
 }
 
 void	Channel::sendNames(AClient &client)
 {
 	std::string	msg;
 
-	msg = ": 353 " + client.getNickName() + " = " + this->name + " :";
+	msg = ':' + *this->server + " 353 " + client.getNickName() + " = " + this->name + " :";
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	{
 		if ((*i).admin == true)
 			msg += "@";
-		msg += (*i).client->getNickName() + " ";
+		msg += (*i).client->getNickName() + ' ';
 	}
-	client.sendMsg(msg + "\r\n");
-	msg = ": 366 " + client.getNickName() + " " + this->name + " :end of /NAMES list.\r\n";
 	client.sendMsg(msg);
+	client.sendMsg(':' + *this->server + " 366 " + client.getNickName() + ' ' + this->name + " :end of /NAMES list.");
 }
 
 void	Channel::sendWho(AClient &client)
 {
 	std::string	msg;
 
-	msg = ":" + this->server->getName() + " 352 " + client.getNickName() + " " + this->name + " ";
+	msg = ':' + *this->server + " 352 " + client.getNickName() + ' ' + this->name + ' ';
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	{
 		std::string	msgWho;
-		msgWho = msg +	(*i).client->getUserName() + " " + \
-						(*i).client->getClientIP() + " " + \
+		msgWho = msg +	(*i).client->getUserName() + ' ' + \
+						(*i).client->getClientIP() + ' ' + \
 						(*i).client->getNickName();
 		if ((*i).admin == true)
 			msgWho += " H@:0 ";
 		else
 			msgWho += " H:0 ";
-		msgWho +=		(*i).client->getRealName() + "\r\n";
+		msgWho +=		(*i).client->getRealName();
 		client.sendMsg(msgWho);
 	}
-	msg = ":" + this->server->getName() + " 315 " + client.getNickName() + " " + this->name + " :End of /WHO list.\r\n";
-	client.sendMsg(msg);
+	client.sendMsg(':' + *this->server + " 315 " + client.getNickName() + ' ' + this ->name + " :end of /WHO list.");
 }
 
 void	Channel::sendToChannel(const std::string msg) const
@@ -549,7 +542,7 @@ std::string	Channel::getTopic(void) const
 
 // void	Channel::printClientList(void) const
 // {
-// 	std::cout	<< "--- Channel "	<< this->name	<< ":"	<< std::endl;
+// 	std::cout	<< "--- Channel "	<< this->name	<< ':'	<< std::endl;
 // 	for (std::vector<ChannelUser>::const_iterator client = this->users.begin(); client != this->users.end(); ++client)
 // 		std::cout	<<	client->client->getNickName()	<<'t'	<< (*client).admin	<< '\n';
 // 	std::cout	<< "--- End of list\n"	<< std::endl;

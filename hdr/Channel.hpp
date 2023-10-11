@@ -86,6 +86,34 @@ class Channel
 		// void	printClientList(void) const;
 
 		Channel	&operator=(const Channel &src);
+		template <typename T>
+		friend std::string	operator+(const T add, const Channel &src)
+		{
+			static_assert(std::is_same<T, char>::value || 
+							std::is_same<T, char*>::value || 
+							std::is_same<T, const char*>::value ||
+							std::is_same<T, std::string>::value, "Invalid type");
+			std::string	ret;
+
+			ret = add;
+			if (!src.name.empty())
+				return (ret + src.name);
+			return (ret);
+		}
+		template <typename T>
+		std::string operator+(const T add)
+		{
+			static_assert(std::is_same<T, char>::value || 
+							std::is_same<T, char*>::value || 
+							std::is_same<T, const char*>::value ||
+							std::is_same<T, std::string>::value, "Invalid type");
+			std::string ret;
+
+			ret = add;
+			if (!this->name.empty())
+				return (ret + this->name);
+			return (ret);
+		}
 };
 
 # include "AClient.hpp"

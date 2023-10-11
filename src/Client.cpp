@@ -45,7 +45,7 @@ Client::Client(Server &server) : AClient(server), _password(false) {
 				<< C_DGREEN	<< " called.\n"
 				<< C_RESET	<< std::endl;
 	initialize(server.getFD());
-	this->sendMsg(":" + this->_server.getName() + " NOTICE * :*** To register please use commands\n- PASS\n- USER(user_name * host :realname)\n- NICK\r\n");
+	this->sendMsg(':' + this->_server + " NOTICE * :*** To register please use commands\n- PASS\n- USER(user_name * host :realname)\n- NICK");
 }
 
 Client::Client(const Client &src) : AClient(src._server), _password(src._password) {
@@ -93,6 +93,7 @@ void	Client::sendMsg(std::string msg) {
 	if (pollConnection() == false)
 		return ;
 
+	msg += "\r\n";
 	ssize_t	size = send(this->pollInfo.fd, msg.c_str(), msg.length(), 0);
 	if (verboseCheck() >= V_MSG)
 		std::cout	<< C_RESET	<< "Send ["	<< size	<< "]\t"
@@ -199,7 +200,7 @@ void	Client::setIsRegistered(bool val){
 			std::cout	<< "User " C_CYAN 	<< this->getBestName()
 											<< C_RESET " is registered by IRC Othello Magic Server"  << std::endl;
 		}
-		printInfo();
+		// printInfo();
 	}
 }
 

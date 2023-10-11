@@ -81,7 +81,7 @@ void	BotTicTacToe::botRespondInvite(const std::vector<std::string> &args)
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("JOIN " + channel->getName() + "\r\n");
+	this->send.push("JOIN " + channel->getName());
 }
 
 void	BotTicTacToe::botRespondJoin(const std::vector<std::string> &args)
@@ -90,7 +90,7 @@ void	BotTicTacToe::botRespondJoin(const std::vector<std::string> &args)
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :Anyone want to //play a game?\r\n");
+	this->send.push("PRIVMSG " + channel->getName() + " :Anyone want to //play a game?\");
 }
 
 void	BotTicTacToe::botRespondPart(const std::vector<std::string> &args)
@@ -98,7 +98,7 @@ void	BotTicTacToe::botRespondPart(const std::vector<std::string> &args)
 	Channel *channel = this->_server.getChannel(args[0]);
 
 	if (channel != nullptr && channel->getSize() <= 1)
-		this->send.push("PART " + channel->getName() + "\r\n");
+		this->send.push("PART " + channel->getName());
 }
 
 void	BotTicTacToe::botRespondPrivMsg(std::string name, const std::vector<std::string> &args)
@@ -136,7 +136,7 @@ void	BotTicTacToe::think(std::string dest, std::string arg)
 	else if (cmd == "//help")
 		this->thinkHelp(dest);
 	else if (dest[0] != '#')
-		this->send.push("PRIVMSG " + dest + " :Huh?\r\n");
+		this->send.push("PRIVMSG " + dest + " :Huh?");
 }
 
 void	BotTicTacToe::thinkLevel(std::string dest, std::string arg)
@@ -158,11 +158,11 @@ void	BotTicTacToe::thinkLevel(std::string dest, std::string arg)
 		}
 		catch(const std::exception& e)
 		{
-			this->send.push("PRIVMSG " + dest + " :Can't set level to " + arg.substr(pos1 + 1, pos2) + "\r\n");
+			this->send.push("PRIVMSG " + dest + " :Can't set level to " + arg.substr(pos1 + 1, pos2));
 			return ;
 		}
 	}
-	this->send.push("PRIVMSG " + dest + " :Level: " + std::to_string(game.level) + "\r\n");
+	this->send.push("PRIVMSG " + dest + " :Level: " + std::to_string(game.level));
 }
 
 void	BotTicTacToe::thinkShow(std::string dest)
@@ -177,16 +177,16 @@ void	BotTicTacToe::thinkReset(std::string dest)
 
 	this->clearGame(game);
 	this->updateGame(dest, game);
-	this->send.push("PRIVMSG " + dest + " :I've reset the game\r\n");
+	this->send.push("PRIVMSG " + dest + " :I've reset the game");
 }
 
 void	BotTicTacToe::thinkHelp(std::string dest)
 {
-	this->send.push("PRIVMSG " + dest + " :I can play Tic Tac Toe!\r\n");
-	this->send.push("PRIVMSG " + dest + " ://play 1-9\tto make a move\r\n");
-	this->send.push("PRIVMSG " + dest + " ://level 1-5\tto set my level\r\n");
-	this->send.push("PRIVMSG " + dest + " ://show \tto display the current game\r\n");
-	this->send.push("PRIVMSG " + dest + " ://reset \tto reset the current game\r\n");
+	this->send.push("PRIVMSG " + dest + " :I can play Tic Tac Toe!");
+	this->send.push("PRIVMSG " + dest + " ://play 1-9\tto make a move");
+	this->send.push("PRIVMSG " + dest + " ://level 1-5\tto set my level");
+	this->send.push("PRIVMSG " + dest + " ://show \tto display the current game");
+	this->send.push("PRIVMSG " + dest + " ://reset \tto reset the current game");
 }
 
 void	BotTicTacToe::thinkPlay(std::string dest, std::string arg)
@@ -201,7 +201,7 @@ void	BotTicTacToe::thinkPlay(std::string dest, std::string arg)
 	}
 	catch(const std::exception& e)
 	{
-		this->send.push("PRIVMSG " + dest + " :" + e.what() + "\r\n");
+		this->send.push("PRIVMSG " + dest + " :" + e.what());
 	}
 }
 
@@ -438,31 +438,31 @@ void	BotTicTacToe::sendGame(std::string dest, game_t &game)
 {
 	this->gameOver(game);
 
-	this->send.push("PRIVMSG " + dest + " : " + game.field[0][0] + " | " + game.field[0][1] + " | " + game.field[0][2] + "\r\n");
-	this->send.push("PRIVMSG " + dest + " : " + game.field[1][0] + " | " + game.field[1][1] + " | " + game.field[1][2] + "\r\n");
-	this->send.push("PRIVMSG " + dest + " : " + game.field[2][0] + " | " + game.field[2][1] + " | " + game.field[2][2] + "\r\n");
+	this->send.push("PRIVMSG " + dest + " : " + game.field[0][0] + " | " + game.field[0][1] + " | " + game.field[0][2]);
+	this->send.push("PRIVMSG " + dest + " : " + game.field[1][0] + " | " + game.field[1][1] + " | " + game.field[1][2]);
+	this->send.push("PRIVMSG " + dest + " : " + game.field[2][0] + " | " + game.field[2][1] + " | " + game.field[2][2]);
 	if (game.winner != 'C')
 	{
 		if (game.winner == 'X')
 		{
-			this->send.push("PRIVMSG " + dest + " :You won! (Difficulty " + std::to_string(game.level) + ")\r\n");
+			this->send.push("PRIVMSG " + dest + " :You won! (Difficulty " + std::to_string(game.level) + ')');
 			if (game.level < 5)
 			{
 				++game.level;
-				this->send.push("PRIVMSG " + dest + " :Setting level to " + std::to_string(game.level) + "\r\n");
+				this->send.push("PRIVMSG " + dest + " :Setting level to " + std::to_string(game.level));
 			}
 		}
 		else if (game.winner == 'O')
 		{
-			this->send.push("PRIVMSG " + dest + " :I won! (Difficulty " + std::to_string(game.level) + ")\r\n");
+			this->send.push("PRIVMSG " + dest + " :I won! (Difficulty " + std::to_string(game.level) + ')');
 			if (game.level > 1)
 			{
 				--game.level;
-				this->send.push("PRIVMSG " + dest + " :Setting level to " + std::to_string(game.level) + "\r\n");
+				this->send.push("PRIVMSG " + dest + " :Setting level to " + std::to_string(game.level));
 			}
 		}
 		else if (game.winner == 'T')
-			this->send.push("PRIVMSG " + dest + " :We tied! (Difficulty " + std::to_string(game.level) + ")\r\n");
+			this->send.push("PRIVMSG " + dest + " :We tied! (Difficulty " + std::to_string(game.level) + ')');
 		this->clearGame(game);
 	}
 }
