@@ -25,6 +25,17 @@ class Channel;
 // struct sockaddr_in
 # include <vector>
 // std::vector
+# include <map>
+// std::map
+
+typedef struct file_s		// add this
+{
+	std::string		fileName;
+	std::string		filePath;
+	std::string		senderName;
+	std::string		receiverName;
+	std::string 	line;
+}	file_t;
 
 class Server
 {
@@ -57,6 +68,8 @@ class Server
 		Server(const Server &src);
 		~Server(void);
 
+		std::map<std::string, file_t>	fileTr; //add this
+		
 		void	addBots(void);
 		void	checkNewClient(void);
 		void	checkClients(void);

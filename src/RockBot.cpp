@@ -108,9 +108,7 @@ void	RockBot::thinkPlay(std::string dest, std::string arg){
 	{
 		hand_t	hand = this->findGame(dest);
 		if (this->getPlayerMove(hand, arg))
-			// this->send.push("PRIVMSG " + dest + " :test?\r\n");
 			this->rockMove(dest, hand);
-			// this->sendGame(dest, game);
 		this->updateGame(dest, hand);
 	}
 	catch(const std::exception& e)

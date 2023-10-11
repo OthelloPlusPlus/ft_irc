@@ -90,7 +90,7 @@
 # define RPL_REHASHING				"382"
 # define RPL_TIME					"391"
 # define ERR_UNKNOWNERROR			"400"
-# define ERR_NOSUCHNICK				"401"
+# define ERR_NOSUCHNICK				" :No such nick/channel\r\n" 	// 401
 # define ERR_NOSUCHSERVER			" :No such user or server\r\n" // 402
 # define ERR_NOSUCHCHANNEL			"403"
 # define ERR_CANNOTSENDTOCHAN		"404"

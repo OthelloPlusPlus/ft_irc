@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/06 17:35:37 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/11 12:55:21 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ enum	e_command
 	CMD_AWAY,
 	CMD_SIZE_OPEN,
 	
+	CMD_SEND,
+	CMD_ACCEPT,
+	CMD_REJECT,
 	CMD_PRIVMSG,
 	CMD_LIST,
 	CMD_JOIN,
@@ -65,6 +68,9 @@ namespace Command
 	static void away(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void oper(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
 	static void kill(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void	send(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
+	static void accept(AClient &user,const std::string &cmd, const std::vector<std::string> &args);
+	static void reject(AClient &user,const std::string &cmd, const std::vector<std::string> &args);
 
 	static void unknownCmd(AClient &user, const std::string &cmd);
 
@@ -73,3 +79,5 @@ namespace Command
 }
 
 #endif
+
+///home/emlicame/Desktop/file.doc

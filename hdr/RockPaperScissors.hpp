@@ -7,6 +7,7 @@ class Server;
 
 # include <queue>
 # include <map>
+//std::map
 
 #define USER 0;
 #define BOT 1;

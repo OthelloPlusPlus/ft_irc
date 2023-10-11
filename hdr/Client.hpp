@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/06 19:23:37 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/10 19:18:51 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,18 @@
 // std::vector
 #include <tuple>   
 // for std::tuple
+# include <map>
+// std::map
 
-struct FileTransfer
-{
-	std::string		targetName;
-	std::string		fileName;
-	std::string		hostTarget;
-	u_int32_t		port;
-};
+
+
+// typedef struct file_s
+// {
+// 	std::string		fileName;
+// 	std::string		senderName;
+// 	std::string		receiverName;
+// 	std::string 	line;
+// }	file_t;
 
 class Client : public AClient
 {
@@ -63,7 +67,7 @@ class Client : public AClient
 		Client(Server &server);
 		~Client(void);
 
-		std::vector<FileTransfer> fileTransfers;
+		// std::map<std::string, file_t>	fileTr;
 
 		std::string	getMsg(void);
 		void		sendMsg(std::string msg);
@@ -85,24 +89,3 @@ class Client : public AClient
 class Client;
 
 #endif
-
-		// std::string			_nickName;
-		// std::string			_userName; //Ident Name
-		// std::string			_realName;
-		// bool				_isRegistered;
-		// bool				_isOperator;
-		// std::string			_buffer;
-		// std::string			_message;
-		
-		// std::string	const &getMessage(void) const;
-		// std::string	const &getUserName(void) const; 
-		// std::string	const &getRealName(void) const;
-		// std::string	const &getNickName(void) const;
-		// bool		getIsRegistered(void) const;
-		// bool		getIsOperator(void) const;
-		
-		// void	setMessage(std::string message);
-		// void	setNickName(std::string nickname);
-		// void	setUserName(std::string username);
-		// void	setRealName(std::string realname);
-		// void	setIsOperator(bool val);
