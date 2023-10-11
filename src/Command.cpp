@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/11 13:38:05 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/11 19:18:28 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -475,13 +475,8 @@ static void	Command::send(AClient &user, const std::string &cmd, const std::vect
 
 	sendFile.filePath = args[1];
 
-	// (*(dynamic_cast<Client *>(&user))).fileTr[sendFile.fileName] = sendFile;
-
 	size_t	pos = sendFile.filePath.find_last_of('/');
 	std::string	fileName = sendFile.filePath.substr(pos + 1);
-	
-	std::cout << __func__ << __LINE__ << C_MGNT << sendFile.fileName << C_RESET <<std::endl;
-	std::cout << __func__ << __LINE__ << C_MGNT << sendFile.filePath << C_RESET <<std::endl;
 	
 	sendFile.fileName = fileName; 
 	std::ifstream inFile(sendFile.filePath, std::ios::binary);
@@ -494,28 +489,43 @@ static void	Command::send(AClient &user, const std::string &cmd, const std::vect
 	sendFile.line = buffer.str();
 	inFile.close();
 	
-	// std::string msg = user.getNickName() + " want to send you a file called " + fileName + "\nTo accept write [ACCEPT <sender_name> <file name>]";
-	clientName->sendMsg("SEND " + user.getNickName() + " :" +fileName + "\r\n");
-	clientName->sendMsg("- To accept write [ACCEPT <sender_name> <file_name>]\r\n");
+	clientName->sendMsg("User " + user.getNickName() + " is sending you a file called " +fileName + "\r\n");
+	clientName->sendMsg("- To accept write [ACCEPT <sender_name> <file_name> <optional: destination_name>]\r\n");
 	clientName->sendMsg("- To reject write [REJECT <sender_name> <file_name>]\r\n");
-	// clientName->sendMsg("SEND " + sendFile.receiverName + " :" + msg + "\r\n");
+
 	user.getServer()->fileTr[sendFile.fileName] = sendFile;
+
+	user.sendMsg(fileName + " sent\r\n");
+	if (verboseCheck()	>= V_USER)
+		std::cout	<< C_RESET	<< "File "
+					<< C_LCYAN	<< fileName
+					<< C_RESET	<< " has been sent to user "
+					<< C_LCYAN	<< clientName->getNickName()
+					<< C_RESET	<< " waiting for reply"	
+
+					
+					<< C_RESET	<< std::endl;
+	
 }
 
+// (*(dynamic_cast<Client *>(&user))).fileTr[sendFile.fileName] = sendFile;
 
 /* ************************************************************************** *\
 *				ACCEPT - File Transfer											*
 \* ************************************************************************** */
 
 
-	static void Command::accept(AClient &user,const std::string &cmd, const std::vector<std::string> &args){
+static void Command::accept(AClient &user,const std::string &cmd, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 
-	if (args.size() != 2){
+	if (args.size() < 2){
 		user.sendMsg(":" + serverName + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
-			std::cout	<<	C_LRED	<<	"File transfer requires 2 parameters : <nick name> of the receiver and <file name> " 
+			std::cout	<<	C_LRED	<<	"File transfer requires at least 2 parameters : <nick name> of the receiver and <file name> "
+						<<	C_RESET	<<	"<nick name>"
+						<<	C_LRED	<<	" of the receiver and "
+						<<	C_RESET	<<	"<file name>"
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
@@ -539,31 +549,60 @@ static void	Command::send(AClient &user, const std::string &cmd, const std::vect
 						<<	C_RESET	<<	receiverName
 						<<	C_LRED	<<	" is not the sender"
 						<<	C_RESET	<<	std::endl;
+		return;
 	}
 	std::string argsFile = args[1];
 
 	file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
-    // Handle file not found error
     	user.sendMsg(":" + serverName + " ERROR " + user.getNickName() + " :File not found\r\n");
+		if (verboseCheck()	>= V_USER)
+			std::cout	<<	C_LRED	<<	"Error " 
+						<<	C_RESET	<<	serverName
+						<<	C_LRED	<<	" File "
+						<<	C_RESET	<<	sendFile.fileName
+						<<	C_LRED	<<	" not found"
+						<<	C_RESET	<<	std::endl;
 		return;
 	}
 	
-	std::fstream outFile(sendFile.fileName + "_last", std::fstream::out);
+	std::string filePath = argsFile;
+	
+	if (args.size() > 2)
+		filePath = args[2];
+
+	size_t	pos = filePath.find_last_of('/');
+	std::string	newfileName = filePath.substr(pos + 1);
+	 
+	std::fstream outFile(filePath, std::fstream::out);
 	if (!outFile.is_open())	{
 		user.sendMsg(":" + serverName + " 402 " + user.getNickName() + " :Error. Failed to open the output file\r\n");
+		if (verboseCheck()	>= V_USER)
+			std::cout	<<	C_LRED	<<	"Error " 
+						<<	C_RESET	<<	serverName
+						<<	C_LRED	<<	" File "
+						<<	C_RESET	<<	sendFile.fileName
+						<<	C_LRED	<<	" failed to open the output file"
+						<<	C_RESET	<<	std::endl;
 		return ;
 	}
 	outFile << sendFile.line;
 	outFile.close();
+
+	std::string userPath;
+	if (args.size() > 2)
+		userPath = " as " + filePath;
+	std::cout << "userPath [" << userPath << std::endl;
+	user.sendMsg(sendFile.fileName + " accepted" + userPath + "\r\n");
+	clientName->sendMsg(sendFile.fileName + " accepted\r\n");
+	
 	// Remove the file entry from the map after processing
 	user.getServer()->fileTr.erase(argsFile);
 	
 	//For the server destructor ?
     // Clear all elements from the map
-	if (!user.getServer()->fileTr.empty()) {
-    	user.getServer()->fileTr.clear();
-	}
+	if (!user.getServer()->fileTr.empty())
+		user.getServer()->fileTr.clear();
 }
 
 /* ************************************************************************** *\
@@ -571,46 +610,61 @@ static void	Command::send(AClient &user, const std::string &cmd, const std::vect
 \* ************************************************************************** */
 
 
-	static void Command::reject(AClient &user,const std::string &cmd, const std::vector<std::string> &args) {
+static void Command::reject(AClient &user,const std::string &cmd, const std::vector<std::string> &args) {
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 
 	if (args.size() != 2){
 		user.sendMsg(":" + serverName + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
-			std::cout	<<	C_LRED	<<	"File transfer requires 2 parameters : <nick name> of the receiver and <file name> " 
+			std::cout	<<	C_LRED	<<	"File transfer requires at least 2 parameters : <nick name> of the receiver and <file name> "
+						<<	C_RESET	<<	"<nick name>"
+						<<	C_LRED	<<	" of the receiver and "
+						<<	C_RESET	<<	"<file name>"
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	std::string receiverName = args[0];
-	AClient	*clientName = user.getServer()->getClient(receiverName);
+	std::string senderName = args[0];
+	AClient	*clientName = user.getServer()->getClient(senderName);
 	if (clientName == nullptr){
-		user.sendMsg(":" + serverName + " 401 * " + receiverName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + serverName + " 401 * " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	serverName
-						<<	C_LRED	<<	" no user can be found for the supplied nickname"
-						<<	C_RESET	<<	args[0] <<	std::endl;
+						<<	C_LRED	<<	" no user can be found for the supplied nickname "
+						<<	C_RESET	<<	senderName <<	std::endl;
 		return ;
+		
 	}
-	if (receiverName != clientName->getNickName()){
-		user.sendMsg(":" + serverName + " 401 * " + receiverName + ERR_NOSUCHNICK);
+	if (senderName != clientName->getNickName()){
+		user.sendMsg(":" + serverName + " 401 * " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	serverName
 						<<	C_LRED	<<	" the nickname "
-						<<	C_RESET	<<	receiverName
+						<<	C_RESET	<<	senderName
 						<<	C_LRED	<<	" is not the sender"
 						<<	C_RESET	<<	std::endl;
+		return;
 	}
 	std::string argsFile = args[1];
 
 	file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
     	user.sendMsg(":" + serverName + " ERROR " + user.getNickName() + " :File not found\r\n");
+		if (verboseCheck()	>= V_USER)
+			std::cout	<<	C_LRED	<<	"Error " 
+						<<	C_RESET	<<	serverName
+						<<	C_LRED	<<	" File "
+						<<	C_RESET	<<	sendFile.fileName
+						<<	C_LRED	<<	" not found"
+						<<	C_RESET	<<	std::endl;
 		return;
 	}
-
+	
+	user.sendMsg(sendFile.fileName + " rejected\r\n");
+	clientName->sendMsg(sendFile.fileName + " rejected\r\n");
+	
 	user.getServer()->fileTr.erase(argsFile);
 	
 }

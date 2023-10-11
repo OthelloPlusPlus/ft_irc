@@ -456,3 +456,15 @@ NICK MAG
 
 PRIVMSG Agent :DCC SEND "file.doc" 168493318 41107 6
 SEND Agent /home/emlicame/Desktop/file.doc 168493318 41107 6
+
+
+PASS password
+USER Ema * 1 :Io
+NICK M
+
+/home/emlicame/Desktop/file.doc
+/home/emlicame/Desktop/received
+/home/emlicame/Pictures/Screenshots/Screenshot1.png
+
+
+// user.getServer()->fileTr[sendFile.senderName + ':' + sendFile.fileName] = sendFile;
