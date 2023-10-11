@@ -90,7 +90,7 @@ void	BotTicTacToe::botRespondJoin(const std::vector<std::string> &args)
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :Anyone want to //play a game?\");
+	this->send.push("PRIVMSG " + channel->getName() + " :Anyone want to //play a game?");
 }
 
 void	BotTicTacToe::botRespondPart(const std::vector<std::string> &args)
