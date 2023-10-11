@@ -88,7 +88,7 @@ void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string>
 	{
 		AClient *client = this->_server.getClient(name);
 		if (client != nullptr)
-			dest = client->getBestName();
+			dest = client->getNickName();
 	}
 	if (!dest.empty())
 		this->think(dest, args[1]);

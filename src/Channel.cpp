@@ -27,8 +27,7 @@
  * 
 \* ************************************************************************** */
 
-Channel::Channel(std::string name, Server *server): name(name), topic(""), server(server),
-modeInvite(false), userLimit(0), modeTopic(false)
+Channel::Channel(std::string name, Server *server): name(name), topic(""), modeInvite(false), userLimit(0), modeTopic(false), server(server)
 {
 	if (this->name.empty() || this->name.at(0) != '#')
 		this->name = '#' + this->name;
@@ -77,7 +76,6 @@ void	Channel::addClient(AClient &newClient, bool admin, const std::string passwo
 	newUser.admin = admin;
 	newUser.timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());;
 	this->users.push_back(newUser);
-	// std::cout	<< __func__ << __LINE__	<< newClient.getSourceName()<< std::endl;
 	this->sendToChannel(':' + newClient + " JOIN " + this->name);
 	if (newUser.admin)
 		this->sendToChannel(':' + *this->server + " MODE " + this->name + " +o " + newUser.client->getNickName());
@@ -167,7 +165,7 @@ void	Channel::promoteOldestUser(void)
 
 void	Channel::sendMode(AClient &client) const
 {
-	std::string	msg = ':' + *this->server + " 324 " + client.getBestName() + ' ' + *this + " \n";
+	std::string	msg = ':' + *this->server + " 324 " + client.getNickName() + ' ' + *this + " \n";
 	if (this->modeInvite)
 		msg += "+i\t Private channel, invite only\n";
 	else
@@ -352,8 +350,7 @@ void	Channel::setModeO(AClient &client, std::string flag, std::string clientName
 
 void	Channel::setModeL(AClient &client, std::string flag, std::string count)
 {
-	int	oldLimit = this->userLimit;
-	int	newLimit = oldLimit;
+	size_t	oldLimit = this->userLimit;
 
 	if (flag[0] == '-')
 		this->userLimit = 0;
@@ -539,53 +536,6 @@ std::string	Channel::getTopic(void) const
 {
 	return (this->topic);
 }
-
-// void	Channel::printClientList(void) const
-// {
-// 	std::cout	<< "--- Channel "	<< this->name	<< ':'	<< std::endl;
-// 	for (std::vector<ChannelUser>::const_iterator client = this->users.begin(); client != this->users.end(); ++client)
-// 		std::cout	<<	client->client->getNickName()	<<'t'	<< (*client).admin	<< '\n';
-// 	std::cout	<< "--- End of list\n"	<< std::endl;
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // void	Channel::kickClient(Client *client)
-// // {
-// // 	for (size_t i = this->users.size(); i > 0; --i)
-// // 	{
-// // 		if (this->users[i - 1].client == client)
-// // 		{
-// // 			this->users[i - 1].client->sendMsg("PART " + this->name);
-// // 			this->users.erase(this->users.begin() + i - 1);
-// // 			return ;
-// // 		}
-// // 	}
-// // }
 
 /** ************************************************************************ **\
  * 

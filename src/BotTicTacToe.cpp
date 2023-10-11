@@ -73,6 +73,7 @@ void	BotTicTacToe::botRespond(std::string name, AClient &src, const std::string 
 		this->botRespondPart(args);
 	else if (cmd == "PRIVMSG")
 		this->botRespondPrivMsg(name, args);
+	(void)src;
 }
 
 void	BotTicTacToe::botRespondInvite(const std::vector<std::string> &args)
@@ -115,7 +116,7 @@ void	BotTicTacToe::botRespondPrivMsg(std::string name, const std::vector<std::st
 	{
 		AClient *client = this->_server.getClient(name);
 		if (client != nullptr)
-			dest = client->getBestName();
+			dest = client->getNickName();
 	}
 	if (!dest.empty())
 		this->think(dest, args[1]);

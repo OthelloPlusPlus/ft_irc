@@ -7,7 +7,7 @@
  * 
 \* ************************************************************************** */
 
-AClient::AClient(Server &server): _server(server), _isRegistered(false), _isOperator(false)
+AClient::AClient(Server &server): _isOperator(false), _server(server), _isRegistered(false)
 {}
 
 /** ************************************************************************ **\
@@ -43,24 +43,14 @@ void	AClient::passwordValidation(bool val)
 	(void)val;
 }
 
-// void	AClient::setServerName(std::string serverName)
-// {
-// 	this->_serverName = serverName;
-// }
 void	AClient::setClientIP(std::string clientIP)
 {
 	this->_clientIP = clientIP;
 }
 
-// void	AClient::setIpHostName(std::string IpHostName)
-// {
-// 	this->_IpHostName = IpHostName;
-// }
-
 void	AClient::setNickName(std::string nickName)
 {
 	this->_nickName = nickName;
-	// this->updateRegistered();
 }
 
 void	AClient::setUserName(std::string userName)
@@ -88,11 +78,6 @@ void	AClient::setBuffer(std::string buffer)
 	this->_buffer = buffer;
 }
 
-// const std::string	&AClient::getServerName(void) const
-// {
-// 	return (this->_serverName);
-// }
-
 Server	*AClient::getServer(void) const
 {
 	return (&this->_server);
@@ -102,11 +87,6 @@ const std::string	&AClient::getClientIP(void) const
 {
 	return (this->_clientIP);
 }
-
-// const std::string	&AClient::getIpHostName(void) const
-// {
-// 	return (this->_IpHostName);
-// }
 
 const std::string	&AClient::getNickName(void) const
 {
@@ -147,7 +127,43 @@ const std::string	&AClient::getBuffer(void) const
 	return (this->_buffer);
 }
 
-std::string	AClient::getSourceName(void) const
+// std::string	AClient::getSourceName(void) const
+// {
+// 	return (this->_nickName + "!~" + this->_userName + '@' + this->_clientIP);
+// }
+
+/** ************************************************************************ **\
+ * 
+ * 	Operators
+ * 
+\* ************************************************************************** */
+
+bool	AClient::operator==(const AClient &cmp) const
 {
-	return (this->_nickName + "!~" + this->_userName + '@' + this->_clientIP);
+	return (this->_isOperator == cmp._isOperator);
+}
+
+bool	AClient::operator!=(const AClient &cmp) const
+{
+	return (this->_isOperator != cmp._isOperator);
+}
+
+bool	AClient::operator>(const AClient &cmp) const
+{
+	return (this->_isOperator > cmp._isOperator);
+}
+
+bool	AClient::operator>=(const AClient &cmp) const
+{
+	return (this->_isOperator >= cmp._isOperator);
+}
+
+bool	AClient::operator<(const AClient &cmp) const
+{
+	return (this->_isOperator < cmp._isOperator);
+}
+
+bool	AClient::operator<=(const AClient &cmp) const
+{
+	return (this->_isOperator <= cmp._isOperator);
 }

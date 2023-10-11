@@ -19,7 +19,6 @@
 #include "BotTicTacToe.hpp"
 #include "RockPaperScissors.hpp"
 
-
 #include <iostream>
 // std::cout
 #include <iomanip>
@@ -35,6 +34,10 @@
 // void	freeifaddrs(ifaddrs *)
 #include <arpa/inet.h>
 // char	*inet_ntoa(in_addr)
+#ifdef __APPLE__
+# include <fcntl.h>
+// int fcntl(int fd, int cmd, ... /* arg */ );
+#endif
 
 #include <net/if.h>
 // ifaddrs FLAGS
@@ -46,7 +49,6 @@
 // std::transform
 #include <tuple>
 // for std::tuple
-
 
 /** ************************************************************************ **\
  * 
@@ -254,12 +256,9 @@ void	Server::checkNewClient(void)
 
 void	Server::acceptClient(void)
 {
-	Client	*newClient;
-
 	try
 	{
-		Client	*newClient = new Client(*this);
-		this->clients.push_back(newClient);
+		this->clients.push_back(new Client(*this));
 	}
 	catch(const std::exception& e)
 	{
@@ -374,13 +373,13 @@ void	Server::sendInvite(AClient &client, const std::vector<std::string> &args)
 	}
 }
 
-void	Server::sendPong(AClient &client) const
-{
-	std::string	time;
+// void	Server::sendPong(AClient &client) const
+// {
+// 	std::string	time;
 
-	time = std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
-	client.sendMsg(':' + *this + " PONG " + *this + " :" + time);
-}
+// 	time = std::to_string(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+// 	client.sendMsg(':' + *this + " PONG " + *this + " :" + time);
+// }
 
 void	Server::sendPong(AClient &client, const std::string token) const
 {
@@ -491,10 +490,10 @@ void	Server::partChannel(AClient &client, const std::string channelName)
 		channel->removeUser(client);
 }
 
-std::vector<AClient *>	Server::getClientList(void)
-{
-	return (this->clients);
-}
+// std::vector<AClient *>	Server::getClientList(void)
+// {
+// 	return (this->clients);
+// }
 
 AClient	*Server::getClient(std::string name) const
 {
@@ -528,25 +527,25 @@ Channel	*Server::getChannel(std::string name) const
 	return (nullptr);
 }
 
-std::string	Server::getName(void) const
-{
-	return (this->serverName);
-}
+// std::string	Server::getName(void) const
+// {
+// 	return (this->serverName);
+// }
 
 int		Server::getFD(void) const
 {
 	return (this->pollInfo.fd);
 }
 
-const std::string	Server::getIP(void) const
-{
-	return (this->localIP);
-}
+// const std::string	Server::getIP(void) const
+// {
+// 	return (this->localIP);
+// }
 
-uint32_t	Server::getTransferIP(void) const
-{
-	return (this->transferIP);
-}
+// uint32_t	Server::getTransferIP(void) const
+// {
+// 	return (this->transferIP);
+// }
 
 void	Server::checkChannels(void)
 {

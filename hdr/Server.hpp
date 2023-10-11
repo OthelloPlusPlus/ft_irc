@@ -52,13 +52,15 @@ class Server
 		std::vector<AClient *>	clients;
 		std::string				passwordUser;
 
-		// std::string	getHostIp(void);
+		void	readEnv(void);
 		void	setLocalIP(void);
 		void	bootUpServer(void);
-		void	readEnv(void);
+		void	addBots(void);
+		// std::string	getHostIp(void);
 
 		void	acceptClient(void);
 		void	sendWelcome(Client &client);
+		void	joinChannel(AClient &client, const std::string channelName);
 
 	protected:
 
@@ -70,29 +72,27 @@ class Server
 
 		std::map<std::string, file_t>	fileTr; //add this
 		
-		void	addBots(void);
 		void	checkNewClient(void);
 		void	checkClients(void);
 		void	checkChannels(void);
 
 		int	validatePassword(const std::string password) const;
-		// bool	nicknameExists(const std::string nickname) const;
+		// // bool	nicknameExists(const std::string nickname) const;
 
-		std::vector<AClient *>	getClientList(void);
+		// std::vector<AClient *>	getClientList(void);
 		AClient					*getClient(std::string name) const;
 		Channel					*getChannel(std::string channel) const;
-		std::string				getName(void) const;
+		// std::string				getName(void) const;
 		int						getFD(void) const;
-		const std::string		getIP(void) const;
-		uint32_t				getTransferIP(void) const;
+		// const std::string		getIP(void) const;
+		// uint32_t				getTransferIP(void) const;
 
-		void	joinChannel(AClient &client, const std::string channelName);
 		void	joinChannel(AClient &client, const std::vector<std::string> &args);
 		void	partChannel(AClient &client, const std::string channelName);
 		void	sendChannelList(AClient &client) const;
 		void	sendWho(AClient &client, const std::string who) const;
 		void	sendWhoIs(AClient &client, const std::string who) const;
-		void	sendPong(AClient &client) const;
+		// void	sendPong(AClient &client) const;
 		void	sendPong(AClient &client, const std::string token) const;
 		void	sendPrivMsg(const AClient &client, const std::vector<std::string> &args);
 		void	sendInvite(AClient &client, const std::vector<std::string> &args);

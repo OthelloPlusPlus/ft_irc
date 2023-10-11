@@ -172,11 +172,11 @@ std::string	Client::getBestName( void ) const {
 	return "";
 }
 
-std::string Client::getSourceName(void) const {
-	std::stringstream info;
-    info << getBestName() << "!~" << _userName << "@" << _clientIP;
-    return info.str();
-}
+// std::string Client::getSourceName(void) const {
+// 	std::stringstream info;
+//     info << getBestName() << "!~" << _userName << "@" << _clientIP;
+//     return info.str();
+// }
 
 void Client::setPollInfofd(int val){
 	this->pollInfo.fd = val;
@@ -196,11 +196,12 @@ void	Client::setIsRegistered(bool val){
 						<< getNickName() 	<< " is now registered in the " << std::getenv("IRC_SERVNAME")
 						<< std::setw(76) 	<< C_RESET		<< std::endl;;
 		} else {
-			std::cout	<< "User " C_CYAN 	<< this->getBestName()
+			std::cout	<< "User " C_CYAN 	<< this->getNickName()
 											<< C_RESET " is registered by IRC Othello Magic Server"  << std::endl;
 		}
 		// printInfo();
 	}
+	(void)val;
 }
 
 void	Client::printInfo(void) const {

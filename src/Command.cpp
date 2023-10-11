@@ -192,7 +192,7 @@ static void Command::password(AClient &user, const std::string& cmd, const std::
 static void Command::nick(AClient &user, const std::string& cmd, const std::vector<std::string> &args) {
 	
 	std::string nickname = args[0];
-	std::vector<AClient*> clients = user.getServer()->getClientList();
+	// std::vector<AClient*> clients = user.getServer()->getClientList();
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (nickname.empty()) {
 		user.sendMsg(":" + serverName + " 431 * " + ERR_NONICKNAMEGIVEN);

@@ -19,9 +19,7 @@
 // std::left
 #include <iomanip>
 // std::setw()
-#include <string.h>
-// char *strerror(int errnum);
-#include <errno.h>
+#include <cstring>
 // char *strerror(int errnum);
 
 bool	setEnv(void);

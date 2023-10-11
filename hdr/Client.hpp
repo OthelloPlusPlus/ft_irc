@@ -74,7 +74,7 @@ class Client : public AClient
 		void		printInfo(void) const;
 		
 		std::string	getBestName (void) const; // remove - use getnickName
-		std::string	getSourceName(void) const;
+		// std::string	getSourceName(void) const;
 
 		void		passwordValidation(bool val);
 		void		setIsRegistered(bool val);

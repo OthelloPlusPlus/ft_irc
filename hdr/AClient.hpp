@@ -34,7 +34,7 @@ class AClient
 		virtual void		passwordValidation(bool val);
 		virtual void		setIsRegistered(bool value);
 		virtual void		printInfo(void) const;
-		virtual std::string	getSourceName(void) const;
+		// virtual std::string	getSourceName(void) const;
 
 		void	setClientIP(std::string clientIP);
 		void	setNickName(std::string nickName);
@@ -52,6 +52,12 @@ class AClient
 		const bool			&getIsOperator(void) const;
 		const std::string	&getBuffer(void) const;
 
+		bool	operator==(const AClient &cmp) const;
+		bool	operator!=(const AClient &cmp) const;
+		bool	operator>(const AClient &cmp) const;
+		bool	operator>=(const AClient &cmp) const;
+		bool	operator<(const AClient &cmp) const;
+		bool	operator<=(const AClient &cmp) const;
 		template <typename T>
 		friend std::string	operator+(const T add, const AClient &src)
 		{
