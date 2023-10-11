@@ -100,6 +100,42 @@ class Server
 		void	setChannelMode(AClient &client, const std::vector<std::string> &args);
 
 		Server	&operator=(const Server &src);
+		template <typename T>
+		friend std::string	operator+(const T add, const Server &src)
+		{
+			static_assert(std::is_same<T, char>::value || 
+							std::is_same<T, char*>::value || 
+							std::is_same<T, const char*>::value ||
+							std::is_same<T, std::string>::value, "Invalid type");
+			std::string	ret;
+
+			ret = add;
+			if (!src.serverName.empty())
+				return (ret + src.serverName);
+			if (!src.localIP.empty())
+				return (ret + src.localIP);
+			if (!src.publicIP.empty())
+				return (ret + src.publicIP);
+			return (ret);
+		}
+		template <typename T>
+		std::string operator+(const T add)
+		{
+			static_assert(std::is_same<T, char>::value || 
+							std::is_same<T, char*>::value || 
+							std::is_same<T, const char*>::value ||
+							std::is_same<T, std::string>::value, "Invalid type");
+			std::string	ret;
+
+			ret = add;
+			if (!this->serverName.empty())
+				return (ret + this->serverName);
+			if (!this->localIP.empty())
+				return (ret + this->localIP);
+			if (!this->publicIP.empty())
+				return (ret + this->publicIP);
+			return (ret);
+		}
 };
 
 # include "Client.hpp"

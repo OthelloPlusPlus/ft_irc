@@ -51,6 +51,31 @@ class AClient
 		const bool			&getIsRegistered(void) const;
 		const bool			&getIsOperator(void) const;
 		const std::string	&getBuffer(void) const;
+
+		template <typename T>
+		friend std::string	operator+(const T add, const AClient &src)
+		{
+			static_assert(std::is_same<T, char>::value || 
+							std::is_same<T, char*>::value || 
+							std::is_same<T, const char*>::value ||
+							std::is_same<T, std::string>::value, "Invalid type");
+			std::string	ret;
+
+			ret = add;
+			return (ret + src._nickName + "!~" + src._userName + '@' + src._clientIP);
+		}
+		template <typename T>
+		std::string operator+(const T add)
+		{
+			static_assert(std::is_same<T, char>::value || 
+							std::is_same<T, char*>::value || 
+							std::is_same<T, const char*>::value ||
+							std::is_same<T, std::string>::value, "Invalid type");
+			std::string ret;
+
+			ret = add;
+			return (ret + this->_nickName + "!~" + this->_userName + '@' + this->_clientIP);
+		}
 };
 
 #include "Server.hpp"
