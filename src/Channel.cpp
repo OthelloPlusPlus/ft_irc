@@ -78,9 +78,9 @@ void	Channel::addClient(AClient &newClient, bool admin, const std::string passwo
 	newUser.timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());;
 	this->users.push_back(newUser);
 	// std::cout	<< __func__ << __LINE__	<< newClient.getSourceName()<< std::endl;
-	this->sendToChannel(':' + newClient.getSourceName() + " JOIN " + this->name);
+	this->sendToChannel(':' + newClient + " JOIN " + this->name);
 	if (newUser.admin)
-		this->sendToChannel(':' + this->server->getIP() + " MODE " + this->name + " +o " + newUser.client->getNickName());
+		this->sendToChannel(':' + *this->server + " MODE " + this->name + " +o " + newUser.client->getNickName());
 	if (!this->topic.empty())
 		this->sendTopic(*newUser.client);
 	this->sendNames(*newUser.client);
@@ -139,7 +139,7 @@ void	Channel::removeUser(const AClient &client)
 {
 	if (this->userIsInChannel(client))
 	{
-		this->sendToChannel(':' + client.getSourceName() + " PART " + this->name);
+		this->sendToChannel(':' + client + " PART " + this->name);
 		for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end();)
 		{
 			if ((*i).client == &client)
@@ -162,7 +162,7 @@ void	Channel::promoteOldestUser(void)
 		if ((*user).timestamp < (*oldest).timestamp)
 			oldest = user;
 	(*oldest).admin = true;
-	this->sendToChannel(':' + this->server->getName() + " MODE " + this->name + " +o " + (*oldest).client->getNickName());
+	this->sendToChannel(':' + *this->server + " MODE " + this->name + " +o " + (*oldest).client->getNickName());
 }
 
 void	Channel::sendMode(AClient &client) const

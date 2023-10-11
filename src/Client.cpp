@@ -178,7 +178,6 @@ std::string Client::getSourceName(void) const {
     return info.str();
 }
 
-
 void Client::setPollInfofd(int val){
 	this->pollInfo.fd = val;
 }
