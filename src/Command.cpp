@@ -59,7 +59,9 @@ e_command	mapToEnum(std::string cmd){
 	if (cmd == "INVITE") return CMD_INVITE;
 	if (cmd == "TOPIC") return CMD_TOPIC;
 	if (cmd == "MODE") return CMD_MODE;
-	// if (cmd == "AUTHSERV") return CMD_AUTHSERV;
+	if (cmd == "NAMES") return CMD_NAMES;
+	if (cmd == "KICK") return CMD_KICK;
+	if (cmd == "NOTICE") return CMD_NOTICE;
 	if (cmd == "OPER") return CMD_OPER;
 	if (cmd == "KILL") return CMD_KILL;
 	if (cmd == "") return CMD_EMPTY;
@@ -106,7 +108,9 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 		case CMD_TOPIC:		user.getServer()->setChannelTopic(user, args);	break;
 		case CMD_MODE:		user.getServer()->setChannelMode(user, args);	break;
 
-		// case CMD_AUTHSERV:	user.getServer()->sendAuthserv(user, args);	break;
+		case CMD_NAMES:		user.getServer()->sendNames(user, args);		break;
+		case CMD_KICK:		user.getServer()->kickUser(user, args);			break;
+		case CMD_NOTICE:	user.getServer()->sendNotice(user, args);					break;
 		case CMD_OPER:		oper(user, args);								break;
 		case CMD_KILL:		kill(user, args);								break;
 		case CMD_EMPTY:														break;

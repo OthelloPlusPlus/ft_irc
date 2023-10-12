@@ -153,6 +153,42 @@ void	Channel::removeUser(const AClient &client)
 	}
 }
 
+void	Channel::kickUser(AClient &client, const std::vector<std::string> &names)
+{
+	if (names[1].empty())
+		return ;
+	
+	ChannelUser	*user = this->getChannelUser(client.getNickName());
+	ChannelUser *remove = this->getChannelUser(names[1]);
+	if (user == nullptr)
+		client.sendMsg(':' + *this->server + " 401 " + client.getNickName() + ' ' + names[1] + " :You are not in channel");
+	else if (remove == nullptr)
+		client.sendMsg(':' + *this->server + " 401 " + client.getNickName() + ' ' + names[1] + " :No such nick");
+	else if (!client.getIsOperator() && !user->admin)
+		client.sendMsg(':' + *this->server + " 482 " + client.getNickName() + ' ' + this->name + " :Priviledges required");
+	else if (remove->client->getIsOperator())
+		client.sendMsg(':' + *this->server + " 482 " + client.getNickName() + ' ' + this->name + " :Can't kick server operator");
+	else if (!client.getIsOperator() && remove->admin)
+		client.sendMsg(':' + *this->server + " 482 " + client.getNickName() + ' ' + this->name + " :Only server operators can kick channel operators");
+	else
+	{
+		std::string	msg = ':' + client + " KICK " + this->name + ' ' + names[1] + " :";
+		if (names.size() >= 3)
+			msg += names[2];
+		else
+			msg += names[1];
+		this->sendToChannel(msg);
+		for (std::vector<ChannelUser>::iterator i = this->users.begin(); i != this->users.end(); ++i)
+			if ((*i).client == remove->client)
+			{
+				this->users.erase(i);
+				break ;
+			}
+		if (this->getAdminSize() == 0)
+			this->promoteOldestUser();
+	}
+}
+
 void	Channel::promoteOldestUser(void)
 {
 	std::vector<ChannelUser>::iterator	oldest = this->users.begin();
@@ -344,6 +380,7 @@ void	Channel::setModeO(AClient &client, std::string flag, std::string clientName
 						<< C_LRED	<< " for channel "
 						<< C_RESET	<< this->name
 						<< C_RESET	<< std::endl;
+		return ;
 	}
 	this->sendToChannel(':' + client + " MODE " + this->name + ' ' + flag + ' ' + user->client->getNickName());
 }
@@ -433,7 +470,7 @@ void	Channel::sendNames(AClient &client)
 {
 	std::string	msg;
 
-	msg = ':' + *this->server + " 353 " + client.getNickName() + " = " + this->name + " :";
+	msg = ':' + *this->server + " 353 " + client.getNickName() + " @ " + this->name + " :";
 	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 	{
 		if ((*i).admin == true)
