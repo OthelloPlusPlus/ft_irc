@@ -326,7 +326,10 @@ void	Server::sendWhoIs(AClient &client, const std::string who) const
 		client.sendMsg(msg + whoClient->getUserName() + ' ' + whoClient->getClientIP() + " * :" + whoClient->getRealName());
 		msg.replace(msg.find(" 311 "), 5, " 312 ");
 		client.sendMsg(msg + *whoClient->getServer());
-		msg.replace(msg.find(" 312 "), 5, " 318 ");
+		msg.replace(msg.find(" 312 "), 5, " 301 ");
+		if (!whoClient->getAway().empty())
+			client.sendMsg(msg + ':' + whoClient->getAway());
+		msg.replace(msg.find(" 301 "), 5, " 318 ");
 	}
 	else
 	{
@@ -408,6 +411,14 @@ void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &
 			user->sendMsg(':' + client + " PRIVMSG " + user->getNickName() + " :" + msg);	
 	}
 }
+
+// void	Server::sendAuthserv(AClient &client, const std::vector<std::string> &args)
+// {
+// 	for (std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i)
+// 		std::cout	<<	*i	<< std::endl;
+// 	client.sendMsg(':' + *(client.getServer()) + " 421 " + client.getNickName() + " AUTHSERV: Feature not supported");
+// 	(void)args;
+// }
 
 void	Server::checkClients(void)
 {

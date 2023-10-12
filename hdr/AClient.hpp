@@ -18,6 +18,7 @@ class AClient
 		std::string	_nickName;
 		std::string	_userName; //Ident Name
 		std::string	_realName;
+		std::string	_away;
 		bool		_isRegistered;
 	
 		std::string	_buffer;
@@ -39,6 +40,7 @@ class AClient
 		void	setNickName(std::string nickName);
 		void	setUserName(std::string userName);
 		void	setRealName(std::string realName);
+		void	setAway(std::string away);
 		void	setIsOperator(bool value);
 		void	setBuffer(std::string buffer);
 		Server				*getServer(void) const;
@@ -47,6 +49,7 @@ class AClient
 		const std::string	&getUserName(void) const;
 		const std::string	&getRealName(void) const;
 		const std::string	&getBestName(void) const;
+		const std::string	&getAway(void) const;
 		const bool			&getIsRegistered(void) const;
 		const bool			&getIsOperator(void) const;
 		const std::string	&getBuffer(void) const;
