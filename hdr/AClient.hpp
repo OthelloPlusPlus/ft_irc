@@ -34,7 +34,6 @@ class AClient
 		virtual void		passwordValidation(bool val);
 		virtual void		setIsRegistered(bool value);
 		virtual void		printInfo(void) const;
-		// virtual std::string	getSourceName(void) const;
 
 		void	setClientIP(std::string clientIP);
 		void	setNickName(std::string nickName);

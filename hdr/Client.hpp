@@ -6,41 +6,32 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/10 19:18:51 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/12 13:49:42 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-#include "AClient.hpp"
+# include "AClient.hpp"
 
-#include <netinet/in.h>
+# include <netinet/in.h>
 // struct sockaddr_in
 // socklen_t
 
-#include <poll.h>
+# include <poll.h>
 // struct pollfd
-#include <iostream>
+# include <iostream>
 // std::
-#include <string>
+# include <string>
 // std::string
-#include <vector>
+# include <vector>
 // std::vector
-#include <tuple>   
+# include <tuple>   
 // for std::tuple
 # include <map>
 // std::map
 
-
-
-// typedef struct file_s
-// {
-// 	std::string		fileName;
-// 	std::string		senderName;
-// 	std::string		receiverName;
-// 	std::string 	line;
-// }	file_t;
 
 class Client : public AClient
 {
@@ -67,14 +58,12 @@ class Client : public AClient
 		Client(Server &server);
 		~Client(void);
 
-		// std::map<std::string, file_t>	fileTr;
 
 		std::string	getMsg(void);
 		void		sendMsg(std::string msg);
 		void		printInfo(void) const;
 		
-		std::string	getBestName (void) const; // remove - use getnickName
-		// std::string	getSourceName(void) const;
+		std::string	getBestName (void) const; 
 
 		void		passwordValidation(bool val);
 		void		setIsRegistered(bool val);

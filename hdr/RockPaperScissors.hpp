@@ -29,7 +29,7 @@ class RockBot: public AClient
 		std::queue<std::string> send;
 		std::map<std::string, hand_t>	hand;
 
-		void	rockBotRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args);
+		void	rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args);
 		void	botRespondInvite(const std::vector<std::string> &args);
 		void	botRespondJoin(const std::vector<std::string> &args);
 		void	botRespondPart(const std::vector<std::string> &args);

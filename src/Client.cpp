@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/11 13:07:30 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/12 14:34:17 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,6 @@ void	Client::setIsRegistered(bool val){
 			std::cout	<< "User " C_CYAN 	<< this->getNickName()
 											<< C_RESET " is registered by IRC Othello Magic Server"  << std::endl;
 		}
-		// printInfo();
 	}
 	(void)val;
 }

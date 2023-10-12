@@ -23,25 +23,11 @@
 namespace
 {
 //removed the trailing "\r\n"
-std::string cleanMsg(AClient &user, std::string msg){
+std::string cleanMsg(std::string msg){
 	std::string del = "\r\n";
 	int end = msg.find_first_of(del, 0); 
 	msg = msg.substr(0, end);
 	return msg;
-}
-
-std::vector<std::string> ircSplitMulti(const std::string& input, const std::string& delimiters) {
-	std::vector<std::string> tokens;
-	size_t start = 0, end = 0;
-
-	while ((end = input.find_first_of(delimiters, start)) != std::string::npos) {
-		if (end != start)
-			tokens.push_back(input.substr(start, end - start));
-		start = end + 1;
-	}
-	if (start < input.size())
-		tokens.push_back(input.substr(start));
-	return tokens;
 }
 
 std::vector<std::string> ircSplit( const std::string& input, const std::string& delimiter){
@@ -65,7 +51,7 @@ std::tuple<AClient &, std::string, std::vector<std::string>> Parse::parseMsg(ACl
 	std::string arguments;
 	std::vector<std::string>	args;
 	
-	std::string clMsg = cleanMsg(user, msg);
+	std::string clMsg = cleanMsg(msg);
 	size_t spacePos = clMsg.find(' ');
 	if (spacePos != std::string::npos) {
 		cmd = clMsg.substr(0, spacePos);

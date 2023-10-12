@@ -40,7 +40,7 @@ RockBot::~RockBot(void) {
 				<< C_RESET	<< std::endl;
 }
 
-void	RockBot::rockBotRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args){
+void	RockBot::rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args){
 	if (cmd == "INVITE")
 		this->botRespondInvite(args);
 	else if (cmd == "JOIN")
@@ -56,7 +56,7 @@ void	RockBot::botRespondInvite(const std::vector<std::string> &args){
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("JOIN " + channel->getName() + "\r\n");
+	this->send.push("JOIN " + channel->getName());
 }
 
 void	RockBot::botRespondJoin(const std::vector<std::string> &args){
@@ -64,7 +64,7 @@ void	RockBot::botRespondJoin(const std::vector<std::string> &args){
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand!Wanna //play Rock, paper or scissors?\r\n");
+	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand!Wanna //play Rock, paper or scissors?");
 }
 
 void	RockBot::botRespondPart(const std::vector<std::string> &args)
@@ -72,7 +72,7 @@ void	RockBot::botRespondPart(const std::vector<std::string> &args)
 	Channel *channel = this->_server.getChannel(args[0]);
 
 	if (channel != nullptr && channel->getSize() <= 1)
-		this->send.push("PART " + channel->getName() + "\r\n");
+		this->send.push("PART " + channel->getName());
 }
 
 void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string> &args) {
@@ -100,7 +100,7 @@ void	RockBot::think(std::string dest, std::string arg) {
 		this->thinkPlay(dest, arg);
 	}
 	else if (dest[0] != '#')
-		this->send.push("PRIVMSG " + dest + " :Huh?\r\n");
+		this->send.push("PRIVMSG " + dest + " :Huh?");
 }
 
 void	RockBot::thinkPlay(std::string dest, std::string arg){
@@ -113,7 +113,7 @@ void	RockBot::thinkPlay(std::string dest, std::string arg){
 	}
 	catch(const std::exception& e)
 	{
-		this->send.push("PRIVMSG " + dest + " :" + e.what() + "\r\n");
+		this->send.push("PRIVMSG " + dest + " :" + e.what());
 	}
 }
 
@@ -165,18 +165,18 @@ void	RockBot::rockMove(std::string dest, hand_t &hand){
 	e_move playerMove = mapToeMove(hand.shapes[0]);
 	e_move botMove = mapToeMove(hand.shapes[1]);
 
-	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[0] + " and I reply " + hand.shapes[1] + "\r\n");
+	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[0] + " and I reply " + hand.shapes[1]);
 	if (playerMove == botMove){
-		this->send.push("PRIVMSG " + dest + " :We tied!\r\n");
+		this->send.push("PRIVMSG " + dest + " :We tied!");
 		return ;
 	}
 
-	if (playerMove == e_move::ROCK && botMove == e_move::SCISSORS|| \
-		playerMove == e_move::PAPER && botMove == e_move::ROCK	||  \
-		playerMove == e_move::SCISSORS  && botMove == e_move::PAPER )
-		this->send.push("PRIVMSG " + dest + " :You won!\r\n");
+	if ((playerMove == e_move::ROCK && botMove == e_move::SCISSORS)	|| \
+		(playerMove == e_move::PAPER && botMove == e_move::ROCK)	||  \
+		(playerMove == e_move::SCISSORS  && botMove == e_move::PAPER))
+		this->send.push("PRIVMSG " + dest + " :You won!");
 	else
-		this->send.push("PRIVMSG " + dest + " :I won!\r\n");
+		this->send.push("PRIVMSG " + dest + " :I won!");
 	
 	return ;
 }
@@ -216,14 +216,14 @@ std::string	RockBot::getMsg(void) {
 		std::string args = this->recv.front().substr(this->recv.front().find(' ') + 1);
 
 		std::tuple<AClient &, std::string, std::vector<std::string>> parsed = Parse::parseMsg(*this, args);
-		this->rockBotRespond(name, std::get<0>(parsed), std::get<1>(parsed), std::get<2>(parsed));
+		this->rockBotRespond(name, std::get<1>(parsed), std::get<2>(parsed));
 		this->recv.pop();
 	}
 	if (!send.empty()){
 		reply = this->send.front();
 		this->send.pop();
 	}
-	return (reply);
+	return (reply + "\r\n");
 }
 
 void	RockBot::sendMsg(std::string msg) {

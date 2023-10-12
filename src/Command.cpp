@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/11 19:18:28 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/12 14:25:05 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,26 @@
 //	int	close(int filedes);
 #include <algorithm>
 // std::transform
+// #include <fcntl.h>
+// //close
 
+static void userName(AClient &user, const std::vector<std::string> &args);
+static void password(AClient &user, const std::vector<std::string> &args);
+static void nick(AClient &user, const std::vector<std::string> &args);
+static void ping(AClient &user, const std::vector<std::string> &args);
+static void quit(AClient &user, const std::vector<std::string> &args);
+static void away(AClient &user, const std::vector<std::string> &args);
+static void oper(AClient &user, const std::vector<std::string> &args);
+static void kill(AClient &user, const std::vector<std::string> &args);
+static void	send(AClient &user, const std::vector<std::string> &args);
+static void accept(AClient &user, const std::vector<std::string> &args);
+static void reject(AClient &user, const std::vector<std::string> &args);
+
+static void unknownCmd(AClient &user, const std::string &cmd);
+
+static void	userNotRegisteredMsg(AClient &user, std::string cmd);
+static void	userNotOperatorMsg(AClient &user, std::string cmd);
+	
 e_command	mapToEnum(std::string cmd){
 	if (cmd == "USER") return CMD_USER;
 	if (cmd == "NICK") return CMD_NICK;
@@ -67,15 +86,15 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 	}
 
 	switch (command) {
-		case CMD_USER:		Command::user(user, cmd, args);					break;
-		case CMD_NICK:		Command::nick(user, cmd, args);					break;
-		case CMD_PASS:		Command::password(user, cmd, args);				break;
-		case CMD_PING:		Command::ping(user, cmd, args);					break;
-		case CMD_QUIT:		Command::quit(user, cmd, args);					break;
-		case CMD_AWAY:		Command::away(user, cmd, args);					break;
-		case CMD_SEND:		Command::send(user, cmd, args);					break;
-		case CMD_ACCEPT:	Command::accept(user, cmd, args);				break;
-		case CMD_REJECT:	Command::reject(user, cmd, args);				break;
+		case CMD_USER:		userName(user, args);							break;
+		case CMD_NICK:		nick(user, args);								break;
+		case CMD_PASS:		password(user, args);							break;
+		case CMD_PING:		ping(user, args);								break;
+		case CMD_QUIT:		quit(user, args);								break;
+		case CMD_AWAY:		away(user, args);								break;
+		case CMD_SEND:		send(user, args);								break;
+		case CMD_ACCEPT:	accept(user, args);								break;
+		case CMD_REJECT:	reject(user, args);								break;
 		case CMD_PRIVMSG:	user.getServer()->sendPrivMsg(user, args);		break;
 		case CMD_LIST:		user.getServer()->sendChannelList(user);		break;
 		case CMD_JOIN:		user.getServer()->joinChannel(user, args);		break;
@@ -85,13 +104,13 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 		case CMD_INVITE:	user.getServer()->sendInvite(user, args);		break;
 		case CMD_TOPIC:		user.getServer()->setChannelTopic(user, args);	break;
 		case CMD_MODE:		user.getServer()->setChannelMode(user, args);	break;
-		case CMD_OPER:		Command::oper(user, cmd, args);					break;
-		case CMD_KILL:		Command::kill(user, cmd, args);					break;
+		case CMD_OPER:		oper(user, args);								break;
+		case CMD_KILL:		kill(user, args);								break;
 		case CMD_EMPTY:														break;
 		case CMD_SIZE_OPEN:													break;
 		case CMD_SIZE_REGISTERED:											break;
 		case CMD_SIZE_OPER:													break;
-		case CMD_UNKNOWN:	Command::unknownCmd(user, cmd);					break;
+		case CMD_UNKNOWN:	unknownCmd(user, cmd);							break;
 	}
 }
 
@@ -107,7 +126,8 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 /* ************************************************************************** *\
 *				USER														  *
 \* ************************************************************************** */
-static void	Command::user(AClient &user, const std::string& cmd, const std::vector<std::string> &args) {
+
+static void	userName(AClient &user, const std::vector<std::string> &args) {
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (user.getIsRegistered()){
@@ -138,18 +158,20 @@ static void	Command::user(AClient &user, const std::string& cmd, const std::vect
 	
 	std::string temp = args[3].substr(0);
 	if (args.size() > 4){
-		for (int i = 4; i < args.size(); i++)
+		for (size_t i = 4; i < args.size(); i++)
 			temp.append(" " + args[i]);
 	}
 	user.setRealName(temp);
 	
 	user.setIsRegistered(true);
+	
 }
 
 /* ************************************************************************** *\
 *				PASS														  *
 \* ************************************************************************** */
-static void Command::password(AClient &user, const std::string& cmd, const std::vector<std::string>& args) {
+
+static void 	password(AClient &user, const std::vector<std::string>& args) {
 
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.empty() || args[0].empty()){
@@ -184,12 +206,14 @@ static void Command::password(AClient &user, const std::string& cmd, const std::
 		user.setIsOperator(true);
 	user.passwordValidation(true);
 	user.setIsRegistered(true);
+
 }
 
 /* ************************************************************************** *\
 *				NICK														  *
 \* ************************************************************************** */
-static void Command::nick(AClient &user, const std::string& cmd, const std::vector<std::string> &args) {
+
+static void nick(AClient &user, const std::vector<std::string> &args) {
 	
 	std::string nickname = args[0];
 	// std::vector<AClient*> clients = user.getServer()->getClientList();
@@ -224,7 +248,7 @@ static void Command::nick(AClient &user, const std::string& cmd, const std::vect
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	for (int i = 1; i < nickname.size(); i++){
+	for (size_t i = 1; i < nickname.size(); i++){
 		if (!isalnum(nickname[i])){
 			user.sendMsg(":" + serverName + "432 * " + nickname + ERR_ERRONEUSNICKNAME);
 			if (verboseCheck()	>= V_USER)
@@ -237,18 +261,20 @@ static void Command::nick(AClient &user, const std::string& cmd, const std::vect
 	}
 	user.setNickName(nickname);
 	user.setIsRegistered(true);
+
 }
 
 /* ************************************************************************** *\
 *				PING														  *
 \* ************************************************************************** */
-static void Command::ping(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
+
+static void ping(AClient &user, const std::vector<std::string> &args){
 	if (args.empty() || args[0].empty()){
 		std::string serverName = std::getenv("IRC_SERVNAME");
-		user.sendMsg(":" + serverName + "461 * " + cmd + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + serverName + "461 * PING " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"No imput provided. Command " 
-						<<	C_RESET	<<	cmd
+						<<	C_RESET	<<	"PING"
 						<<	C_LRED	<<	" needs a token as unique identifier" 
 						<<	C_RESET	<<	std::endl;
 		return ;
@@ -259,14 +285,14 @@ static void Command::ping(AClient &user, const std::string &cmd, const std::vect
 /* ************************************************************************** *\
 *				QUIT														  *
 \* ************************************************************************** */
-#include <fcntl.h>
-static void	Command::quit(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
+
+
+static void	quit(AClient &user, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
-		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getClientIP() + " " \
-						+ cmd + ":Client Quit " + args[0] + "\r\n");
-		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)\r\n");
+		user.sendMsg(":" + user + " QUIT Client Quit " + args[0]);
+		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_RESET	<<	"User "
 						<<	C_LCYAN	<<	user.getBestName()
@@ -274,9 +300,8 @@ static void	Command::quit(AClient &user, const std::string &cmd, const std::vect
 						<<	C_LCYAN	<<	args[0]
 						<<	C_RESET	<<	std::endl;
 	} else {
-		user.sendMsg(":" + user.getBestName() + "!~" + user.getUserName() + "@" + user.getClientIP() + " " \
-						+ cmd + ":Client Quit\r\n");
-		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)\r\n");
+		user.sendMsg(":" + user + " QUIT Client Quit");
+		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_RESET	<<	"User "
 						<<	C_LCYAN	<<	user.getBestName()
@@ -291,7 +316,7 @@ static void	Command::quit(AClient &user, const std::string &cmd, const std::vect
 *				AWAY														  *
 \* ************************************************************************** */
 
-static void Command::away(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
+static void away(AClient &user, const std::vector<std::string> &args){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (!args[0].empty()){
 		user.sendMsg(":" + serverName + " 306 * " + user.getBestName() + RPL_NOWAWAY);
@@ -306,7 +331,7 @@ static void Command::away(AClient &user, const std::string &cmd, const std::vect
 /* ************************************************************************** *\
 *				OPER														  *
 \* ************************************************************************** */
-static void	Command::oper(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
+static void	oper(AClient &user, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
@@ -323,7 +348,7 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong password. Command " 
-						<<	C_RESET	<<	cmd 
+						<<	C_RESET	<<	"OPER" 
 						<<	C_LRED	<<	" requires Admin password"
 						<<	C_RESET	<<	std::endl;
 		return ;
@@ -363,7 +388,7 @@ static void	Command::oper(AClient &user, const std::string &cmd, const std::vect
 /* ************************************************************************** *\
 *				KILL														  *
 \* ************************************************************************** */
-static void	Command::kill(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
+static void	kill(AClient &user, const std::vector<std::string> &args){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (args.size() != 2){
 		user.sendMsg(":" + serverName + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
@@ -383,7 +408,7 @@ static void	Command::kill(AClient &user, const std::string &cmd, const std::vect
 	}
 	AClient	*clientName = user.getServer()->getClient(args[0]);
 	if (clientName != nullptr){
-		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + clientName->getNickName() + ": " + args[args.size() - 1] + "\r\n");
+		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + clientName->getNickName() + ": " + args[args.size() - 1]);
 		clientName->closeFD();
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
@@ -406,7 +431,7 @@ static void	Command::kill(AClient &user, const std::string &cmd, const std::vect
 *				UNKNOWN CMD														  *
 \* ************************************************************************** */
 
-static void	Command::unknownCmd(AClient &user, const std::string &cmd){
+static void	unknownCmd(AClient &user, const std::string &cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	user.sendMsg(":" + serverName + " 421 * " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
 	if (verboseCheck()	>= V_USER)	
@@ -416,7 +441,7 @@ static void	Command::unknownCmd(AClient &user, const std::string &cmd){
 }
 
 
-static void	Command::userNotRegisteredMsg(AClient &user, std::string cmd){
+static void	userNotRegisteredMsg(AClient &user, std::string cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (verboseCheck() >= V_USER)
 		std::cout 	<< C_LRED << serverName << " User " << C_RESET << user.getBestName() 
@@ -424,7 +449,7 @@ static void	Command::userNotRegisteredMsg(AClient &user, std::string cmd){
 					<< C_LRED " command" << C_RESET << std::endl;
 }
 
-static void	Command::userNotOperatorMsg(AClient &user, std::string cmd){
+static void	userNotOperatorMsg(AClient &user, std::string cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	if (verboseCheck() >= V_USER)
 		std::cout 	<< C_LRED << serverName << "User " << C_RESET << user.getBestName() 
@@ -448,7 +473,7 @@ static file_t	findFile(AClient &user, std::string key) {
 #include <fstream>
 #include <sstream>
 
-static void	Command::send(AClient &user, const std::string &cmd, const std::vector<std::string> &args){
+static void	send(AClient &user, const std::vector<std::string> &args){
 	std::string serverName = std::getenv("IRC_SERVNAME");
 	
 	if (args.size() != 2){
@@ -481,7 +506,7 @@ static void	Command::send(AClient &user, const std::string &cmd, const std::vect
 	sendFile.fileName = fileName; 
 	std::ifstream inFile(sendFile.filePath, std::ios::binary);
 	if (!inFile) {
-		user.sendMsg(":" + serverName + " 402 " + user.getNickName() + " :Invalid file name or path\r\n");
+		user.sendMsg(":" + serverName + " 402 " + user.getNickName() + " :Invalid file name or path");
 		return ;
 	}
 	std::stringstream buffer;
@@ -489,13 +514,13 @@ static void	Command::send(AClient &user, const std::string &cmd, const std::vect
 	sendFile.line = buffer.str();
 	inFile.close();
 	
-	clientName->sendMsg("User " + user.getNickName() + " is sending you a file called " +fileName + "\r\n");
-	clientName->sendMsg("- To accept write [ACCEPT <sender_name> <file_name> <optional: destination_name>]\r\n");
-	clientName->sendMsg("- To reject write [REJECT <sender_name> <file_name>]\r\n");
+	clientName->sendMsg("User " + user.getNickName() + " is sending you a file called " +fileName);
+	clientName->sendMsg("- To accept write [ACCEPT <sender_name> <file_name> <optional: destination_name>]");
+	clientName->sendMsg("- To reject write [REJECT <sender_name> <file_name>]");
 
 	user.getServer()->fileTr[sendFile.fileName] = sendFile;
 
-	user.sendMsg(fileName + " sent\r\n");
+	user.sendMsg(fileName + " sent");
 	if (verboseCheck()	>= V_USER)
 		std::cout	<< C_RESET	<< "File "
 					<< C_LCYAN	<< fileName
@@ -515,7 +540,7 @@ static void	Command::send(AClient &user, const std::string &cmd, const std::vect
 \* ************************************************************************** */
 
 
-static void Command::accept(AClient &user,const std::string &cmd, const std::vector<std::string> &args){
+static void accept(AClient &user, const std::vector<std::string> &args){
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 
@@ -555,7 +580,7 @@ static void Command::accept(AClient &user,const std::string &cmd, const std::vec
 
 	file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
-    	user.sendMsg(":" + serverName + " ERROR " + user.getNickName() + " :File not found\r\n");
+    	user.sendMsg(":" + serverName + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
 						<<	C_RESET	<<	serverName
@@ -576,7 +601,7 @@ static void Command::accept(AClient &user,const std::string &cmd, const std::vec
 	 
 	std::fstream outFile(filePath, std::fstream::out);
 	if (!outFile.is_open())	{
-		user.sendMsg(":" + serverName + " 402 " + user.getNickName() + " :Error. Failed to open the output file\r\n");
+		user.sendMsg(":" + serverName + " 402 " + user.getNickName() + " :Error. Failed to open the output file");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
 						<<	C_RESET	<<	serverName
@@ -593,8 +618,8 @@ static void Command::accept(AClient &user,const std::string &cmd, const std::vec
 	if (args.size() > 2)
 		userPath = " as " + filePath;
 	std::cout << "userPath [" << userPath << std::endl;
-	user.sendMsg(sendFile.fileName + " accepted" + userPath + "\r\n");
-	clientName->sendMsg(sendFile.fileName + " accepted\r\n");
+	user.sendMsg(sendFile.fileName + " accepted" + userPath);
+	clientName->sendMsg(sendFile.fileName + " accepted");
 	
 	// Remove the file entry from the map after processing
 	user.getServer()->fileTr.erase(argsFile);
@@ -610,7 +635,7 @@ static void Command::accept(AClient &user,const std::string &cmd, const std::vec
 \* ************************************************************************** */
 
 
-static void Command::reject(AClient &user,const std::string &cmd, const std::vector<std::string> &args) {
+static void reject(AClient &user, const std::vector<std::string> &args) {
 	
 	std::string serverName = std::getenv("IRC_SERVNAME");
 
@@ -651,7 +676,7 @@ static void Command::reject(AClient &user,const std::string &cmd, const std::vec
 
 	file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
-    	user.sendMsg(":" + serverName + " ERROR " + user.getNickName() + " :File not found\r\n");
+    	user.sendMsg(":" + serverName + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
 						<<	C_RESET	<<	serverName
@@ -662,8 +687,8 @@ static void Command::reject(AClient &user,const std::string &cmd, const std::vec
 		return;
 	}
 	
-	user.sendMsg(sendFile.fileName + " rejected\r\n");
-	clientName->sendMsg(sendFile.fileName + " rejected\r\n");
+	user.sendMsg(sendFile.fileName + " rejected");
+	clientName->sendMsg(sendFile.fileName + " rejected");
 	
 	user.getServer()->fileTr.erase(argsFile);
 	

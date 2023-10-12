@@ -1,9 +1,9 @@
 NAME =	ircserv
 
 CC =	c++
-# CFLAGS +=	-Wall -Wextra -Werror
+CFLAGS +=	-Wall -Wextra -Werror
 # CFLAGS +=	-std=c++98
-CFLAGS +=	-Wno-unused-variable
+# CFLAGS +=	-Wno-unused-variable
 DEPFLAGS +=	-MMD -MF $(DEP_DIR)$*.d
 
 INCL_HDR :=	$(shell find . -type f -name '*.hpp' -exec dirname "{}" \; | \
