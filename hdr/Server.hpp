@@ -96,6 +96,7 @@ class Server
 		void	sendPong(AClient &client, const std::string token) const;
 		void	sendPrivMsg(const AClient &client, const std::vector<std::string> &args);
 		void	sendInvite(AClient &client, const std::vector<std::string> &args);
+		void	sendAuthserv(AClient &client, const std::vector<std::string> &args);
 		void	setChannelTopic(AClient &client, const std::vector<std::string> &args);
 		void	setChannelMode(AClient &client, const std::vector<std::string> &args);
 

@@ -59,6 +59,7 @@ e_command	mapToEnum(std::string cmd){
 	if (cmd == "INVITE") return CMD_INVITE;
 	if (cmd == "TOPIC") return CMD_TOPIC;
 	if (cmd == "MODE") return CMD_MODE;
+	// if (cmd == "AUTHSERV") return CMD_AUTHSERV;
 	if (cmd == "OPER") return CMD_OPER;
 	if (cmd == "KILL") return CMD_KILL;
 	if (cmd == "") return CMD_EMPTY;
@@ -104,6 +105,8 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 		case CMD_INVITE:	user.getServer()->sendInvite(user, args);		break;
 		case CMD_TOPIC:		user.getServer()->setChannelTopic(user, args);	break;
 		case CMD_MODE:		user.getServer()->setChannelMode(user, args);	break;
+
+		// case CMD_AUTHSERV:	user.getServer()->sendAuthserv(user, args);	break;
 		case CMD_OPER:		oper(user, args);								break;
 		case CMD_KILL:		kill(user, args);								break;
 		case CMD_EMPTY:														break;
@@ -317,14 +320,27 @@ static void	quit(AClient &user, const std::vector<std::string> &args){
 \* ************************************************************************** */
 
 static void away(AClient &user, const std::vector<std::string> &args){
-	std::string serverName = std::getenv("IRC_SERVNAME");
-	if (!args[0].empty()){
-		user.sendMsg(":" + serverName + " 306 * " + user.getBestName() + RPL_NOWAWAY);
+	if (args[0] == user.getAway())
+		return ;
+	user.setAway(args[0]);
+	if (args[0].empty())
+	{
+		user.sendMsg(':' + *user.getServer() + " 305 " + user.getBestName() + " :You are no longer marked as being away");
+		if (verboseCheck() >= V_USER)
+			std::cout	<< C_RESET	<< "User "
+						<< C_LCYAN	<< user.getBestName()
+						<< C_RESET	<< " is no longer away"
+						<< C_RESET	<< std::endl;
+	}
+	else
+	{
+		user.sendMsg(":" + *user.getServer() + " 306 " + user.getBestName() + RPL_NOWAWAY);
 		if (verboseCheck()	>= V_USER)
-				std::cout	<<	C_RESET	<<	"User "
-							<<	C_LCYAN	<<	user.getBestName()
-							<<	C_RESET	<<	" is away"
-							<<	C_RESET	<<	std::endl;
+				std::cout	<< C_RESET	<< "User "
+							<< C_LCYAN	<< user.getBestName()
+							<< C_RESET	<< " is away: "
+							<< C_LCYAN	<< args[0]
+							<< C_RESET	<< std::endl;
 	}
 }
 
@@ -433,12 +449,13 @@ static void	kill(AClient &user, const std::vector<std::string> &args){
 
 static void	unknownCmd(AClient &user, const std::string &cmd){
 	std::string serverName = std::getenv("IRC_SERVNAME");
-	user.sendMsg(":" + serverName + " 421 * " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
+	user.sendMsg(":" + serverName + " 421 " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
 	if (verboseCheck()	>= V_USER)	
 		std::cout	<<	C_LRED	<<	"The command typed is unknown" 
 					<<	C_RESET	<<	std::endl;
 	return ;
 }
+// 	client.sendMsg(':' + *(client.getServer()) + " 421 " + client.getNickName() + " AUTHSERV: Feature not supported");
 
 
 static void	userNotRegisteredMsg(AClient &user, std::string cmd){

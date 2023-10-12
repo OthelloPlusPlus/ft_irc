@@ -497,6 +497,8 @@ std::string	BotTicTacToe::getMsg(void)
 		reply = this->send.front();
 		this->send.pop();
 	}
+	if (!reply.empty())
+		reply += "\r\n";
 	return (reply);
 }
 

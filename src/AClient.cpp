@@ -63,6 +63,11 @@ void	AClient::setRealName(std::string realName)
 	this->_realName = realName;
 }
 
+void	AClient::setAway(std::string away)
+{
+	this->_away = away;
+}
+
 void	AClient::setIsRegistered(bool value)
 {
 	this->_isRegistered = value;
@@ -110,6 +115,11 @@ const std::string	&AClient::getBestName(void) const
 	if (!this->_clientIP.empty())
 		return (this->_clientIP);
 	return (this->_nickName);
+}
+
+const std::string	&AClient::getAway(void) const
+{
+	return (this->_away);
 }
 
 const bool	&AClient::getIsRegistered(void) const
