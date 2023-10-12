@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 14:25:05 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/12 16:31:20 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,9 +132,9 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 
 static void	userName(AClient &user, const std::vector<std::string> &args) {
 
-	std::string serverName = std::getenv("IRC_SERVNAME");
+
 	if (user.getIsRegistered()){
-		user.sendMsg(":" + serverName + " 462 * " + user.getNickName() + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + *user.getServer() + " 462 * " + user.getNickName() + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
 						<<	C_RESET	<<	user.getNickName()
@@ -144,7 +144,7 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 	}
 
 	if (args.size() < 4){
-		user.sendMsg(":" + serverName + " 461 * " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 * " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error: format required: USER <user name> * <host> :<realname>" 
 						<<	C_RESET	<<	std::endl;
@@ -176,9 +176,9 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 
 static void 	password(AClient &user, const std::vector<std::string>& args) {
 
-	std::string serverName = std::getenv("IRC_SERVNAME");
+
 	if (args.empty() || args[0].empty()){
-		user.sendMsg(":" + serverName + " 461 * " + user.getBestName() + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 * " + user.getBestName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Password not submitted. No imput provided"
 						<<	C_RESET	<<	std::endl;
@@ -186,7 +186,7 @@ static void 	password(AClient &user, const std::vector<std::string>& args) {
 		return ;
 	}
 	if (user.getIsRegistered() == true){
-		user.sendMsg(":" + serverName + " 462 * " + user.getNickName() + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + *user.getServer() + " 462 * " + user.getNickName() + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
 						<<	C_RESET	<<	user.getNickName()
@@ -196,7 +196,7 @@ static void 	password(AClient &user, const std::vector<std::string>& args) {
 	}
 	
 	if (user.getServer()->validatePassword(args[0]) == 0 ){
-		user.sendMsg(":" + serverName + " 464 * " + user.getBestName() + " " + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + *user.getServer() + " 464 * " + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cerr	<<	C_LRED	<<	"Wrong password " 
 						<<	C_RESET	<<	user.getBestName() 
@@ -220,9 +220,9 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 	
 	std::string nickname = args[0];
 	// std::vector<AClient*> clients = user.getServer()->getClientList();
-	std::string serverName = std::getenv("IRC_SERVNAME");
+
 	if (nickname.empty()) {
-		user.sendMsg(":" + serverName + " 431 * " + ERR_NONICKNAMEGIVEN);
+		user.sendMsg(":" + *user.getServer() + " 431 * " + ERR_NONICKNAMEGIVEN);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Nick name not provided " 
 						<<	C_RESET	<<	user.getBestName() 
@@ -233,7 +233,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 	
 	AClient	*clientName = user.getServer()->getClient(nickname);
 	if (clientName != nullptr && clientName != &user){
-		user.sendMsg(":" + serverName + " 433 * " + nickname +  ERR_NICKNAMEINUSE);
+		user.sendMsg(":" + *user.getServer() + " 433 * " + nickname +  ERR_NICKNAMEINUSE);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Nick name not available. [" 
 						<<	C_RESET	<<	nickname
@@ -243,7 +243,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 	}
 
 	if (isdigit(nickname.at(0))){
-		user.sendMsg(":" + serverName + " 432 * " + nickname  + ERR_ERRONEUSNICKNAME);
+		user.sendMsg(":" + *user.getServer() + " 432 * " + nickname  + ERR_ERRONEUSNICKNAME);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong character in name [" 
 						<<	C_RESET	<<	nickname
@@ -253,7 +253,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 	}
 	for (size_t i = 1; i < nickname.size(); i++){
 		if (!isalnum(nickname[i])){
-			user.sendMsg(":" + serverName + "432 * " + nickname + ERR_ERRONEUSNICKNAME);
+			user.sendMsg(":" + *user.getServer() + "432 * " + nickname + ERR_ERRONEUSNICKNAME);
 			if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_LRED	<<	"Wrong character in name [" 
 							<<	C_RESET	<<	nickname
@@ -273,8 +273,8 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 
 static void ping(AClient &user, const std::vector<std::string> &args){
 	if (args.empty() || args[0].empty()){
-		std::string serverName = std::getenv("IRC_SERVNAME");
-		user.sendMsg(":" + serverName + "461 * PING " + ERR_NEEDMOREPARAMS);
+	
+		user.sendMsg(":" + *user.getServer() + "461 * PING " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"No imput provided. Command " 
 						<<	C_RESET	<<	"PING"
@@ -292,7 +292,7 @@ static void ping(AClient &user, const std::vector<std::string> &args){
 
 static void	quit(AClient &user, const std::vector<std::string> &args){
 	
-	std::string serverName = std::getenv("IRC_SERVNAME");
+
 	if (!args[0].empty()){
 		user.sendMsg(":" + user + " QUIT Client Quit " + args[0]);
 		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)");
@@ -349,9 +349,9 @@ static void away(AClient &user, const std::vector<std::string> &args){
 \* ************************************************************************** */
 static void	oper(AClient &user, const std::vector<std::string> &args){
 	
-	std::string serverName = std::getenv("IRC_SERVNAME");
+
 	if (args.size() != 2){
-		user.sendMsg(":" + serverName + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"No imput provided. User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -361,7 +361,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 	}
 		
 	if (user.getServer()->validatePassword(args[1]) != 2){
-		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + *user.getServer() + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong password. Command " 
 						<<	C_RESET	<<	"OPER" 
@@ -370,7 +370,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 		return ;
 	}
 	if (user.getIsOperator() == false){
-		user.sendMsg(":" + serverName + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + *user.getServer() + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -381,17 +381,17 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 	
 	AClient	*clientName = user.getServer()->getClient(args[0]);
 	if (clientName == nullptr){
-		user.sendMsg(":" + serverName + " 491 * " + args[0] + ERR_NOOPERHOST);
+		user.sendMsg(":" + *user.getServer() + " 491 * " + args[0] + ERR_NOOPERHOST);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" doesn’t allow connections from current network of user "
 						<<	C_RESET	<<	args[0] <<	std::endl;
 		return ;
 	}
 	else if (user.getIsOperator() == true) {
 		clientName->setIsOperator(true);
-		user.sendMsg(":" + serverName + " 381 * " + clientName->getNickName() + RPL_YOUREOPER);
+		user.sendMsg(":" + *user.getServer() + " 381 * " + clientName->getNickName() + RPL_YOUREOPER);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_RESET	<<	"User "
 						<<	C_LCYAN	<<	clientName->getNickName()
@@ -405,16 +405,16 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 *				KILL														  *
 \* ************************************************************************** */
 static void	kill(AClient &user, const std::vector<std::string> &args){
-	std::string serverName = std::getenv("IRC_SERVNAME");
+
 	if (args.size() != 2){
-		user.sendMsg(":" + serverName + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"Target not submitted. No imput provided" 
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
 	if (user.getIsOperator() == false){
-		user.sendMsg(":" + serverName + " 481 * " + user.getNickName() + ERR_NOPRIVILEGES);
+		user.sendMsg(":" + *user.getServer() + " 481 * " + user.getNickName() + ERR_NOPRIVILEGES);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -424,7 +424,7 @@ static void	kill(AClient &user, const std::vector<std::string> &args){
 	}
 	AClient	*clientName = user.getServer()->getClient(args[0]);
 	if (clientName != nullptr){
-		user.sendMsg("ERROR :Closing Link: " + serverName + " Killed " + clientName->getNickName() + ": " + args[args.size() - 1]);
+		user.sendMsg("ERROR :Closing Link: " + *user.getServer() + " Killed " + clientName->getNickName() + ": " + args[args.size() - 1]);
 		clientName->closeFD();
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
@@ -433,7 +433,7 @@ static void	kill(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	args[args.size() - 1] << std::endl;
 	}
 	else {
-		user.sendMsg(":" + serverName + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
+		user.sendMsg(":" + *user.getServer() + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
 		if (verboseCheck() >= V_USER)
 			std::cout 	<<	C_LRED	<<	"Server or user "
 						<<	C_RESET	<<	args[0]
@@ -448,8 +448,8 @@ static void	kill(AClient &user, const std::vector<std::string> &args){
 \* ************************************************************************** */
 
 static void	unknownCmd(AClient &user, const std::string &cmd){
-	std::string serverName = std::getenv("IRC_SERVNAME");
-	user.sendMsg(":" + serverName + " 421 " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
+
+	user.sendMsg(":" + *user.getServer() + " 421 " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
 	if (verboseCheck()	>= V_USER)	
 		std::cout	<<	C_LRED	<<	"The command typed is unknown" 
 					<<	C_RESET	<<	std::endl;
@@ -459,19 +459,25 @@ static void	unknownCmd(AClient &user, const std::string &cmd){
 
 
 static void	userNotRegisteredMsg(AClient &user, std::string cmd){
-	std::string serverName = std::getenv("IRC_SERVNAME");
+
 	if (verboseCheck() >= V_USER)
-		std::cout 	<< C_LRED << serverName << " User " << C_RESET << user.getBestName() 
-					<< C_LRED " needs to be registered for the " << C_RESET << cmd 
-					<< C_LRED " command" << C_RESET << std::endl;
+		std::cout 	<< C_LRED	<< user.getServer().getName() << " User "
+					<< C_RESET	<< user.getBestName() 
+					<< C_LRED	" needs to be registered for the "
+					<< C_RESET	<< cmd 
+					<< C_LRED	" command"
+					<< C_RESET	<< std::endl;
 }
 
 static void	userNotOperatorMsg(AClient &user, std::string cmd){
-	std::string serverName = std::getenv("IRC_SERVNAME");
+
 	if (verboseCheck() >= V_USER)
-		std::cout 	<< C_LRED << serverName << "User " << C_RESET << user.getBestName() 
-					<< C_LRED " needs to be operator for the " << C_RESET << cmd 
-					<< C_LRED " command" << C_RESET << std::endl;
+		std::cout 	<< C_LRED	<< user.getServer().getName() << " User " 
+					<< C_RESET	<< user.getBestName() 
+					<< C_LRED 	" needs to be operator for the "
+					<< C_RESET	<< cmd 
+					<< C_LRED 	" command"
+					<< C_RESET	<< std::endl;
 }
 
 
@@ -491,10 +497,9 @@ static file_t	findFile(AClient &user, std::string key) {
 #include <sstream>
 
 static void	send(AClient &user, const std::vector<std::string> &args){
-	std::string serverName = std::getenv("IRC_SERVNAME");
 	
 	if (args.size() != 2){
-		user.sendMsg(":" + serverName + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"File transfer requires 2 parameters : <nick name> of the receiver and <file name> " 
 						<<	C_RESET	<<	std::endl;
@@ -506,10 +511,10 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 	sendFile.receiverName = args[0];
 	AClient	*clientName = user.getServer()->getClient(sendFile.receiverName);
 	if (clientName == nullptr){
-		user.sendMsg(":" + serverName + " 401 * " + sendFile.receiverName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 * " + sendFile.receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" no user can be found for the supplied nickname"
 						<<	C_RESET	<<	args[0] <<	std::endl;
 		return ;
@@ -523,7 +528,7 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 	sendFile.fileName = fileName; 
 	std::ifstream inFile(sendFile.filePath, std::ios::binary);
 	if (!inFile) {
-		user.sendMsg(":" + serverName + " 402 " + user.getNickName() + " :Invalid file name or path");
+		user.sendMsg(":" + *user.getServer() + " 402 " + user.getNickName() + " :Invalid file name or path");
 		return ;
 	}
 	std::stringstream buffer;
@@ -558,11 +563,9 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 
 
 static void accept(AClient &user, const std::vector<std::string> &args){
-	
-	std::string serverName = std::getenv("IRC_SERVNAME");
 
 	if (args.size() < 2){
-		user.sendMsg(":" + serverName + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"File transfer requires at least 2 parameters : <nick name> of the receiver and <file name> "
 						<<	C_RESET	<<	"<nick name>"
@@ -574,19 +577,19 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 	std::string receiverName = args[0];
 	AClient	*clientName = user.getServer()->getClient(receiverName);
 	if (clientName == nullptr){
-		user.sendMsg(":" + serverName + " 401 * " + receiverName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 * " + receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" no user can be found for the supplied nickname"
 						<<	C_RESET	<<	args[0] <<	std::endl;
 		return ;
 	}
 	if (receiverName != clientName->getNickName()){
-		user.sendMsg(":" + serverName + " 401 * " + receiverName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 * " + receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" the nickname "
 						<<	C_RESET	<<	receiverName
 						<<	C_LRED	<<	" is not the sender"
@@ -597,10 +600,10 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 
 	file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
-    	user.sendMsg(":" + serverName + " ERROR " + user.getNickName() + " :File not found");
+    	user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" File "
 						<<	C_RESET	<<	sendFile.fileName
 						<<	C_LRED	<<	" not found"
@@ -618,10 +621,10 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 	 
 	std::fstream outFile(filePath, std::fstream::out);
 	if (!outFile.is_open())	{
-		user.sendMsg(":" + serverName + " 402 " + user.getNickName() + " :Error. Failed to open the output file");
+		user.sendMsg(":" + *user.getServer() + " 402 " + user.getNickName() + " :Error. Failed to open the output file");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" File "
 						<<	C_RESET	<<	sendFile.fileName
 						<<	C_LRED	<<	" failed to open the output file"
@@ -653,11 +656,9 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 
 
 static void reject(AClient &user, const std::vector<std::string> &args) {
-	
-	std::string serverName = std::getenv("IRC_SERVNAME");
 
 	if (args.size() != 2){
-		user.sendMsg(":" + serverName + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 " + user.getNickName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"File transfer requires at least 2 parameters : <nick name> of the receiver and <file name> "
 						<<	C_RESET	<<	"<nick name>"
@@ -669,20 +670,20 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 	std::string senderName = args[0];
 	AClient	*clientName = user.getServer()->getClient(senderName);
 	if (clientName == nullptr){
-		user.sendMsg(":" + serverName + " 401 * " + senderName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 * " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" no user can be found for the supplied nickname "
 						<<	C_RESET	<<	senderName <<	std::endl;
 		return ;
 		
 	}
 	if (senderName != clientName->getNickName()){
-		user.sendMsg(":" + serverName + " 401 * " + senderName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 * " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" the nickname "
 						<<	C_RESET	<<	senderName
 						<<	C_LRED	<<	" is not the sender"
@@ -693,10 +694,10 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 
 	file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
-    	user.sendMsg(":" + serverName + " ERROR " + user.getNickName() + " :File not found");
+    	user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
-						<<	C_RESET	<<	serverName
+						<<	C_RESET	<<	user.getServer().getName()
 						<<	C_LRED	<<	" File "
 						<<	C_RESET	<<	sendFile.fileName
 						<<	C_LRED	<<	" not found"
