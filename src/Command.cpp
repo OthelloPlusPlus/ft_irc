@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 16:44:26 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/12 16:47:53 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 
 
 	if (user.getIsRegistered()){
-		user.sendMsg(":" + *user.getServer() + " 462 * " + user.getNickName() + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + *user.getServer() + " 462 " + user.getNickName() + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
 						<<	C_RESET	<<	user.getNickName()
@@ -144,7 +144,7 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 	}
 
 	if (args.size() < 4){
-		user.sendMsg(":" + *user.getServer() + " 461 * " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error: format required: USER <user name> * <host> :<realname>" 
 						<<	C_RESET	<<	std::endl;
@@ -178,7 +178,7 @@ static void 	password(AClient &user, const std::vector<std::string>& args) {
 
 
 	if (args.empty() || args[0].empty()){
-		user.sendMsg(":" + *user.getServer() + " 461 * " + user.getBestName() + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 " + user.getBestName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Password not submitted. No imput provided"
 						<<	C_RESET	<<	std::endl;
@@ -186,7 +186,7 @@ static void 	password(AClient &user, const std::vector<std::string>& args) {
 		return ;
 	}
 	if (user.getIsRegistered() == true){
-		user.sendMsg(":" + *user.getServer() + " 462 * " + user.getNickName() + ERR_ALREADYREGISTERED);
+		user.sendMsg(":" + *user.getServer() + " 462 " + user.getNickName() + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
 						<<	C_RESET	<<	user.getNickName()
@@ -196,7 +196,7 @@ static void 	password(AClient &user, const std::vector<std::string>& args) {
 	}
 	
 	if (user.getServer()->validatePassword(args[0]) == 0 ){
-		user.sendMsg(":" + *user.getServer() + " 464 * " + user.getBestName() + " " + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + *user.getServer() + " 464 " + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cerr	<<	C_LRED	<<	"Wrong password " 
 						<<	C_RESET	<<	user.getBestName() 
@@ -222,7 +222,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 	// std::vector<AClient*> clients = user.getServer()->getClientList();
 
 	if (nickname.empty()) {
-		user.sendMsg(":" + *user.getServer() + " 431 * " + ERR_NONICKNAMEGIVEN);
+		user.sendMsg(":" + *user.getServer() + " 431 " + ERR_NONICKNAMEGIVEN);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Nick name not provided " 
 						<<	C_RESET	<<	user.getBestName() 
@@ -233,7 +233,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 	
 	AClient	*clientName = user.getServer()->getClient(nickname);
 	if (clientName != nullptr && clientName != &user){
-		user.sendMsg(":" + *user.getServer() + " 433 * " + nickname +  ERR_NICKNAMEINUSE);
+		user.sendMsg(":" + *user.getServer() + " 433 " + nickname +  ERR_NICKNAMEINUSE);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Nick name not available. [" 
 						<<	C_RESET	<<	nickname
@@ -243,7 +243,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 	}
 
 	if (isdigit(nickname.at(0))){
-		user.sendMsg(":" + *user.getServer() + " 432 * " + nickname  + ERR_ERRONEUSNICKNAME);
+		user.sendMsg(":" + *user.getServer() + " 432 " + nickname  + ERR_ERRONEUSNICKNAME);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong character in name [" 
 						<<	C_RESET	<<	nickname
@@ -253,7 +253,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 	}
 	for (size_t i = 1; i < nickname.size(); i++){
 		if (!isalnum(nickname[i])){
-			user.sendMsg(":" + *user.getServer() + "432 * " + nickname + ERR_ERRONEUSNICKNAME);
+			user.sendMsg(":" + *user.getServer() + "432 " + nickname + ERR_ERRONEUSNICKNAME);
 			if (verboseCheck()	>= V_USER)
 				std::cout	<<	C_LRED	<<	"Wrong character in name [" 
 							<<	C_RESET	<<	nickname
@@ -274,7 +274,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 static void ping(AClient &user, const std::vector<std::string> &args){
 	if (args.empty() || args[0].empty()){
 	
-		user.sendMsg(":" + *user.getServer() + "461 * PING " + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + "461 PING " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"No imput provided. Command " 
 						<<	C_RESET	<<	"PING"
@@ -351,7 +351,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 	
 
 	if (args.size() != 2){
-		user.sendMsg(":" + *user.getServer() + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 " + user.getNickName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"No imput provided. User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -361,7 +361,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 	}
 		
 	if (user.getServer()->validatePassword(args[1]) != 2){
-		user.sendMsg(":" + *user.getServer() + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + *user.getServer() + " 464 " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong password. Command " 
 						<<	C_RESET	<<	"OPER" 
@@ -370,7 +370,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 		return ;
 	}
 	if (user.getIsOperator() == false){
-		user.sendMsg(":" + *user.getServer() + " 464 * " + user.getNickName() + ERR_PASSWDMISMATCH);
+		user.sendMsg(":" + *user.getServer() + " 464 " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -381,7 +381,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 	
 	AClient	*clientName = user.getServer()->getClient(args[0]);
 	if (clientName == nullptr){
-		user.sendMsg(":" + *user.getServer() + " 491 * " + args[0] + ERR_NOOPERHOST);
+		user.sendMsg(":" + *user.getServer() + " 491 " + args[0] + ERR_NOOPERHOST);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	user.getServer()->getName()
@@ -391,7 +391,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 	}
 	else if (user.getIsOperator() == true) {
 		clientName->setIsOperator(true);
-		user.sendMsg(":" + *user.getServer() + " 381 * " + clientName->getNickName() + RPL_YOUREOPER);
+		user.sendMsg(":" + *user.getServer() + " 381 " + clientName->getNickName() + RPL_YOUREOPER);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_RESET	<<	"User "
 						<<	C_LCYAN	<<	clientName->getNickName()
@@ -407,14 +407,14 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 static void	kill(AClient &user, const std::vector<std::string> &args){
 
 	if (args.size() != 2){
-		user.sendMsg(":" + *user.getServer() + " 461 * " + user.getNickName() + ERR_NEEDMOREPARAMS);
+		user.sendMsg(":" + *user.getServer() + " 461 " + user.getNickName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"Target not submitted. No imput provided" 
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
 	if (user.getIsOperator() == false){
-		user.sendMsg(":" + *user.getServer() + " 481 * " + user.getNickName() + ERR_NOPRIVILEGES);
+		user.sendMsg(":" + *user.getServer() + " 481 " + user.getNickName() + ERR_NOPRIVILEGES);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
 						<<	C_RESET	<<	user.getNickName()
@@ -433,7 +433,7 @@ static void	kill(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	args[args.size() - 1] << std::endl;
 	}
 	else {
-		user.sendMsg(":" + *user.getServer() + " 402 * " + args[0] + " " + ERR_NOSUCHSERVER);
+		user.sendMsg(":" + *user.getServer() + " 402 " + args[0] + " " + ERR_NOSUCHSERVER);
 		if (verboseCheck() >= V_USER)
 			std::cout 	<<	C_LRED	<<	"Server or user "
 						<<	C_RESET	<<	args[0]
@@ -511,7 +511,7 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 	sendFile.receiverName = args[0];
 	AClient	*clientName = user.getServer()->getClient(sendFile.receiverName);
 	if (clientName == nullptr){
-		user.sendMsg(":" + *user.getServer() + " 401 * " + sendFile.receiverName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 " + sendFile.receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	user.getServer()->getName()
@@ -577,7 +577,7 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 	std::string receiverName = args[0];
 	AClient	*clientName = user.getServer()->getClient(receiverName);
 	if (clientName == nullptr){
-		user.sendMsg(":" + *user.getServer() + " 401 * " + receiverName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 " + receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	user.getServer()->getName()
@@ -586,7 +586,7 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 		return ;
 	}
 	if (receiverName != clientName->getNickName()){
-		user.sendMsg(":" + *user.getServer() + " 401 * " + receiverName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 " + receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	user.getServer()->getName()
@@ -670,7 +670,7 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 	std::string senderName = args[0];
 	AClient	*clientName = user.getServer()->getClient(senderName);
 	if (clientName == nullptr){
-		user.sendMsg(":" + *user.getServer() + " 401 * " + senderName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	user.getServer()->getName()
@@ -680,7 +680,7 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 		
 	}
 	if (senderName != clientName->getNickName()){
-		user.sendMsg(":" + *user.getServer() + " 401 * " + senderName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	user.getServer()->getName()
