@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/12 13:20:26 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 13:40:27 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/12 15:54:49 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@
 # define CYNHB "\e[0;106m"
 # define WHTHB "\e[0;107m"
 
+
 //High intensty text
 # define HBLK "\e[0;90m"
 # define HRED "\e[0;91m"
@@ -80,6 +81,8 @@
 # define HMAG "\e[0;95m"
 # define HCYN "\e[0;96m"
 # define HWHT "\e[0;97m"
+
+# define UHBLU "\e[4;94m"
 
 //Bold high intensity text
 # define BHBLK "\e[1;90m"

@@ -172,7 +172,7 @@ void	RockBot::rockMove(std::string dest, hand_t &hand){
 	}
 
 	if ((playerMove == e_move::ROCK && botMove == e_move::SCISSORS)	|| \
-		(playerMove == e_move::PAPER && botMove == e_move::ROCK)	||  \
+		(playerMove == e_move::PAPER && botMove == e_move::ROCK)	|| \
 		(playerMove == e_move::SCISSORS  && botMove == e_move::PAPER))
 		this->send.push("PRIVMSG " + dest + " :You won!");
 	else
