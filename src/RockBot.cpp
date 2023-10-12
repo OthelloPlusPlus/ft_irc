@@ -223,7 +223,9 @@ std::string	RockBot::getMsg(void) {
 		reply = this->send.front();
 		this->send.pop();
 	}
-	return (reply + "\r\n");
+	if (!reply.empty())
+		reply += "\r\n";
+	return (reply);
 }
 
 void	RockBot::sendMsg(std::string msg) {
