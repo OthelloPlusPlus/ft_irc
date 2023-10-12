@@ -40,7 +40,8 @@ int	main(int argc, char **argv)
 			server.checkNewClient();
 			server.checkClients();
 			server.checkChannels();
-			setEnv();
+			if (setEnv())
+				server.setName();
 		}
 	}
 	catch(const std::exception& e)

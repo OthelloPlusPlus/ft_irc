@@ -538,10 +538,19 @@ Channel	*Server::getChannel(std::string name) const
 	return (nullptr);
 }
 
-// std::string	Server::getName(void) const
-// {
-// 	return (this->serverName);
-// }
+std::string	Server::getName(void) const
+{
+	return (this->serverName);
+}
+
+void	Server::setName(void)
+{
+	char *name = getenv("IRC_SERVNAME");
+	if (name != NULL)
+		this->serverName = name;
+	else
+		this->serverName = "OMS";
+}
 
 int		Server::getFD(void) const
 {

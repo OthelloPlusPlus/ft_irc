@@ -82,8 +82,10 @@ class Server
 		// std::vector<AClient *>	getClientList(void);
 		AClient					*getClient(std::string name) const;
 		Channel					*getChannel(std::string channel) const;
-		// std::string				getName(void) const;
+		std::string				getName(void) const;
 		int						getFD(void) const;
+
+		void	setName(void);
 		// const std::string		getIP(void) const;
 		// uint32_t				getTransferIP(void) const;
 
