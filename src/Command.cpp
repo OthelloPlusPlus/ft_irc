@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 16:31:20 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/12 16:44:26 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,7 +384,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 		user.sendMsg(":" + *user.getServer() + " 491 * " + args[0] + ERR_NOOPERHOST);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" doesn’t allow connections from current network of user "
 						<<	C_RESET	<<	args[0] <<	std::endl;
 		return ;
@@ -461,7 +461,7 @@ static void	unknownCmd(AClient &user, const std::string &cmd){
 static void	userNotRegisteredMsg(AClient &user, std::string cmd){
 
 	if (verboseCheck() >= V_USER)
-		std::cout 	<< C_LRED	<< user.getServer().getName() << " User "
+		std::cout 	<< C_LRED	<< user.getServer()->getName() << " User "
 					<< C_RESET	<< user.getBestName() 
 					<< C_LRED	" needs to be registered for the "
 					<< C_RESET	<< cmd 
@@ -472,7 +472,7 @@ static void	userNotRegisteredMsg(AClient &user, std::string cmd){
 static void	userNotOperatorMsg(AClient &user, std::string cmd){
 
 	if (verboseCheck() >= V_USER)
-		std::cout 	<< C_LRED	<< user.getServer().getName() << " User " 
+		std::cout 	<< C_LRED	<< user.getServer()->getName() << " User " 
 					<< C_RESET	<< user.getBestName() 
 					<< C_LRED 	" needs to be operator for the "
 					<< C_RESET	<< cmd 
@@ -514,7 +514,7 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 		user.sendMsg(":" + *user.getServer() + " 401 * " + sendFile.receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" no user can be found for the supplied nickname"
 						<<	C_RESET	<<	args[0] <<	std::endl;
 		return ;
@@ -580,7 +580,7 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 		user.sendMsg(":" + *user.getServer() + " 401 * " + receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" no user can be found for the supplied nickname"
 						<<	C_RESET	<<	args[0] <<	std::endl;
 		return ;
@@ -589,7 +589,7 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 		user.sendMsg(":" + *user.getServer() + " 401 * " + receiverName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" the nickname "
 						<<	C_RESET	<<	receiverName
 						<<	C_LRED	<<	" is not the sender"
@@ -603,7 +603,7 @@ static void accept(AClient &user, const std::vector<std::string> &args){
     	user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" File "
 						<<	C_RESET	<<	sendFile.fileName
 						<<	C_LRED	<<	" not found"
@@ -624,7 +624,7 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 		user.sendMsg(":" + *user.getServer() + " 402 " + user.getNickName() + " :Error. Failed to open the output file");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" File "
 						<<	C_RESET	<<	sendFile.fileName
 						<<	C_LRED	<<	" failed to open the output file"
@@ -673,7 +673,7 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 		user.sendMsg(":" + *user.getServer() + " 401 * " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" no user can be found for the supplied nickname "
 						<<	C_RESET	<<	senderName <<	std::endl;
 		return ;
@@ -683,7 +683,7 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 		user.sendMsg(":" + *user.getServer() + " 401 * " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" the nickname "
 						<<	C_RESET	<<	senderName
 						<<	C_LRED	<<	" is not the sender"
@@ -697,7 +697,7 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
     	user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
-						<<	C_RESET	<<	user.getServer().getName()
+						<<	C_RESET	<<	user.getServer()->getName()
 						<<	C_LRED	<<	" File "
 						<<	C_RESET	<<	sendFile.fileName
 						<<	C_LRED	<<	" not found"
