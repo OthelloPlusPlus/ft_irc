@@ -36,6 +36,8 @@ bool	setEnv(void)
 	{
 		if (newInfo(".env"))
 			readAndSet(".env");
+		else
+			return (false);
 	}
 	catch(const std::exception& e)
 	{
