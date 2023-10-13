@@ -435,9 +435,31 @@ void	Server::kickUser(AClient &client, const std::vector<std::string> &args)
 
 void	Server::sendNotice(AClient &client, const std::vector<std::string> &args)
 {
-	for (std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i)
-		std::cout	<< __func__	<< '\t'	<< *i	<< std::endl;
-	(void)client;
+	if (args.size() < 2)
+		return ;
+	if (args[0][0] == '#')
+	{
+		Channel	*channel = this->getChannel(args[0]);
+		if (channel == nullptr)
+			client.sendMsg(':' + *this + " 401 " + client.getNickName() + ' ' + args[0] + " :No such channel");
+		else
+			channel->sendToChannel(client, ':' + client + " NOTICE " + *channel + " :" + args[1]);
+	}
+	else
+	{
+		AClient *target = this->getClient(args[0]);
+		if (target == nullptr)
+			client.sendMsg(':' + *this + " 401 " + client.getNickName() + ' ' + args[0] + " :No such client");
+		else
+			target->sendMsg(':' + client + " NOTICE " + *target + " :" + args[1]);
+	}
+	// uf (args)
+	// if (args[0].empty() || args[1].empty())
+	// std::cout	<< args.size()	<< std::endl;
+	// for (std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i)
+	// 	std::cout	<< __func__	<< '\t'	<< *i	<< std::endl;
+
+	// (void)client;
 }
 
 // void	Server::sendAuthserv(AClient &client, const std::vector<std::string> &args)
