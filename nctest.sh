@@ -8,10 +8,13 @@ USER2="OtheNetCat"
 NICK="OthNC"
 
 {
-	echo "PASS $PASSWORD"
-	echo "USER $USER1 * $IRC_SERVER :$USER2"
-	echo "NICK $NICK"
 	sleep 0.1
+	echo > /dev/tty
+	echo "PASS $PASSWORD";
+	echo "USER $USER1 * $IRC_SERVER :$USER2";
+	echo "NICK $NICK";
+	sleep 0.1;
+	echo > /dev/tty
 	while [ true ]; do
 		read -p "nc (or quit): " COMMAND;
 		if [ "$COMMAND" == "quit" ]; then
@@ -20,6 +23,7 @@ NICK="OthNC"
 		else
 			echo "$COMMAND";
 		fi
-		sleep 0.2
+		sleep 0.1;
+		echo > /dev/tty
 	done
-} | nc -v $IRC_SERVER $PORT
+} | tee /dev/tty | nc -v $IRC_SERVER $PORT
