@@ -412,6 +412,34 @@ void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &
 	}
 }
 
+void	Server::sendNames(AClient &client, const std::vector<std::string> &args)
+{
+	Channel *channel = this->getChannel(args[0]);
+
+	if (channel != nullptr)
+		channel->sendNames(client);
+	else
+		client.sendMsg(':' + *this + " 401 " + client.getNickName() + ' ' + args[0] + " :No such channel");
+}
+
+void	Server::kickUser(AClient &client, const std::vector<std::string> &args)
+{
+	Channel *channel = this->getChannel(args[0]);
+
+	if (channel != nullptr)
+		channel->kickUser(client, args);
+	else
+		client.sendMsg(':' + *this + " 401 " + client.getNickName() + ' ' + args[0] + " :No such channel");
+
+}
+
+void	Server::sendNotice(AClient &client, const std::vector<std::string> &args)
+{
+	for (std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i)
+		std::cout	<< __func__	<< '\t'	<< *i	<< std::endl;
+	(void)client;
+}
+
 // void	Server::sendAuthserv(AClient &client, const std::vector<std::string> &args)
 // {
 // 	for (std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i)

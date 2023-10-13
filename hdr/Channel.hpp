@@ -45,7 +45,6 @@ class Channel
 		bool	userIsAdmin(const AClient &client) const;
 
 		void	sendTopic(AClient &client) const;
-		void	sendNames(AClient &client);
 
 		void	setModeI(AClient &client, std::string flag);
 		void	setModeT(AClient &client, std::string flag);
@@ -63,16 +62,18 @@ class Channel
 		~Channel(void);
 
 		void	addClient(AClient &newClient, bool admin, const std::string password);
+		void	kickUser(AClient &client, const std::vector<std::string> &names);
 		void	removeUser(const AClient &client);
 		void	promoteOldestUser(void);
 		bool	userIsInChannel(const AClient &client) const;
 		// void	inviteClient(AClient *client);
 
 		void	sendWho(AClient &client);
+		void	sendNames(AClient &client);
+		void	sendMode(AClient &client) const;
 		void	sendToChannel(const std::string msg) const;
 		void	sendToChannel(const AClient &exclude, const std::string msg) const;
 		// void	sendPrivMsg(AClient *sender, std::string msg);
-		void	sendMode(AClient &client) const;
 
 		// void	setAdmin(AClient *target, bool status);
 		void	setMode(AClient &client, std::string flag, std::string arg);
