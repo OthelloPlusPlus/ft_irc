@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 16:50:29 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/13 18:30:53 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,9 @@ void	Client::sendMsg(std::string msg) {
 bool	Client::readReceive(void){
 		char	buffer[4096];
 		ssize_t	recvLen;
-
 		bzero(buffer, sizeof(buffer));
 		recvLen = recv(this->pollInfo.fd, buffer, sizeof(buffer) - 1, 0);
+		std::cout << " buffer [" << buffer << "]" << std::endl;
 		if (recvLen < 0) {
 			if (errno != EWOULDBLOCK && errno != EAGAIN)
 				std::cerr	<< "Error recv(): "	<< strerror(errno)	<< std::endl;
@@ -119,7 +119,6 @@ bool	Client::readReceive(void){
 			std::cout	<< "Client " << getBestName() << " disconnected from server."	<< std::endl;
 			return false;
 		}
-
 		this->_buffer.append(buffer);
 		return true;
 
@@ -143,14 +142,17 @@ std::string	Client::getMsg(void) {
 		return "";
 	if (this->pollInfo.revents & POLLIN) {
 		if(!readReceive())
+		{
 			return "";
+		}
 	}
 	std::string::size_type pos;
-	if (!this->_buffer.empty() && (pos = this->_buffer.find("\n")) != std::string::npos)
+	if (!this->_buffer.empty() && (pos = this->_buffer.find('\n')) != std::string::npos)
 	{
 		// Extract the complete message including the delimiter
 		std::string msg;
 		msg = this->_buffer.substr(0, pos + 1);
+
 		this->_buffer.erase(0, pos + 1);
 
 		return msg;

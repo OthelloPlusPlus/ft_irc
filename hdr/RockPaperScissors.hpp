@@ -34,13 +34,13 @@ class RockBot: public AClient
 		std::queue<std::string>			recv;
 		std::queue<std::string>			send;
 		std::map<std::string, hand_t>	hand;
-		std::string						funFactsRock[ARR_SIZE];
-		std::string						funFactsPaper[ARR_SIZE];
-		std::string						funFactsScissors[ARR_SIZE];
+		static std::string				funFactsRock[];
+		static std::string				funFactsPaper[];
+		static std::string				funFactsScissors[];
 
 		void	rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args);
 		void	botRespondInvite(const std::vector<std::string> &args);
-		void	botRespondJoin(const std::vector<std::string> &args);
+		void	botRespondJoin(std::string name, const std::vector<std::string> &args);
 		void	botRespondPart(const std::vector<std::string> &args);
 		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
 		void	think(std::string dest, std::string arg);
@@ -48,14 +48,14 @@ class RockBot: public AClient
 		void	thinkPlay(std::string dest, std::string arg);
 		bool	getPlayerMove(hand_t &hand, std::string arg);
 		void	rockMove(std::string dest, hand_t &hand);
-		void	botResetGame(std::string dest, std::string arg);
-		void	botShowStats(std::string dest, std::string arg);
+		void	botResetGame(std::string dest);
+		void	botShowStats(std::string dest);
 
 		hand_t	findGame(std::string key);
 		void	newGame(std::string key);
 		void	updateGame(std::string key, hand_t &update);
 
-		void		funFactsFiller(void);
+		// void		funFactsFiller(void);
 		std::string	getFunFact(std::string shape);
 		
 		
