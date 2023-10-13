@@ -15,13 +15,11 @@ class Server;
 
 # define USER 0
 # define BOT 1
-# define ARR_SIZE 10
 
 enum class e_move { ROCK, PAPER, SCISSORS};
 
 typedef struct hand_s
 {
-	int 		level;
 	int 		moves;
 	int			winner[2];
 	std::string shapes[2];
@@ -34,6 +32,7 @@ class RockBot: public AClient
 		std::queue<std::string>			recv;
 		std::queue<std::string>			send;
 		std::map<std::string, hand_t>	hand;
+		
 		static std::string				funFactsRock[];
 		static std::string				funFactsPaper[];
 		static std::string				funFactsScissors[];
@@ -45,11 +44,12 @@ class RockBot: public AClient
 		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
 		void	think(std::string dest, std::string arg);
 		
-		void	thinkPlay(std::string dest, std::string arg);
+		void	botPlays(std::string dest, std::string arg);
 		bool	getPlayerMove(hand_t &hand, std::string arg);
 		void	rockMove(std::string dest, hand_t &hand);
-		void	botResetGame(std::string dest);
+		void	botRestartGame(std::string dest);
 		void	botShowStats(std::string dest);
+		void	helpBot(std::string dest);
 
 		hand_t	findGame(std::string key);
 		void	newGame(std::string key);
