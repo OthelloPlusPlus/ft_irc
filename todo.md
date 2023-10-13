@@ -19,11 +19,6 @@ Polling Functions	branch:Polling	Orlando				works
     · o: Give/take channel operator privilege
     · l: Set/remove the user limit to channel
 
-## Handling suspended terminal
-
-On MacOs executed with ctrl+z, testing on regular activity after suspending terminal
-Find correspondent key combination in Linux
-
 
 ## port range allowed check in main
 Character encoding rules must be followed for unsafe and reserved characters. Clients should take care that attempts to connect to ports other than 194 in the well known port range 1-1024, are disregarded. IRC servers often use the non-registered port 6667 (or ports in the range 6000-7000) for clients to connect to.
@@ -34,3 +29,14 @@ Use "/help <command>" for help on a specific command.
 The following commands are available in this context:
 action, authserv, away, chanserv, clear, clearall, ctcp, debug, deop, devoice, help, invite, j, join, kick, list, me, me, memoserv, mode, msg, names, nick, nickserv, notice, op, operserv, operwall, part, ping, query, quit, quote, remove, say, time, topic, umode, version, voice, wallops, whois, whowas.
 
+
+
+## Handling suspended terminal
+
+On MacOs executed with ctrl+z, testing on regular activity after suspending terminal
+Find correspondent key combination in Linux
+
+## Handling ctrl-D in nc terminal
+
+Check the functionality of the program with ctrl-D interrupting the commands or any entry
+Chck if multiple ctrl-D freeze the nc session also in Mac
