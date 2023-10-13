@@ -44,10 +44,17 @@ int	main(int argc, char **argv)
 				server.setName();
 		}
 	}
+	catch(const std::range_error &e)
+	{
+		std::cerr	<< C_RED	<< "Error: "
+					<< C_RESET	<< e.what()
+					<< std::endl;
+		return (errno);
+	}
 	catch(const std::exception& e)
 	{
-		std::cerr	<< C_RED	<< "Error: "	<< C_RESET
-					<< e.what() << ' '	<< strerror(errno)
+		std::cerr	<< C_RED	<< "Error: "
+					<< C_RESET	<< e.what() << ' '	<< strerror(errno)
 					<< std::endl;
 		return (errno);
 	}
