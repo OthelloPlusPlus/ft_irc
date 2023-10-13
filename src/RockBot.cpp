@@ -12,11 +12,52 @@
 #include <algorithm>
 //std::transform
 
+
+std::string RockBot::funFactsRock[] = {
+	"Magma that comes from volcanoes is liquid rock.",
+	"Some rocks can float on water.",
+	"Diamonds, the hardest known material on Earth, are a 10 on the Mohs scale.",
+	"The colors held inside some rocks and minerals have been used by artists for thousands of years.",
+	"Rocks, stones, and minerals are different things.",
+	"Rocks are made up of minerals, while minerals are made up of chemicals found in the earth.",
+	"Several rocks around the world are so culturally important that they symbolize a whole city, region, or civilization.",
+	"The Most Famous Rock is the Rosetta Stone.",
+	"Metamorphic rock has been put under a lot of pressure and heat.",
+	"Geology is the study of the rocks."
+	};
+
+std::string RockBot::funFactsPaper[] = {
+	"Chinese were the first nation in the world who started producing paper by hand, 2000 years ago.",
+	"Oldest surviving trace of papyrus comes from 3000 BC Egypt.",
+	"Machine that extracts and prepares tree fibers for papermaking is called Hollander.",
+	"Recycling one ton of paper saves 17 trees!",
+	"Toilet paper started being produced in late 9th century China.",
+	"Watermarks on paper were first used in 13th century Italy.",
+	"The oldest European document written on paper comes from 1109. It was a deed of Sicillian king King Roger II.",
+	"First book that was printed from an industrially made paper was produced in 1804. ",
+	"The Chinese are credited with being the first people to use paper currency and toilet paper.",
+	"It can take five liters of water to make one sheet of paper."
+	};
+
+std::string RockBot::funFactsScissors[] = {		
+	"You shouldn't run with scissors.",
+	"The first scissors with a pivot between the blades were being used by the sixth century AD.",
+	"The first scissor blades were constructed from bronze.",
+	"Modern scissors are generally made with stainless steel blades.",
+	"Scissors larger in size than approximately six or seven inches are called shears.",
+	"Japanese scissors have very sharp blades with honed edges that taper to a sharp point.",
+	"It is estimated that scissors were invented in 1500 BC in Egypt, modified later by the Romans in 100 AD.",
+	"The world’s largest pair of scissors was presented 2009. Made of steel, they weighed fifty-five pounds and measured more than seven feet long. They were fully functional!",
+	"Popular myth has their inventor being Leonardo Da Vinci; however they actually pre-date Da Vinci as they were in use in ancient times.",
+	"The term ‘scissors’ comes from the Latin word ‘cisoria’, meaning ‘cutting instrument’."
+	};
+
 /****************************************************************************************\
-*			Constructor 																 *
+*			Constructor																	*
 \****************************************************************************************/
 
-RockBot::RockBot(Server &server): AClient (server) {
+RockBot::RockBot(Server &server): AClient (server){
+
 	this->_nickName = "RockBot";
 	this->_userName = "RockPaperScissorBot";
 	this->_realName = "Rock-paper-scissors playing Bot";
@@ -29,22 +70,27 @@ RockBot::RockBot(Server &server): AClient (server) {
 }
 
 /****************************************************************************************\
-*			Destructor 																 	 *
+*			Destructor																	*
 \****************************************************************************************/
 
-RockBot::~RockBot(void) {
+RockBot::~RockBot(void){
+
 	this->closeFD();
+	if (!this->hand.empty())
+		this->hand.clear();
 	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< "RockBot"
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
 }
 
+
 void	RockBot::rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args){
+
 	if (cmd == "INVITE")
 		this->botRespondInvite(args);
 	else if (cmd == "JOIN")
-		this->botRespondJoin(args);
+		this->botRespondJoin(name, args);
 	else if (cmd == "PART")
 		this->botRespondPart(args);
 	else if (cmd == "PRIVMSG")
@@ -52,6 +98,7 @@ void	RockBot::rockBotRespond(std::string name, const std::string cmd, const std:
 }
 
 void	RockBot::botRespondInvite(const std::vector<std::string> &args){
+
 	Channel *channel = this->_server.getChannel(args[1]);
 
 	if (channel == nullptr)
@@ -59,23 +106,25 @@ void	RockBot::botRespondInvite(const std::vector<std::string> &args){
 	this->send.push("JOIN " + channel->getName());
 }
 
-void	RockBot::botRespondJoin(const std::vector<std::string> &args){
+void	RockBot::botRespondJoin(std::string name, const std::vector<std::string> &args){
+
 	Channel *channel = this->_server.getChannel(args[0]);
 
-	if (channel == nullptr)
+	if (channel == nullptr || name != this->_nickName)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand!Wanna //play Rock, paper or scissors?");
+	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand! Look //throw a shape...rock, paper or scissors?");
 }
 
-void	RockBot::botRespondPart(const std::vector<std::string> &args)
-{
+void	RockBot::botRespondPart(const std::vector<std::string> &args){
+
 	Channel *channel = this->_server.getChannel(args[0]);
 
 	if (channel != nullptr && channel->getSize() <= 1)
 		this->send.push("PART " + channel->getName());
 }
 
-void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string> &args) {
+void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string> &args){
+
 	std::string	dest;
 
 	if (args[0][0] == '#')
@@ -94,16 +143,25 @@ void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string>
 		this->think(dest, args[1]);
 }
 
-void	RockBot::think(std::string dest, std::string arg) {
+void	RockBot::think(std::string dest, std::string arg){
+
 	std::string	cmd = arg.substr(0, arg.find(' '));
-	if (cmd == "//play"){
+	if (cmd == "//throw")
 		this->thinkPlay(dest, arg);
-	}
+	else if (cmd == "//restart")
+		this->botResetGame(dest);
+	else if (cmd == "//stats")
+		this->botShowStats(dest);
+	// else if (cmd == "//level")
+	// 	this->botResetGame(dest);
 	else if (dest[0] != '#')
 		this->send.push("PRIVMSG " + dest + " :Huh?");
+	else if (dest[0] == '#' && cmd.compare(0, 2, "//") == 0)
+		this->send.push("PRIVMSG " + dest + " :Huh?2");
 }
 
 void	RockBot::thinkPlay(std::string dest, std::string arg){
+
 	try 
 	{
 		hand_t	hand = this->findGame(dest);
@@ -118,6 +176,7 @@ void	RockBot::thinkPlay(std::string dest, std::string arg){
 }
 
 bool	RockBot::getPlayerMove(hand_t &hand, std::string arg){
+
 	size_t	pos1 = arg.find(' ');
 	size_t	notSpace = arg.find_first_not_of(' ', pos1);
 	size_t	lastNotSpace = arg.find_last_not_of(' ');
@@ -140,32 +199,56 @@ bool	RockBot::getPlayerMove(hand_t &hand, std::string arg){
 		throw(std::runtime_error("Mmmhh...I don't recognise this shape: " + input ));
 		return (false);
 	}
-	hand.shapes[0] = shape;
+	hand.shapes[USER] = shape;
 	hand.moves++;
 	return (true);
 }
 
-//		std::cout	<< __func__ << __LINE__	<< std::endl;
 
 e_move	mapToeMove(std::string shape){
+
 	if (shape == "rock") return e_move::ROCK;
 	if (shape == "paper") return e_move::PAPER;
 	if (shape == "scissors") return e_move::SCISSORS;
 	return e_move::ROCK;
 }
 
+std::string	RockBot::getFunFact(std::string shape){
+
+	size_t factIndex;
+	size_t rockSize = sizeof(RockBot::funFactsRock) / sizeof(RockBot::funFactsRock[0]);
+	size_t paperSize = sizeof(RockBot::funFactsPaper) / sizeof(RockBot::funFactsPaper[0]);
+	size_t scissorSize = sizeof(RockBot::funFactsScissors) / sizeof(RockBot::funFactsScissors[0]);
+
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+	if (shape == "rock"){
+		factIndex = std::rand() % rockSize;
+		return (funFactsRock[factIndex]);
+	}
+	else if (shape == "paper"){
+		factIndex = std::rand() % paperSize;
+		return (funFactsPaper[factIndex]);
+	}
+	else if (shape == "scissors"){
+		factIndex = std::rand() % scissorSize;
+		return (funFactsScissors[factIndex]);
+	}
+	return ("");
+}
+
 void	RockBot::rockMove(std::string dest, hand_t &hand){
-	if (hand.shapes[0].empty())
+
+	if (hand.shapes[USER].empty())
 		return ;
 
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	int rockMoveIndex = std::rand() % 3;
-	hand.shapes[1] = hand.options[rockMoveIndex];
+	hand.shapes[BOT] = hand.options[rockMoveIndex];
 	
-	e_move playerMove = mapToeMove(hand.shapes[0]);
-	e_move botMove = mapToeMove(hand.shapes[1]);
+	e_move playerMove = mapToeMove(hand.shapes[USER]);
+	e_move botMove = mapToeMove(hand.shapes[BOT]);
 
-	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[0] + " and I reply " + hand.shapes[1]);
+	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[USER] + " and I play " + hand.shapes[BOT]);
 	if (playerMove == botMove){
 		this->send.push("PRIVMSG " + dest + " :We tied!");
 		return ;
@@ -173,15 +256,42 @@ void	RockBot::rockMove(std::string dest, hand_t &hand){
 
 	if ((playerMove == e_move::ROCK && botMove == e_move::SCISSORS)	|| \
 		(playerMove == e_move::PAPER && botMove == e_move::ROCK)	|| \
-		(playerMove == e_move::SCISSORS  && botMove == e_move::PAPER))
+		(playerMove == e_move::SCISSORS  && botMove == e_move::PAPER)){
 		this->send.push("PRIVMSG " + dest + " :You won!");
-	else
+		hand.winner[USER] += 1;
+		std::cout << "fun fact " << getFunFact(hand.shapes[USER]) << std::endl;
+		this->send.push("PRIVMSG " + dest + " :Did you know? " + getFunFact(hand.shapes[USER]));
+	}
+	else {
 		this->send.push("PRIVMSG " + dest + " :I won!");
-	
+		hand.winner[BOT] += 1;
+	}
 	return ;
 }
 
-hand_t	RockBot::findGame(std::string key) {
+void	RockBot::botResetGame(std::string dest){
+
+	std::map<std::string, hand_t>::const_iterator i = this->hand.find(dest);
+	if (i != this->hand.end()){
+		this->hand.erase(i);
+		this->newGame(dest);
+		i = this->hand.find(dest);
+	}
+	this->send.push("PRIVMSG " + dest + " :Game reset. Let's start over");
+}
+
+void	RockBot::botShowStats(std::string dest){
+
+	hand_t	showGame =  this->findGame(dest);
+	this->send.push("PRIVMSG " + dest + " :Game level = " + std::to_string(showGame.level));
+	this->send.push("PRIVMSG " + dest + " :Game total moves = " + std::to_string(showGame.moves));
+	this->send.push("PRIVMSG " + dest + " :Game score = " + dest + " = " + std::to_string(showGame.winner[USER]) \
+														+ " vs RockBot = " + std::to_string(showGame.winner[BOT]));
+}
+
+
+hand_t	RockBot::findGame(std::string key){
+
 	std::map<std::string, hand_t>::const_iterator i = this->hand.find(key);
 	if (i == this->hand.end())
 	{
@@ -192,23 +302,26 @@ hand_t	RockBot::findGame(std::string key) {
 }
 
 void	RockBot::newGame(std::string key){
+
 	hand_t	newGame;
 
 	newGame.level = 1;
 	newGame.moves = 0;
+	newGame.winner[USER] = 0;
+	newGame.winner[BOT] = 0;
 	newGame.options[0] = "rock";
 	newGame.options[1] = "paper";
 	newGame.options[2] = "scissors";
-	// this->clearGame(newGame);
 	this->updateGame(key, newGame);
 }
 
-void	RockBot::updateGame(std::string key, hand_t &update)
-{
+void	RockBot::updateGame(std::string key, hand_t &update){
+
 	this->hand[key] = update;
 }
 
-std::string	RockBot::getMsg(void) {
+std::string	RockBot::getMsg(void){
+
 	std::string reply;
 
 	while (!this->recv.empty()) {
@@ -228,17 +341,22 @@ std::string	RockBot::getMsg(void) {
 	return (reply);
 }
 
-void	RockBot::sendMsg(std::string msg) {
+void	RockBot::sendMsg(std::string msg){
+
 	this->recv.push(msg);
 }
 
-bool	RockBot::stillActive(void) const {
+bool	RockBot::stillActive(void) const{
+
 	return (true);
 }
 
-void	RockBot::closeFD(void) {
+void	RockBot::closeFD(void){
+
 	while (!this->recv.empty())
 		this->recv.pop();
 	while (!this->send.empty())
 		this->send.pop();
 }
+
+//		std::cout	<< __func__ << __LINE__	<< std::endl;

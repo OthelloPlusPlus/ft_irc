@@ -17,8 +17,11 @@
 // std::string
 #include <vector>
 // std::vector
-#include <tuple>   
+#include <tuple>
 // for std::tuple
+
+#include <algorithm>
+// std::transform
 
 namespace
 {
@@ -77,7 +80,7 @@ std::tuple<AClient &, std::string, std::vector<std::string>> Parse::parseMsg(ACl
 			args.push_back(arguments);
 		}
 	}
-
+	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
 	return std::tuple<AClient &, std::string, std::vector<std::string>>(user, cmd, args);
 }
 
