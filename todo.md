@@ -43,10 +43,11 @@ Chck if multiple ctrl-D freeze the nc session also in Mac
 
 
 ## Actual todo list
+- Adjust file transfer for server changes
 - Server Bot
 - File Cleanup
 - Testing
 - Mac Compatability, cause we fancy
 - README.md
 - Evaluate
-- get outstanding
+- get outstanding, cause we deserve it!
