@@ -6,13 +6,15 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 14:34:17 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/12 16:50:29 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 #include "colors.hpp"
+#include "ansicolors.hpp"
 #include "Parse.hpp"
+// namespace Parse
 #include "Command.hpp"
 // namespace Command
 
@@ -45,7 +47,7 @@ Client::Client(Server &server) : AClient(server), _password(false) {
 				<< C_DGREEN	<< " called.\n"
 				<< C_RESET	<< std::endl;
 	initialize(server.getFD());
-	this->sendMsg(':' + this->_server + " NOTICE * :*** To register please use commands\n- PASS\n- USER(user_name * host :realname)\n- NICK");
+	this->sendMsg(UHBLU ":" + this->_server + " NOTICE * :*** To register please use commands\n" HBLU "- PASS\n- USER(user_name * host :realname)\n- NICK" CRESET);
 }
 
 Client::Client(const Client &src) : AClient(src._server), _password(src._password) {

@@ -40,6 +40,42 @@ RockBot::~RockBot(void) {
 				<< C_RESET	<< std::endl;
 }
 
+void	RockBot::funFactsFiller(){
+	RockBot::funFactsRock[0] = "";
+	RockBot::funFactsRock[1] = "";
+	RockBot::funFactsRock[2] = "";
+	RockBot::funFactsRock[3] = "";
+	RockBot::funFactsRock[4] = "";
+	RockBot::funFactsRock[5] = "";
+	RockBot::funFactsRock[6] = "";
+	RockBot::funFactsRock[7] = "";
+	RockBot::funFactsRock[8] = "";
+	RockBot::funFactsRock[9] = "";
+
+	RockBot::funFactsPaper[0] = "";
+	RockBot::funFactsPaper[1] = "";
+	RockBot::funFactsPaper[2] = "";
+	RockBot::funFactsPaper[3] = "";
+	RockBot::funFactsPaper[4] = "";
+	RockBot::funFactsPaper[5] = "";
+	RockBot::funFactsPaper[6] = "";
+	RockBot::funFactsPaper[7] = "";
+	RockBot::funFactsPaper[8] = "";
+	RockBot::funFactsPaper[9] = "";
+
+	RockBot::funFactsScissors[0] = "";
+	RockBot::funFactsScissors[1] = "";
+	RockBot::funFactsScissors[2] = "";
+	RockBot::funFactsScissors[3] = "";
+	RockBot::funFactsScissors[4] = "";
+	RockBot::funFactsScissors[5] = "";
+	RockBot::funFactsScissors[6] = "";
+	RockBot::funFactsScissors[7] = "";
+	RockBot::funFactsScissors[8] = "";
+	RockBot::funFactsScissors[9] = "";
+
+}
+
 void	RockBot::rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args){
 	if (cmd == "INVITE")
 		this->botRespondInvite(args);
@@ -64,7 +100,7 @@ void	RockBot::botRespondJoin(const std::vector<std::string> &args){
 
 	if (channel == nullptr)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand!Wanna //play Rock, paper or scissors?");
+	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand! Look //throw a shape...rock, paper or scissors?");
 }
 
 void	RockBot::botRespondPart(const std::vector<std::string> &args)
@@ -96,9 +132,12 @@ void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string>
 
 void	RockBot::think(std::string dest, std::string arg) {
 	std::string	cmd = arg.substr(0, arg.find(' '));
-	if (cmd == "//play"){
+	if (cmd == "//throw")
 		this->thinkPlay(dest, arg);
-	}
+	else if (cmd == "//restart")
+		this->botResetGame(dest, arg);
+	else if (cmd == "//stats")
+		this->botResetGame(dest, arg);
 	else if (dest[0] != '#')
 		this->send.push("PRIVMSG " + dest + " :Huh?");
 }
@@ -140,7 +179,7 @@ bool	RockBot::getPlayerMove(hand_t &hand, std::string arg){
 		throw(std::runtime_error("Mmmhh...I don't recognise this shape: " + input ));
 		return (false);
 	}
-	hand.shapes[0] = shape;
+	hand.shapes[USER] = shape;
 	hand.moves++;
 	return (true);
 }
@@ -154,18 +193,25 @@ e_move	mapToeMove(std::string shape){
 	return e_move::ROCK;
 }
 
+std::string	RockBot::getFunFact(std::string shape){
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+	int factIndex = srand() % ARR_SIZE;
+
+	return ("");
+}
+
 void	RockBot::rockMove(std::string dest, hand_t &hand){
-	if (hand.shapes[0].empty())
+	if (hand.shapes[USER].empty())
 		return ;
 
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	int rockMoveIndex = std::rand() % 3;
-	hand.shapes[1] = hand.options[rockMoveIndex];
+	hand.shapes[BOT] = hand.options[rockMoveIndex];
 	
-	e_move playerMove = mapToeMove(hand.shapes[0]);
-	e_move botMove = mapToeMove(hand.shapes[1]);
+	e_move playerMove = mapToeMove(hand.shapes[USER]);
+	e_move botMove = mapToeMove(hand.shapes[BOT]);
 
-	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[0] + " and I reply " + hand.shapes[1]);
+	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[USER] + " and I reply " + hand.shapes[BOT]);
 	if (playerMove == botMove){
 		this->send.push("PRIVMSG " + dest + " :We tied!");
 		return ;
@@ -173,13 +219,35 @@ void	RockBot::rockMove(std::string dest, hand_t &hand){
 
 	if ((playerMove == e_move::ROCK && botMove == e_move::SCISSORS)	|| \
 		(playerMove == e_move::PAPER && botMove == e_move::ROCK)	|| \
-		(playerMove == e_move::SCISSORS  && botMove == e_move::PAPER))
+		(playerMove == e_move::SCISSORS  && botMove == e_move::PAPER)){
 		this->send.push("PRIVMSG " + dest + " :You won!");
-	else
+		hand.winner[USER] += 1;
+	}
+	else {
 		this->send.push("PRIVMSG " + dest + " :I won!");
-	
+		hand.winner[BOT] += 1;
+	}
 	return ;
 }
+
+void	RockBot::botResetGame(std::string dest, std::string arg){
+	std::map<std::string, hand_t>::const_iterator i = this->hand.find(dest);
+	if (i != this->hand.end()){
+		this->hand.erase(i);
+		this->newGame(dest);
+		i = this->hand.find(dest);
+	}
+	this->send.push("PRIVMSG " + dest + " :Game reset. Let's start over");
+}
+
+void	RockBot::botShowStats(std::string dest, std::string arg){
+	hand_t	showGame =  this->findGame(dest);
+	this->send.push("PRIVMSG " + dest + " :Game level = " + std::to_string(showGame.level));
+	this->send.push("PRIVMSG " + dest + " :Game total moves = " + std::to_string(showGame.moves));
+	this->send.push("PRIVMSG " + dest + " :Game score = " + dest + " = " + std::to_string(showGame.winner[USER]) \
+														+ " - RockBot = " + std::to_string(showGame.winner[BOT]));
+}
+
 
 hand_t	RockBot::findGame(std::string key) {
 	std::map<std::string, hand_t>::const_iterator i = this->hand.find(key);
@@ -196,10 +264,11 @@ void	RockBot::newGame(std::string key){
 
 	newGame.level = 1;
 	newGame.moves = 0;
+	newGame.winner[USER] = 0;
+	newGame.winner[BOT] = 0;
 	newGame.options[0] = "rock";
 	newGame.options[1] = "paper";
 	newGame.options[2] = "scissors";
-	// this->clearGame(newGame);
 	this->updateGame(key, newGame);
 }
 
