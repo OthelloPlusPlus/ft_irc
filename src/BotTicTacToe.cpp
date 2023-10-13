@@ -68,7 +68,7 @@ void	BotTicTacToe::botRespond(std::string name, AClient &src, const std::string 
 	if (cmd == "INVITE")
 		this->botRespondInvite(args);
 	else if (cmd == "JOIN")
-		this->botRespondJoin(args);
+		this->botRespondJoin(name, args);
 	else if (cmd == "PART")
 		this->botRespondPart(args);
 	else if (cmd == "PRIVMSG")
@@ -85,11 +85,11 @@ void	BotTicTacToe::botRespondInvite(const std::vector<std::string> &args)
 	this->send.push("JOIN " + channel->getName());
 }
 
-void	BotTicTacToe::botRespondJoin(const std::vector<std::string> &args)
+void	BotTicTacToe::botRespondJoin(std::string name, const std::vector<std::string> &args)
 {
 	Channel *channel = this->_server.getChannel(args[0]);
 
-	if (channel == nullptr)
+	if (channel == nullptr || name != this->_nickName)
 		return ;
 	this->send.push("PRIVMSG " + channel->getName() + " :Anyone want to //play a game?");
 }
