@@ -40,3 +40,13 @@ Find correspondent key combination in Linux
 
 Check the functionality of the program with ctrl-D interrupting the commands or any entry
 Chck if multiple ctrl-D freeze the nc session also in Mac
+
+
+## Actual todo list
+- Server Bot
+- File Cleanup
+- Testing
+- Mac Compatability, cause we fancy
+- README.md
+- Evaluate
+- get outstanding
