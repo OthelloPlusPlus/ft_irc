@@ -28,7 +28,7 @@ class Channel;
 # include <map>
 // std::map
 
-typedef struct file_s		// add this
+typedef struct file_s
 {
 	std::string		fileName;
 	std::string		filePath;
@@ -40,18 +40,21 @@ typedef struct file_s		// add this
 class Server
 {
 	private:
-		std::string				serverName;
-		struct pollfd			pollInfo;
-		struct sockaddr_in		socketAddress;
-		int						port;
-		std::string				publicIP;
-		std::string				localIP;
-		uint32_t				transferIP;
+		std::string			serverName;
+		struct pollfd		pollInfo;
+		struct sockaddr_in	socketAddress;
+		int					port;
+		std::string			publicIP;
+		std::string			localIP;
+		uint32_t			transferIP;
 
-		std::vector<Channel *>	channels;
-		std::vector<AClient *>	clients;
-		std::string				passwordUser;
+		std::vector<Channel *>			channels;
+		std::vector<AClient *>			clients;
+		std::map<std::string, file_t>	fileTr;
+		std::string	passwordUser;
+		std::string	motd;
 
+		void	validatePort(void);
 		void	readEnv(void);
 		void	setLocalIP(void);
 		void	bootUpServer(void);
@@ -70,7 +73,9 @@ class Server
 		Server(const Server &src);
 		~Server(void);
 
-		std::map<std::string, file_t>	fileTr; //add this
+		void	setTransferFile(std::string key, file_t &file);
+		file_t	getTransferFile(std::string key);
+		void	rmTransferFile(std::string key);
 		
 		void	checkNewClient(void);
 		void	checkClients(void);
@@ -96,7 +101,7 @@ class Server
 		void	sendWhoIs(AClient &client, const std::string who) const;
 		// void	sendPong(AClient &client) const;
 		void	sendPong(AClient &client, const std::string token) const;
-		void	sendPrivMsg(const AClient &client, const std::vector<std::string> &args);
+		void	sendPrivMsg(AClient &client, const std::vector<std::string> &args);
 		void	sendInvite(AClient &client, const std::vector<std::string> &args);
 		// void	sendAuthserv(AClient &client, const std::vector<std::string> &args);
 		void	sendNames(AClient &client, const std::vector<std::string> &args);

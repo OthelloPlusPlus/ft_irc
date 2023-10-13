@@ -67,11 +67,14 @@ Server::Server(int argc, char **argv)
 	if (argc > 3)
 		throw (std::range_error("Too many arguments passed."));
 	this->port = std::stoi(argv[1]);
+	this->validatePort();
+	
 	this->passwordUser = argv[2];
 	this->readEnv();
 	this->setLocalIP();
 	this->bootUpServer();
 	this->addBots();
+	this->motd = "We know what we're doing! We swear!";
 
 	std::cout	<< C_HEADER	<< std::setw(76)	<< "Server setup complete"	<< C_RESET	<< "\n"
 				<< std::setw(23)	<< " - Server name: "	<< this->serverName	<< "\n"
@@ -102,6 +105,8 @@ Server::~Server(void)
 {
 	if (this->pollInfo.fd != -1)
 		close(this->pollInfo.fd);
+	if (!this->fileTr.empty())
+		this->fileTr.clear();
 	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< "Server"
 				<< C_DRED	<< " called"
@@ -150,6 +155,28 @@ void	Server::bootUpServer(void)
 		throw (std::runtime_error("listen(): "));
 	}
 	this->pollInfo.events = POLLIN;
+}
+
+void	Server::validatePort(void)
+{
+	std::string msg = "Port " + std::to_string(this->port) + " not allowed. ";
+	if (this->port < 0 || this->port > 655535)
+		throw (std::range_error((msg + "Outside of port range(1024-655535)").c_str()));
+	switch (this->port)
+	{
+		case 0 ... 1023:	throw (std::range_error((msg + "Well-Known Ports(0-1023) not allowed.").c_str()));
+		case 1433:	throw(std::range_error((msg + "Port reserved for Microsoft SQL Server").c_str()));
+		case 1521:	throw(std::range_error((msg + "Port reserved for Oracle Database").c_str()));
+		case 3306:	throw(std::range_error((msg + "Port reserved for MySQL Database").c_str()));
+		case 5000:	throw(std::range_error((msg + "Port reserved for UPnP (Universal Plug and Play) control point").c_str()));
+		case 5222:	throw(std::range_error((msg + "Port reserved for XMPP (Extensible Messaging and Presence Protocol)").c_str()));
+		case 5432:	throw(std::range_error((msg + "Port reserved for PostgreSQL Database").c_str()));
+		case 7070:	throw(std::range_error((msg + "Port reserved for Real-Time Messaging Protocol (RTMP)").c_str()));
+		case 8080:	throw(std::range_error((msg + "Port reserved for Alternate HTTP (commonly used for web servers)").c_str()));
+		case 8443:	throw(std::range_error((msg + "Port reserved for HTTPS Alternate (often used for secure web traffic)").c_str()));
+		case 9090:	throw(std::range_error((msg + "Port reserved for Alternate Web Server (often used for web proxy servers)").c_str()));
+		default:	break;
+	}
 }
 
 void	Server::setLocalIP(void)
@@ -273,9 +300,10 @@ void	Server::sendWelcome(Client &client)
 
 	msg = ':' + *this;
 	client.sendMsg(msg + " 375 " + client.getNickName() + " :- ft_irc Message of the Day - ");
-	client.sendMsg(msg + " 372 " + client.getNickName() + " :- We know what we're doing! We swear!");
+	client.sendMsg(msg + " 372 " + client.getNickName() + " :- " + this->motd);
 	client.sendMsg(msg + " 376 " + client.getNickName() + " :End of /MOTD command.");
-	this->joinChannel(client, "#WelcomeChannel");
+	// this->joinChannel(client, "#WelcomeChannel");
+	client.sendMsg(":ServerBot PRIVMSG " + client.getNickName() + " :Hello, I am ServerBot. How can I //help you today?");
 }
 
 void	Server::sendChannelList(AClient &client) const
@@ -389,7 +417,7 @@ void	Server::sendPong(AClient &client, const std::string token) const
 	client.sendMsg(':' + *this + " PONG " + *this + " :" + token);
 }
 
-void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &args)
+void	Server::sendPrivMsg(AClient &client, const std::vector<std::string> &args)
 {
 	std::string	name = args[0];
 	std::string msg = args[args.size() - 1];
@@ -402,13 +430,17 @@ void	Server::sendPrivMsg(const AClient &client, const std::vector<std::string> &
 
 		if (channel != nullptr)
 			channel->sendToChannel(client, ':' + client + " PRIVMSG " + *channel + " :" + msg);
+		else
+			client.sendMsg(':' + *this + " 401 " + client.getNickName() + ' ' + args[0] + " :No such channel");
 	}
 	else
 	{
 		AClient	*user = getClient(name);
 
 		if (user != nullptr)
-			user->sendMsg(':' + client + " PRIVMSG " + user->getNickName() + " :" + msg);	
+			user->sendMsg(':' + client + " PRIVMSG " + user->getNickName() + " :" + msg);
+		else
+			client.sendMsg(':' + *this + " 401 " + client.getNickName() + ' ' + args[0] + " :No such client");
 	}
 }
 
@@ -658,6 +690,28 @@ void	Server::setChannelMode(AClient &client, const std::vector<std::string> &arg
 		channel->setMode(client, args[1], "");
 	else if (args.size() >= 3)
 		channel->setMode(client, args[1], args[2]);
+}
+
+void	Server::setTransferFile(std::string key, file_t &file)
+{
+	this->fileTr[key] = file;
+}
+
+file_t	Server::getTransferFile(std::string key)
+{
+	std::map<std::string, file_t>::iterator i = this->fileTr.find(key);
+	if (i == this->fileTr.end())
+	{
+		file_t	newFile;
+		return (newFile);
+	}
+	else
+		return (i->second);
+}
+
+void	Server::rmTransferFile(std::string key)
+{
+	this->fileTr.erase(key);
 }
 
 /** ************************************************************************ **\
