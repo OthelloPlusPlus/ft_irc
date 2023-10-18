@@ -269,10 +269,16 @@ void	Server::shutdownServer(AClient &client, const std::string key)
 	std::string lock;
 
 	if (!client.getIsOperator())
+	{
+		// client.sendMsg("How bout no");
 		return ;
+	}
 	lock = getenv("IRCADMINPWD");
 	if (lock != key)
+	{
+		// client.sendMsg("Uhhuh uh");
 		return ;
+	}
 	this->state = false;
 }
 
