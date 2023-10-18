@@ -17,7 +17,7 @@ SRC =	$(SRC_MAIN:%.cpp=	$(SRC_DIR)%.cpp)\
 
 SRC_DIR =	src/
 SRC_MAIN =	main.cpp
-SRC_ACLASS = AClient.cpp
+SRC_ACLASS =	AClient.cpp
 SRC_CLASS =	Server.cpp Channel.cpp Client.cpp ServerBot.cpp BotTicTacToe.cpp RockBot.cpp
 SRC_FUNC =	setEnv.cpp	verboseCheck.cpp
 SRC_NMSPC =	Parse.cpp Command.cpp
@@ -46,7 +46,8 @@ $(NAME): $(OBJ)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@printf	"Compiling object file: %s\n"	$@
-	@$(CC) $(CFLAGS) $(DEPFLAGS) $(INCL_HDR)  -c $< -o $@
+	printf $*
+	$(CC) $(CFLAGS) $(DEPFLAGS) $(INCL_HDR) -c $< -o $@
 
 -include $(DEP)
 
