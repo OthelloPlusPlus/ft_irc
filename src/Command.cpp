@@ -110,7 +110,7 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 
 		case CMD_NAMES:		user.getServer()->sendNames(user, args);		break;
 		case CMD_KICK:		user.getServer()->kickUser(user, args);			break;
-		case CMD_NOTICE:	user.getServer()->sendNotice(user, args);					break;
+		case CMD_NOTICE:	user.getServer()->sendNotice(user, args);		break;
 		case CMD_OPER:		oper(user, args);								break;
 		case CMD_KILL:		kill(user, args);								break;
 		case CMD_EMPTY:														break;
@@ -485,14 +485,14 @@ static void	userNotOperatorMsg(AClient &user, std::string cmd){
 }
 
 
-static file_t	findFile(AClient &user, std::string key) {
-	file_t	newFile;
+// static file_t	findFile(AClient &user, std::string key) {
+// 	file_t	newFile;
 
-	std::map<std::string, file_t>::const_iterator i = user.getServer()->fileTr.find(key);
-	if (i == user.getServer()->fileTr.end())
-		return (newFile);
-	return (i->second);
-}
+// 	std::map<std::string, file_t>::const_iterator i = user.getServer()->fileTr.find(key);
+// 	if (i == user.getServer()->fileTr.end())
+// 		return (newFile);
+// 	return (i->second);
+// }
 /* ************************************************************************** *\
 *				SEND - File Transfer											*
 \* ************************************************************************** */
@@ -544,7 +544,8 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 	clientName->sendMsg("- To accept write [ACCEPT <sender_name> <file_name> <optional: destination_name>]");
 	clientName->sendMsg("- To reject write [REJECT <sender_name> <file_name>]");
 
-	user.getServer()->fileTr[sendFile.fileName] = sendFile;
+	user.getServer()->setTransferFile(sendFile.fileName, sendFile);
+	// user.getServer()->fileTr[sendFile.fileName] = sendFile;
 
 	user.sendMsg(fileName + " sent");
 	if (verboseCheck()	>= V_USER)
@@ -602,7 +603,8 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 	}
 	std::string argsFile = args[1];
 
-	file_t sendFile = findFile(user, argsFile);
+	file_t	sendFile = user.getServer()->getTransferFile(argsFile);
+	// file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
     	user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
@@ -646,12 +648,13 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 	clientName->sendMsg(sendFile.fileName + " accepted");
 	
 	// Remove the file entry from the map after processing
-	user.getServer()->fileTr.erase(argsFile);
+	user.getServer()->rmTransferFile(argsFile);
+	// user.getServer()->fileTr.erase(argsFile);
 	
 	//For the server destructor ?
     // Clear all elements from the map
-	if (!user.getServer()->fileTr.empty())
-		user.getServer()->fileTr.clear();
+	// if (!user.getServer()->fileTr.empty())
+	// 	user.getServer()->fileTr.clear();
 }
 
 /* ************************************************************************** *\
@@ -696,7 +699,8 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 	}
 	std::string argsFile = args[1];
 
-	file_t sendFile = findFile(user, argsFile);
+	file_t	sendFile = user.getServer()->getTransferFile(argsFile);
+	// file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
     	user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
@@ -712,6 +716,7 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 	user.sendMsg(sendFile.fileName + " rejected");
 	clientName->sendMsg(sendFile.fileName + " rejected");
 	
-	user.getServer()->fileTr.erase(argsFile);
+	user.getServer()->rmTransferFile(argsFile);
+	// user.getServer()->fileTr.erase(argsFile);
 	
 }

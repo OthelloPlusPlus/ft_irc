@@ -24,18 +24,19 @@ class AClient
 		std::string	_buffer;
 
 	public:
+		//(De)constructors
 		AClient(Server &server);
 		virtual ~AClient(void) = 0;
-
+		//Pure Virtual functions - Mandatory for derived classes
 		virtual bool		stillActive(void) const = 0;
 		virtual void		closeFD(void) = 0;
 		virtual std::string	getMsg(void) = 0;
 		virtual void		sendMsg(std::string msg) = 0;
-
+		//Virtual functions - Optional for derived classes
 		virtual void		passwordValidation(bool val);
 		virtual void		setIsRegistered(bool value);
 		virtual void		printInfo(void) const;
-
+		//Non-virtual functions - Cannot not overridden by derived classes
 		void	setClientIP(std::string clientIP);
 		void	setNickName(std::string nickName);
 		void	setUserName(std::string userName);
@@ -53,13 +54,14 @@ class AClient
 		const bool			&getIsRegistered(void) const;
 		const bool			&getIsOperator(void) const;
 		const std::string	&getBuffer(void) const;
-
+		//Operator overloads for admin state comparison
 		bool	operator==(const AClient &cmp) const;
 		bool	operator!=(const AClient &cmp) const;
 		bool	operator>(const AClient &cmp) const;
 		bool	operator>=(const AClient &cmp) const;
 		bool	operator<(const AClient &cmp) const;
 		bool	operator<=(const AClient &cmp) const;
+		//Operator overload to caternate to character strings
 		template <typename T>
 		friend std::string	operator+(const T add, const AClient &src)
 		{

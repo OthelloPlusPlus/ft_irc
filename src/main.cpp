@@ -35,7 +35,7 @@ int	main(int argc, char **argv)
 	{
 		Server	server(argc, argv);
 
-		while (true)
+		while (server.getState())
 		{
 			server.checkNewClient();
 			server.checkClients();

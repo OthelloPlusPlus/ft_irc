@@ -34,22 +34,22 @@ typedef struct game_s
 class BotTicTacToe: public AClient
 {
 	private:
-		std::queue<std::string>			recv;
 		std::queue<std::string> 		send;
 		std::map<std::string, game_t>	game;
 
+		//Bot Responces
 		void	botRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args);
 		void	botRespondInvite(const std::vector<std::string> &args);
 		void	botRespondJoin(std::string name, const std::vector<std::string> &args);
 		void	botRespondPart(const std::vector<std::string> &args);
 		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
-
+		//Bot Responces for game commands
 		void	think(std::string dest, const std::string arg);
 		void	thinkLevel(std::string dest, std::string arg);
 		void	thinkShow(std::string dest);
 		void	thinkReset(std::string dest);
 		void	thinkHelp(std::string dest);
-
+		//Bot Algorithms for playing TicTacToe
 		void	thinkPlay(std::string dest, std::string arg);
 		bool	enterMove(game_t &game, std::string arg);
 		void	counterMove(game_t &game);
@@ -58,7 +58,7 @@ class BotTicTacToe: public AClient
 		int		counterMoveSmart(game_t &game);
 		int		counterMoveRandom(game_t &game);
 		bool	gameOver(game_t &game);
-
+		//Bot Game settings and transfer
 		game_t	findGame(std::string key);
 		void	newGame(std::string key);
 		void	clearGame(game_t &game);
@@ -70,9 +70,10 @@ class BotTicTacToe: public AClient
 	protected:
 
 	public:
+		//(De)constructors
 		BotTicTacToe(Server &server);
 		~BotTicTacToe(void);
-
+		//Virtual void functions from AClient
 		bool		stillActive(void) const;
 		void		sendMsg(std::string msg);
 		std::string	getMsg(void);

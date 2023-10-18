@@ -18,7 +18,7 @@ SRC =	$(SRC_MAIN:%.cpp=	$(SRC_DIR)%.cpp)\
 SRC_DIR =	src/
 SRC_MAIN =	main.cpp
 SRC_ACLASS = AClient.cpp
-SRC_CLASS =	Server.cpp Client.cpp Channel.cpp BotTicTacToe.cpp RockBot.cpp
+SRC_CLASS =	Server.cpp Channel.cpp Client.cpp ServerBot.cpp BotTicTacToe.cpp RockBot.cpp
 SRC_FUNC =	setEnv.cpp	verboseCheck.cpp
 SRC_NMSPC =	Parse.cpp Command.cpp
 # CommandNick.cpp CommandPass.cpp \

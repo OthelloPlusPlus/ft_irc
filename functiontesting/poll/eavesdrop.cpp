@@ -151,7 +151,7 @@ bool	setSocket(int &socketFd)
 	}
 	if (fcntl(socketFd,  F_SETFL, fcntl(socketFd, F_GETFL, 0) | O_NONBLOCK) == -1)
 	{
-		std::cerr	<< "Error fctnl(): "	<< strerror(errno)	<< std::endl;
+		std::cerr	<< "Error fcntl(): "	<< strerror(errno)	<< std::endl;
 		close(socketFd);
 		return (false);
 	}
@@ -360,7 +360,7 @@ void	recvAndSend(t_connect &source, t_connect &destination, std::string color)
 // 	}
 // 	if (fcntl(socketFd,  F_SETFL, fcntl(socketFd, F_GETFL, 0) | O_NONBLOCK) == -1)
 // 	{
-// 		std::cerr	<< "Error fctnl(): "	<< strerror(errno)	<< std::endl;
+// 		std::cerr	<< "Error fcntl(): "	<< strerror(errno)	<< std::endl;
 // 		close(socketFd);
 // 		return (false);
 // 	}

@@ -108,7 +108,7 @@ bool	Client::readReceive(void){
 		ssize_t	recvLen;
 		bzero(buffer, sizeof(buffer));
 		recvLen = recv(this->pollInfo.fd, buffer, sizeof(buffer) - 1, 0);
-		std::cout << " buffer [" << buffer << "]" << std::endl;
+		// std::cout << " buffer [" << buffer << "]" << std::endl;
 		if (recvLen < 0) {
 			if (errno != EWOULDBLOCK && errno != EAGAIN)
 				std::cerr	<< "Error recv(): "	<< strerror(errno)	<< std::endl;

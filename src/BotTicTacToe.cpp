@@ -36,10 +36,11 @@ BotTicTacToe::BotTicTacToe(Server &server): AClient(server)
 	this->_realName = "Tic-Tac-Toe playing Bot";
 	this->_isRegistered = true;
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
-	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< "BotTicTacToe"
-				<< C_DGREEN	<< " called."
-				<< C_RESET	<< std::endl;
+	if (verboseCheck() >= V_DETAILS)
+		std::cout	<< C_GREEN	<< this->_nickName
+					<< C_DGREEN	<< ": Bot ready to play "
+					<< C_GREEN	<< "Tic Tac Toe!"
+					<< C_RESET	<< std::endl;
 }
 
 /** ************************************************************************ **\
@@ -51,10 +52,10 @@ BotTicTacToe::BotTicTacToe(Server &server): AClient(server)
 BotTicTacToe::~BotTicTacToe(void)
 {
 	this->closeFD();
-	std::cout	<< C_DRED	<< "Deconstructor "
-				<< C_RED	<< "BotTicTacToe"
-				<< C_DRED	<< " called"
-				<< C_RESET	<< std::endl;
+	if (verboseCheck() >= V_DETAILS)
+		std::cout	<< C_RED	<< "BotTicTacToe"
+					<< C_DRED	<< ": No more play?"
+					<< C_RESET	<< std::endl;
 }
 
 /** ************************************************************************ **\
@@ -475,37 +476,28 @@ bool	BotTicTacToe::stillActive(void) const
 
 void	BotTicTacToe::sendMsg(std::string msg)
 {
-	this->recv.push(msg);
+	std::string	name(msg.substr(1, msg.find('!') - 1));
+	std::string args(msg.substr(msg.find(' ') + 1));
+	std::tuple<AClient &, std::string, std::vector<std::string>>\
+				prsd(Parse::parseMsg(*this, args));
+
+	this->botRespond(name, std::get<0>(prsd), std::get<1>(prsd), std::get<2>(prsd));
 }
 
 std::string	BotTicTacToe::getMsg(void)
 {
 	std::string	reply;
 
-	while (!this->recv.empty())
+	if (!this->send.empty())
 	{
-		std::string	name = this->recv.front().substr(1, this->recv.front().find('!') - 1);
-		std::string	args = this->recv.front().substr(this->recv.front().find(' ') + 1);
-
-		std::tuple<AClient &, std::string, std::vector<std::string>> prsd = Parse::parseMsg(*this, args);
-
-		this->botRespond(name, std::get<0>(prsd), std::get<1>(prsd), std::get<2>(prsd));
-		this->recv.pop();
-	}
-	if (!send.empty())
-	{
-		reply = this->send.front();
+		reply = this->send.front() + "\r\n";
 		this->send.pop();
 	}
-	if (!reply.empty())
-		reply += "\r\n";
 	return (reply);
 }
 
 void	BotTicTacToe::closeFD(void)
 {
-	while (!this->recv.empty())
-		this->recv.pop();
 	while (!this->send.empty())
 		this->send.pop();
 }

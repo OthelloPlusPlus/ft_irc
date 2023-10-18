@@ -129,7 +129,7 @@ bool	setServer(t_connect &server)
 	}
 	if (fcntl(server.socketFd,  F_SETFL, fcntl(server.socketFd, F_GETFL, 0) | O_NONBLOCK) == -1)
 	{
-		std::cerr	<< "Error fctnl(): "	<< strerror(errno)	<< std::endl;
+		std::cerr	<< "Error fcntl(): "	<< strerror(errno)	<< std::endl;
 		close(server.socketFd);
 		return (false);
 	}

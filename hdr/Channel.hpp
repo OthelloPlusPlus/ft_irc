@@ -40,54 +40,49 @@ class Channel
 
 		Server	*server;
 		std::vector<ChannelUser>	users;
-		
+
+		//User Management
 		bool	addClientValidate(const AClient &newClient, const std::string password);
-		bool	userIsAdmin(const AClient &client) const;
-
 		void	sendTopic(AClient &client) const;
-
+		//Channel Management
+		bool	userIsAdmin(const AClient &client) const;
 		void	setModeI(AClient &client, std::string flag);
 		void	setModeT(AClient &client, std::string flag);
 		void	setModeK(AClient &client, std::string flag, std::string newPass);
 		void	setModeO(AClient &client, std::string flag, std::string targetName);
 		void	setModeL(AClient &client, std::string flag, std::string count);
-
+		//Getter
 		ChannelUser	*getChannelUser(std::string clientName);
 
 	protected:
 
 	public:
+		//(De)constructors
 		Channel(std::string name, Server *server);
-		Channel(const Channel &src);
 		~Channel(void);
-
+		//User Management
 		void	addClient(AClient &newClient, bool admin, const std::string password);
 		void	kickUser(AClient &client, const std::vector<std::string> &names);
 		void	removeUser(const AClient &client);
 		void	promoteOldestUser(void);
 		bool	userIsInChannel(const AClient &client) const;
-		// void	inviteClient(AClient *client);
-
-		void	sendWho(AClient &client);
-		void	sendNames(AClient &client);
-		void	sendMode(AClient &client) const;
-		void	sendToChannel(const std::string msg) const;
-		void	sendToChannel(const AClient &exclude, const std::string msg) const;
-		// void	sendPrivMsg(AClient *sender, std::string msg);
-
-		// void	setAdmin(AClient *target, bool status);
+		//Channel Management
 		void	setMode(AClient &client, std::string flag, std::string arg);
 		void	setTopic(AClient &client, const std::string newTopic);
-
+		//Channel information
+		void	sendNames(AClient &client) const;
+		void	sendWho(AClient &client) const;
+		void	sendMode(AClient &client) const;
+		//Messaging
+		void	sendToChannel(const std::string msg) const;
+		void	sendToChannel(const AClient &exclude, const std::string msg) const;
+		//Getters
 		std::string	getName(void) const;
-		// std::string	getTopic(void) const;
+		std::string getTopic(void) const;
 		size_t		getSize(void) const;
 		size_t		getAdminSize(void) const;
-		std::string getTopic(void) const;
 
-		// void	printClientList(void) const;
-
-		Channel	&operator=(const Channel &src);
+		//Operator overload to caternate to character strings
 		template <typename T>
 		friend std::string	operator+(const T add, const Channel &src)
 		{

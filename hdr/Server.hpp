@@ -17,7 +17,7 @@ class Client;
 class AClient;
 class Channel;
 
-#include <string>
+# include <string>
 // std::string
 # include <poll.h>
 // struct pollfd
@@ -44,9 +44,9 @@ class Server
 		struct pollfd		pollInfo;
 		struct sockaddr_in	socketAddress;
 		int					port;
-		std::string			publicIP;
+		std::string			publicIP;	//https://www.whatsmyip.org/	185-61-55-68.185-61-55-ip.fmo-solutions.nl
 		std::string			localIP;
-		uint32_t			transferIP;
+		static bool			state;
 
 		std::vector<Channel *>			channels;
 		std::vector<AClient *>			clients;
@@ -54,63 +54,59 @@ class Server
 		std::string	passwordUser;
 		std::string	motd;
 
-		void	validatePort(void);
+		//Server initialisation
+		void	validatePort(void) const;
 		void	readEnv(void);
 		void	setLocalIP(void);
 		void	bootUpServer(void);
 		void	addBots(void);
-		// std::string	getHostIp(void);
-
+		//Server Shutdown
+		static void	handlerSIGINT(int signal);
+		//Connection subfunctions
 		void	acceptClient(void);
-		void	sendWelcome(Client &client);
-		void	joinChannel(AClient &client, const std::string channelName);
+		void	sendWelcome(AClient &client) const;
 
 	protected:
 
 	public:
-		// Server(void);
+		//(De)constructors
 		Server(int argc, char **argv);
-		Server(const Server &src);
 		~Server(void);
-
+		//Server Shutdown
+		void	shutdownServer(AClient &client, const std::string password);
+		//Connection
+		void	checkNewClient(void);
+		int		validatePassword(const std::string password) const;
+		void	checkClients(void);
+		void	checkChannels(void);
+		//User interaction
+		void	sendPrivMsg(AClient &client, const std::vector<std::string> &args) const;
+		void	sendNotice(AClient &client, const std::vector<std::string> &args) const;
+		void	sendPong(AClient &client, const std::string token) const;
+		//Channel Interaction
+		void	sendChannelList(AClient &client) const;
+		void	joinChannel(AClient &client, const std::vector<std::string> &args);
+		void	sendInvite(AClient &client, const std::vector<std::string> &args) const;
+		void	partChannel(AClient &client, const std::string channelName);
+		void	kickUser(AClient &client, const std::vector<std::string> &args);
+		void	sendNames(AClient &client, const std::vector<std::string> &args) const;
+		void	sendWho(AClient &client, const std::string who) const;
+		void	sendWhoIs(AClient &client, const std::string who) const;
+		void	setChannelTopic(AClient &client, const std::vector<std::string> &args);
+		void	setChannelMode(AClient &client, const std::vector<std::string> &args);
+		//Setters and Getters
+		void		setName(void);
+		std::string	getName(void) const;
+		int			getFD(void) const;
+		AClient		*getClient(std::string name) const;
+		Channel		*getChannel(std::string channel) const;
+		bool		getState(void) const;
+		//File Transfer
 		void	setTransferFile(std::string key, file_t &file);
 		file_t	getTransferFile(std::string key);
 		void	rmTransferFile(std::string key);
-		
-		void	checkNewClient(void);
-		void	checkClients(void);
-		void	checkChannels(void);
 
-		int	validatePassword(const std::string password) const;
-		// // bool	nicknameExists(const std::string nickname) const;
-
-		// std::vector<AClient *>	getClientList(void);
-		AClient					*getClient(std::string name) const;
-		Channel					*getChannel(std::string channel) const;
-		std::string				getName(void) const;
-		int						getFD(void) const;
-
-		void	setName(void);
-		// const std::string		getIP(void) const;
-		// uint32_t				getTransferIP(void) const;
-
-		void	joinChannel(AClient &client, const std::vector<std::string> &args);
-		void	partChannel(AClient &client, const std::string channelName);
-		void	sendChannelList(AClient &client) const;
-		void	sendWho(AClient &client, const std::string who) const;
-		void	sendWhoIs(AClient &client, const std::string who) const;
-		// void	sendPong(AClient &client) const;
-		void	sendPong(AClient &client, const std::string token) const;
-		void	sendPrivMsg(AClient &client, const std::vector<std::string> &args);
-		void	sendInvite(AClient &client, const std::vector<std::string> &args);
-		// void	sendAuthserv(AClient &client, const std::vector<std::string> &args);
-		void	sendNames(AClient &client, const std::vector<std::string> &args);
-		void	kickUser(AClient &client, const std::vector<std::string> &args);
-		void	sendNotice(AClient &client, const std::vector<std::string> &args);
-		void	setChannelTopic(AClient &client, const std::vector<std::string> &args);
-		void	setChannelMode(AClient &client, const std::vector<std::string> &args);
-
-		Server	&operator=(const Server &src);
+		//Operator overload to caternate to character strings
 		template <typename T>
 		friend std::string	operator+(const T add, const Server &src)
 		{
@@ -130,7 +126,7 @@ class Server
 			return (ret);
 		}
 		template <typename T>
-		std::string operator+(const T add)
+		std::string	operator+(const T add)
 		{
 			static_assert(std::is_same<T, char>::value || 
 							std::is_same<T, char*>::value || 
