@@ -14,6 +14,10 @@ NICK="OthNC"
 	echo "USER $USER1 * $IRC_SERVER :$USER2";
 	echo "NICK $NICK";
 	sleep 0.1;
+# Hardcoded tests
+
+# Endof harcoded tests
+	sleep 0.1;
 	echo > /dev/tty
 	while [ true ]; do
 		read -p "nc (or quit): " COMMAND;
