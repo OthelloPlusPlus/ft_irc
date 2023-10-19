@@ -55,9 +55,9 @@ While this server, in theory, is compatible with all IRC Clients that follow the
 While the IRC Server is mainly for client to client communication. It also contains several bots for users to interact with.
 | Bots |||
 | --- | --- | --- |
-| [hdr/ServerBot.hpp](ServerBot) | //info | A bot that only works through private messages. He can provide some general server information and shutdown the server. |
-| [hdr/BotTicTacToe.hpp](TicTacBot) | //play | A bot that can play Tic Tac Toe. |
-| [hdr/RockBot.hpp](RockBot) | //throw | A bot that can play Rock Paper Scissors |
+| [ServerBot](hdr/ServerBot.hpp) | //info | A bot that only works through private messages. He can provide some general server information and shutdown the server. |
+| [TicTacBot](hdr/BotTicTacToe.hpp) | //play | A bot that can play Tic Tac Toe. |
+| [RockBot](hdr/RockBot.hpp) | //throw | A bot that can play Rock Paper Scissors |
 
 # Explanation
 ## Enviroment
