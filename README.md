@@ -12,18 +12,7 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 
 # Usage
 ## Running Server
-<table>
-	<thead>
-		<tr><th colspan="3">Title</th></tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>one</td>
-			<td>two</td>
-			<td>three</td>
-		</tr>
-	</tbody>
-</table>
+
 <table>
 	<thead>
 		<tr><th colspan="3">Running server</th></tr>
@@ -56,6 +45,7 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 		</tr>
 	</tbody>
 </table>
+
 | Command | Arguments | Functionality |
 | --- | --- | --- |
 | make || Compiles the files into ircserv |
