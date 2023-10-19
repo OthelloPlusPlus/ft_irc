@@ -24,7 +24,7 @@ While this server, in theory, is compatible with all IRC Clients that follow the
 
 ## Bots
 While the IRC Server is mainly for client to client communication. It also contains several bots for users to interact with.
-| Bots |||
+| Bots |
 | --- | --- | --- |
 | ServerBot | //info | A bot that only works through private messages. He can provide some general server information and shutdown the server. |
 | TicTacBot | //play | A bot that can play Tic Tac Toe. |
@@ -42,6 +42,15 @@ We have sockets, not to be confused with socks!
 ## Classes
 The bulk of this program consists of classes. There are classes for the Server, Channels and the Clients.
 The Clients are derived for the abstract class AClient, from which the bots are also derived. Once a Bot or Client is added the IRC Server no longer differentiates between them.
+The Server has been structured so that new Bots can easily be implemented.
+They do require definitions for the following public functions.
+
+| Return | Public Member Function | Usage |
+| --- | --- | --- |
+| bool | stillActive(void) const | Whether an AClient is still active |
+| void | closeFD(void) | Clean up function for any File Descriptors or alertnatives used |
+| std::string | getMsg(void) | Messages the AClient wants to send to the server |
+| void | sendMsg(std::string msg) | Messages sent to the AClient |
 
 ## Namespsaces
 We made space for those too!
