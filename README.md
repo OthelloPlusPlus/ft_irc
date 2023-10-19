@@ -7,11 +7,11 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 
 ## Table of Contents
 - [Usage](#Usage)
+-	 [Usage](#Usage)
 - [Information](#Information)
 - [Sources](#Sources)
 
 # Usage
-## Running Server
 The server has been designed for Linux but should compatible with MacOS too.
 It can be compiled and run using the following temrinal commands.
 
