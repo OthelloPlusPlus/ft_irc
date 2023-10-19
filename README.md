@@ -12,10 +12,12 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 
 # Usage
 ## Running Server
+The server has been designed for Linux but should compatible with MacOS too.
+It can be compiled and run using the following temrinal commands.
 
 <table>
 	<thead>
-		<tr><th colspan="3">Running server</th></tr>
+		<tr><th colspan="3">Terminal Commands</th></tr>
 		<tr>
 			<th>Command</th>
 			<th>Argumens</th>
@@ -46,13 +48,6 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 	</tbody>
 </table>
 
-| Command | Arguments | Functionality |
-| --- | --- | --- |
-| make || Compiles the files into ircserv |
-| ./ircserv | [port] [password] | Runs the binary |
-| make | subject | Compiles the files and runs the binary with port '6667' and password set to 'password' |
-| ./nctest.sh || Runs a shell script that in turn runs nc. Automatically logs in into the server |
-
 ## Client
 While this server, in theory, is compatible with all IRC Clients that follow the IRC protocol. It has been tested using pidgin and is fully compatible with it.
 
@@ -66,7 +61,7 @@ While the IRC Server is mainly for client to client communication. It also conta
 
 # Explanation
 ## Enviroment
-The project contains an .env file which valuable information about the server.
+The project contains an [.env].env file which valuable information about the server.
 This includes the server name, the password for admins and the level of verbose.
 Whenever this file is changes, the server automatically updates accordingly.
 ## Ports
@@ -77,7 +72,7 @@ We have sockets, not to be confused with socks!
 The bulk of this program consists of classes. There are classes for the Server, Channels and the Clients.
 The Clients are derived for the abstract class AClient, from which the bots are also derived. Once a Bot or Client is added the IRC Server no longer differentiates between them.
 The Server has been structured so that new Bots can easily be implemented.
-They do require definitions for the following public functions.
+They do require definitions for the following public member functions.
 
 | Return | Public Member Function | Usage |
 | --- | --- | --- |
