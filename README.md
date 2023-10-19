@@ -12,7 +12,7 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 
 # Usage
 ## Running Server
-| <th colspan="3">Spanning Header</th> |
+| Test | < | < |
 | Command | Arguments | Functionality |
 | --- | --- | --- |
 | make || Compiles the files into ircserv |
