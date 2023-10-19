@@ -2,8 +2,11 @@ NAME =	ircserv
 
 CC =	c++
 CFLAGS +=	-Wall -Wextra -Werror
-# CFLAGS +=	-std=c++98
-# CFLAGS +=	-Wno-unused-variable
+ifeq ($(shell uname), Darwin)
+	CFLAGS +=	-std=c++11
+else
+	CFLAGS +=	-std=c++98
+endif
 DEPFLAGS +=	-MMD -MF $(DEP_DIR)$*.d
 
 INCL_HDR :=	$(shell find . -type f -name '*.hpp' -exec dirname "{}" \; | \
@@ -16,24 +19,17 @@ SRC =	$(SRC_MAIN:%.cpp=	$(SRC_DIR)%.cpp)\
 		$(SRC_NMSPC:%.cpp=	$(SRC_DIR)%.cpp)
 
 SRC_DIR =	src/
-SRC_MAIN =	main.cpp
-SRC_ACLASS =	AClient.cpp
-SRC_CLASS =	Server.cpp Channel.cpp Client.cpp ServerBot.cpp BotTicTacToe.cpp RockBot.cpp
-SRC_FUNC =	setEnv.cpp	verboseCheck.cpp
-SRC_NMSPC =	Parse.cpp Command.cpp
-# CommandNick.cpp CommandPass.cpp \
-# CommandUser.cpp CommandPing.cpp \
-# CommandQuit.cpp CommandOper.cpp \
-# CommandKill.cpp
+SRC_MAIN =		main.cpp
+SRC_FUNC =		setEnv.cpp verboseCheck.cpp
+SRC_CLASS =		Server.cpp Channel.cpp
+SRC_ACLASS =	AClient.cpp Client.cpp ServerBot.cpp BotTicTacToe.cpp RockBot.cpp
+SRC_NMSPC =		Parse.cpp Command.cpp
 
 DIRS =	$(OBJ_DIR) $(DEP_DIR)
 OBJ_DIR =	obj/
 OBJ =	$(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 DEP_DIR =	dep/
 DEP =	$(SRC:$(SRC_DIR)%.cpp=$(DEP_DIR)%.d)
-
-# -include .env
-# export $(shell sed 's/=.*//' .env)
 
 all: $(DIRS) $(NAME)
 
