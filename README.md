@@ -23,8 +23,8 @@ It can be compiled and run using the following terminal commands.
 
 <table>
 	<thead>
-		<tr style="background-color: #333; color: white;">
-			<th colspan="3">Terminal Commands</th>
+		<tr >
+			<th colspan="3" style="background-color: #333; color: white;">Terminal Commands</th>
 		</tr>
 		<tr>
 			<th>Command</th>
