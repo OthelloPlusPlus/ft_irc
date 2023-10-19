@@ -71,7 +71,7 @@ Using the [int setsockopt(int socket, int level, int option, const void *option_
 For MacOS systems the function [int fcntl(int fildes, int cmd, ...)]() is used to ensure the socket is non-blocking (**O_NONBLOCK**).
 
 ## Ports
-Then using the [int bind(int socket, const struct sockaddr *address, socklen_t address_len)]() function, the socket is bound to the specified port  and the function [int listen(int socket, int backlog);]() sets it to listen to the port for incomming streams and maintainting a backlog, which can store 128 (**SOMAXCONN**) incomming messages.
+Then using the [int bind(int socket, const struct sockaddr *address, socklen_t address_len)](https://man7.org/linux/man-pages/man2/bind.2.html) function, the socket is bound to the specified port and the function [int listen(int socket, int backlog);](src/Server.cpp) sets it to listen to the port for incomming streams and maintainting a backlog, which can store 128 (**SOMAXCONN**) incomming messages.
 The accepted ports have been limited to avoid usage ports that have predefined uses.
 
 | Port | Usage |
