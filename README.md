@@ -61,7 +61,7 @@ While the IRC Server is mainly for client to client communication. It also conta
 
 # Explanation
 ## Enviroment
-The project contains an [.env].env file which valuable information about the server.
+The project contains an [.env](.env) file which valuable information about the server.
 This includes the server name, the password for admins and the level of verbose.
 Whenever this file is changes, the server automatically updates accordingly.
 ## Ports
