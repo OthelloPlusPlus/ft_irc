@@ -49,7 +49,15 @@ It can be compiled and run using the following temrinal commands.
 </table>
 
 ## Client
-While this server, in theory, is compatible with all IRC Clients that follow the IRC protocol. It has been tested using pidgin and is fully compatible with it.
+While this server, in theory, is compatible with all IRC Clients that follow the IRC protocol. It has been tested using [Pidgin](https://pidgin.im/) and is fully compatible with it.
+To connect with Pidgin make a new Account and set the following settings.
+- Set Protocol to '**IRC**'
+- Set Username to the desired Nickname
+- Set Server to the **Local IP Address** provided by the IRC Server
+- Set Password to the password passed to the server
+- Set Port(Advanced) to the port passed to the server
+- Set Ident name(Advanced) to the desired name
+- Set Real name to the desired full name
 
 ## Bots
 While the IRC Server is mainly for client to client communication. It also contains several bots for users to interact with.
@@ -65,14 +73,24 @@ The project contains an [.env](.env) file which valuable information about the s
 This includes the server name, the password for admins and the level of verbose.
 Whenever this file is changes, the server automatically updates accordingly.
 
+The IRC_VERBOSE setting in .env can be set to adjust the types of output are sent to the standard output.
+| Setting | enum | Message Type |
+| --- | --- | --- |
+| 0 | V_SILENT | Silent |
+| 1 | V_ADMIN | Include Admin messages |
+| 2 | V_DETAILS | Include Details on construction and deconstruction of users | 
+| 3 | V_CHANNEL | Include Channel events |
+| 4 | V_USER | Include User events |
+| 5 | V_MSG | Include all messages sent to and from the Server |
+
 ## Sockets
-Using the [int socket()]() function, a socket is created for internet communication (**AF_INET**) over which can be bidirectional communication (**SOCK_STREAM**) is possible.
-Using the [int setsockopt()]() function, the socket is set to bind a socket, even if the address is already in use.
-For MacOS systems the function [int fcntl()]() is used to ensure the socket is non-blocking (**O_NONBLOCK**).
+Using the [int socket()](src/Server.cpp#L190) function, a socket is created for internet communication (**AF_INET**) over which can be bidirectional communication (**SOCK_STREAM**) is possible.
+Using the [int setsockopt()](src/Server.cpp#L194) function, the socket is set to bind a socket, even if the address is already in use.
+For MacOS systems the function [int fcntl()](src/Server.cpp#L201) is used to ensure the socket is non-blocking (**O_NONBLOCK**).
 
 ## Ports
 Then using the [int bind()](https://man7.org/linux/man-pages/man2/bind.2.html) function, the socket is bound to the specified port and the function [int listen()](src/Server.cpp#L211) sets it to listen to the port for incomming streams and maintainting a backlog, which can store 128 (**SOMAXCONN**) incomming messages.
-The accepted ports have been limited to avoid usage ports that have predefined uses.
+The accepted ports have been restricted to avoid usage ports that have predefined uses.
 
 | Port | Usage |
 | --- | --- |
