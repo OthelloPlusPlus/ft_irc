@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   ServerBot.hpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/10/19 20:25:16 by ohengelm      #+#    #+#                 */
+/*   Updated: 2023/10/19 20:40:08 by ohengelm      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SERVERBOT_HPP
 # define SERVERBOT_HPP
 
@@ -17,6 +29,7 @@ class ServerBot: public AClient
 		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
 		void	think(std::string dest, std::string arg);
 		void	thinkInfo(std::string dest);
+		void	thinkMOTD(std::string dest, std::string arg);
 		void	thinkShutdown(std::string dest, std::string arg);
 		void	thinkHelp(std::string dest);
 
