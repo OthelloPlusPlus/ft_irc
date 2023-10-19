@@ -136,10 +136,10 @@ We made space for those too!
 - https://modern.ircdocs.horse/#introduction
 
 # Creators
-MagicEmy
-- [LinkedIn]()
-- [GitHub]()
-
 Othello
 - [LinkedIn]()
 - [GitHub](https://github.com/OthelloPlusPlus)
+
+MagicEmy
+- [LinkedIn]()
+- [GitHub]()
