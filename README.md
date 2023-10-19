@@ -64,10 +64,30 @@ While the IRC Server is mainly for client to client communication. It also conta
 The project contains an [.env](.env) file which valuable information about the server.
 This includes the server name, the password for admins and the level of verbose.
 Whenever this file is changes, the server automatically updates accordingly.
-## Ports
-We have ports, only good ones allowed!
+
 ## Sockets
-We have sockets, not to be confused with socks!
+Using the [int socket(int domain, int type, int protocol)]() function, a socket is created for internet communication (**AF_INET**) over which can be bidirectional communication (**SOCK_STREAM**) is possible.
+Using the [int setsockopt(int socket, int level, int option, const void *option_value, socklen_t option_len)]() function, the socket is set to bind a socket, even if the address is already in use.
+For MacOS systems the function [int fcntl(int fildes, int cmd, ...)]() is used to ensure the socket is non-blocking (**O_NONBLOCK**).
+
+## Ports
+Then using the [int bind(int socket, const struct sockaddr *address, socklen_t address_len)]() function, the socket is bound to the specified port  and the function [int listen(int socket, int backlog);]() sets it to listen to the port for incomming streams and maintainting a backlog, which can store 128 (**SOMAXCONN**) incomming messages.
+The accepted ports have been limited to avoid usage ports that have predefined uses.
+
+| Port | Usage |
+| --- | --- |
+| 0 ... 1023 | Well-Known Ports(0-1023) |
+| 1433 | Microsoft SQL Server |
+| 1521 | Oracle Database |
+| 3306 | MySQL Database |
+| 5000 | UPnP (Universal Plug and Play) control point |
+| 5222 | XMPP (Extensible Messaging and Presence Protocol) |
+| 5432 | PostgreSQL Database |
+| 7070 | Real-Time Messaging Protocol (RTMP) |
+| 8080 | Alternate HTTP (commonly used for web servers) |
+| 8443 | HTTPS Alternate (often used for secure web traffic) |
+| 9090 | Alternate Web Server (often used for web proxy servers) |
+
 ## Classes
 The bulk of this program consists of classes. There are classes for the [Server](hdr/Server.hpp), [Channels](hdr/Channel.hpp) and the Clients.
 The Clients are derived for the abstract class [AClient](hdr/AClient.hpp), from which the bots are also derived. Once a Bot or Client is added the IRC Server no longer differentiates between them.
@@ -85,5 +105,5 @@ They do require definitions for the following public member functions.
 We made space for those too!
 
 # Sources
-https://pidgin.im/
-https://modern.ircdocs.horse/#client-to-server-protocol-structure
+- https://pidgin.im/
+- https://modern.ircdocs.horse/#client-to-server-protocol-structure
