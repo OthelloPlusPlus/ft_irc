@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Client.hpp                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 13:49:42 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/19 20:25:37 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <netinet/in.h>
 // struct sockaddr_in
 // socklen_t
-
 # include <poll.h>
 // struct pollfd
 # include <iostream>
@@ -31,7 +30,6 @@
 // for std::tuple
 # include <map>
 // std::map
-
 
 class Client : public AClient
 {

@@ -639,6 +639,14 @@ int		Server::getFD(void) const
 	return (this->pollInfo.fd);
 }
 
+void	Server::setMOTD(AClient &client, std::string msg)
+{
+	if (!client.getIsOperator())
+		client.sendMsg(":ServerBot PRIVMSG " + client.getNickName() + " :You are not allowed to do this");
+	else if (!msg.empty())
+		this->motd = msg;
+}
+
 std::string	Server::getMOTD(void) const
 {
 	return (this->motd);

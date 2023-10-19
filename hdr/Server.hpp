@@ -100,6 +100,7 @@ class Server
 		std::string	getIP(void) const;
 		int			getPort(void) const;
 		int			getFD(void) const;
+		void		setMOTD(AClient &client, std::string msg);
 		std::string	getMOTD(void) const;
 		AClient		*getClient(std::string name) const;
 		size_t		getClientsSize(void) const;
