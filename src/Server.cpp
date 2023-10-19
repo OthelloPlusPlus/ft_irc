@@ -277,7 +277,7 @@ void	Server::shutdownServer(AClient &client, const std::string key)
 	lock = getenv("IRCADMINPWD");
 	if (lock != key)
 	{
-		client.sendMsg(":ServerBot PRIVMSG " + client.getNickName() + " :Wrong password");
+		client.sendMsg(":ServerBot PRIVMSG " + client.getNickName() + " :Invalid password");
 		return ;
 	}
 	this->state = false;
@@ -624,9 +624,24 @@ std::string	Server::getName(void) const
 	return (this->serverName);
 }
 
+std::string		Server::getIP(void) const
+{
+	return (this->localIP);
+}
+
+int		Server::getPort(void) const
+{
+	return (this->port);
+}
+
 int		Server::getFD(void) const
 {
 	return (this->pollInfo.fd);
+}
+
+std::string	Server::getMOTD(void) const
+{
+	return (this->motd);
 }
 
 AClient	*Server::getClient(std::string name) const
@@ -644,6 +659,11 @@ AClient	*Server::getClient(std::string name) const
 	return (nullptr);
 }
 
+size_t	Server::getClientsSize(void) const
+{
+	return (this->clients.size());
+}
+
 Channel	*Server::getChannel(std::string name) const
 {
 	std::transform(name.begin(), name.end(), name.begin(), ::tolower);
@@ -659,6 +679,11 @@ Channel	*Server::getChannel(std::string name) const
 			return (*channel);
 	}
 	return (nullptr);
+}
+
+size_t	Server::getChannelsSize(void) const
+{
+	return (this->channels.size());
 }
 
 bool	Server::getState(void) const

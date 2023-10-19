@@ -16,8 +16,9 @@ class ServerBot: public AClient
 		void	botRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args);
 		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
 		void	think(std::string dest, std::string arg);
-		void	thinkHelp(std::string dest);
+		void	thinkInfo(std::string dest);
 		void	thinkShutdown(std::string dest, std::string arg);
+		void	thinkHelp(std::string dest);
 
 	protected:
 

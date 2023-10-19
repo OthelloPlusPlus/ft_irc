@@ -97,9 +97,14 @@ class Server
 		//Setters and Getters
 		void		setName(void);
 		std::string	getName(void) const;
+		std::string	getIP(void) const;
+		int			getPort(void) const;
 		int			getFD(void) const;
+		std::string	getMOTD(void) const;
 		AClient		*getClient(std::string name) const;
+		size_t		getClientsSize(void) const;
 		Channel		*getChannel(std::string channel) const;
+		size_t		getChannelsSize(void) const;
 		bool		getState(void) const;
 		//File Transfer
 		void	setTransferFile(std::string key, file_t &file);

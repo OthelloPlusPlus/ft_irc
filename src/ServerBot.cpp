@@ -71,22 +71,38 @@ void	ServerBot::think(std::string dest, std::string arg)
 {
 	std::string	cmd = arg.substr(0, arg.find(' '));
 
-	if (cmd == "//help")
-		this->thinkHelp(dest);
+	if (cmd == "//info")
+		this->thinkInfo(dest);
 	else if (cmd == "//shutdown")
 		this->thinkShutdown(dest, arg);
+	else if (cmd == "//help")
+		this->thinkHelp(dest);
+	else
+		this->send.push("PRIVMSG " + dest + " :I am sorry, I do not know what that means.");
 }
 
-void	ServerBot::thinkHelp(std::string dest)
+void	ServerBot::thinkInfo(std::string dest)
 {
-	this->send.push("PRIVMSG " + dest + " :I dont know how to help you yet!");
+	std::string	msg("PRIVMSG " + dest);
+
+	this->send.push(msg + " :Server:\t" + this->_server.getName());
+	this->send.push(msg + " :IP:\t" + this->_server.getIP());
+	this->send.push(msg + " :Port:\t" + std::to_string(this->_server.getPort()));
+	this->send.push(msg + " :MotD:\t" + this->_server.getMOTD());
+	this->send.push(msg + " :Clients:\t" + std::to_string(this->_server.getClientsSize()));
+	this->send.push(msg + " :Channels:\t" + std::to_string(this->_server.getChannelsSize()));
+	std::string oper;
+	AClient *client = this->_server.getClient(dest);
+	if (client != nullptr && client->getIsOperator())
+			oper = "(operator)";
+	this->send.push("PRIVMSG " + dest + " :User:\t" + dest + oper);
 }
 
 void	ServerBot::thinkShutdown(std::string dest, std::string arg)
 {
 	size_t	pos = arg.find(' ');
 	if (pos == std::string::npos)
-		this->send.push("PRIVMSG " + dest + " :You need to provide a password");
+		this->send.push("PRIVMSG " + dest + " :You need to provide a password.");
 	else
 	{
 		AClient *client	= this->_server.getClient(dest);
@@ -94,6 +110,18 @@ void	ServerBot::thinkShutdown(std::string dest, std::string arg)
 			return ;
 		this->_server.shutdownServer(*client, arg.substr(pos + 1));
 	}
+}
+
+void	ServerBot::thinkHelp(std::string dest)
+{
+	this->send.push("PRIVMSG " + dest + " :Hello, I am ServerBot! I am part of this server and can help you a bit.");
+	this->send.push("PRIVMSG " + dest + " :Right now I can:");
+	this->send.push("PRIVMSG " + dest + " ://info:\tTo provide you with server information");
+	this->send.push("PRIVMSG " + dest + " ://shutdown [password]:\tTo shutdown the server");
+	this->send.push("PRIVMSG " + dest + " :You can also:");
+	this->send.push("PRIVMSG " + dest + " :/join [channel]:\tTo join a channel");
+	this->send.push("PRIVMSG " + dest + " :/part [channel]:\tTo leave a channel");
+	this->send.push("PRIVMSG " + dest + " :/msg [user] [message]:\tTo message a user");
 }
 
 bool	ServerBot::stillActive(void) const
