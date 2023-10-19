@@ -32,7 +32,7 @@ It can be compiled and run using the following temrinal commands.
 	</thead>
 	<tbody>
 		<tr>
-			<td>[make](Makefile)</td>
+			<td><a href="Makefile" target="_blank">make</a></td>
 			<td></td>
 			<td>Compiles the files into ircserv</td>
 		</tr>
