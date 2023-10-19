@@ -71,7 +71,7 @@ Using the [int setsockopt()]() function, the socket is set to bind a socket, eve
 For MacOS systems the function [int fcntl()]() is used to ensure the socket is non-blocking (**O_NONBLOCK**).
 
 ## Ports
-Then using the [int bind()](https://man7.org/linux/man-pages/man2/bind.2.html) function, the socket is bound to the specified port and the function [int listen()](src/Server.cpp#L211){:target="_blank"} sets it to listen to the port for incomming streams and maintainting a backlog, which can store 128 (**SOMAXCONN**) incomming messages.
+Then using the [int bind()](https://man7.org/linux/man-pages/man2/bind.2.html) function, the socket is bound to the specified port and the function <a href="src/Server.cpp#L211" target="_blank">int listen()</a>[int listen()](src/Server.cpp#L211){:target="_blank"} sets it to listen to the port for incomming streams and maintainting a backlog, which can store 128 (**SOMAXCONN**) incomming messages.
 The accepted ports have been limited to avoid usage ports that have predefined uses.
 
 | Port | Usage |
