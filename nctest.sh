@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         ::::::::             #
+#    nctest.sh                                          :+:    :+:             #
+#                                                      +:+                     #
+#    By: ohengelm <ohengelm@student.42.fr>            +#+                      #
+#                                                    +#+                       #
+#    Created: 2023/10/19 20:25:57 by ohengelm      #+#    #+#                  #
+#    Updated: 2023/10/19 20:25:59 by ohengelm      ########   odam.nl          #
+#                                                                              #
+# **************************************************************************** #
+
 #! /bin/bash
 
 if [ "$(uname)" == "Darwin" ]; then
@@ -10,16 +22,34 @@ PASSWORD="password"
 USER1="OthelloNC"
 USER2="OtheNetCat"
 NICK="OthNC"
+CHANNEL="#ncTestChannel"
 {
-# exit 0
 	sleep 0.1
+# Connection requirements
 	echo > /dev/tty;
 	echo "PASS $PASSWORD";
 	echo "USER $USER1 * $IRC_SERVER :$USER2";
 	echo "NICK $NICK";
 	sleep 0.1;
 # Hardcoded tests
-
+	echo "PRIVMSG $NICK :Hello me"
+	echo "JOIN $CHANNEL"
+	echo "INVITE RockBot $CHANNEL"
+	echo "PRIVMSG $CHANNEL ://throw rock"
+	sleep 0.1
+	echo "KICK $CHANNEL RockBot :I'm crazy with power!"
+	sleep 0.1
+	echo "MODE $CHANNEL"
+	echo "MODE $CHANNEL +l 1"
+	echo "MODE $CHANNEL +i"
+	echo "MODE $CHANNEL +t"
+	echo "MODE $CHANNEL +k SabotagingPassword"
+	echo "MODE $CHANNEL -o $NICK"
+	echo "MODE $CHANNEL"
+	sleep 0.1
+	echo "PART $CHANNEL"
+	sleep 0.1
+	echo "PRIVMSG ServerBot ://info"
 # Endof harcoded tests
 	sleep 0.1;
 	echo > /dev/tty;
