@@ -24,6 +24,38 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 		</tr>
 	</tbody>
 </table>
+<table>
+	<thead>
+		<tr><th colspan="3">Running server</th></tr>
+		<tr>
+			<th>Command</th>
+			<th>Argumens</th>
+			<th>Functionality</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>make</td>
+			<td></td>
+			<td>Compiles the files into ircserv</td>
+		</tr>
+		<tr>
+			<td>./ircserv</td>
+			<td>[port] [password]</td>
+			<td>Runs the binary</td>
+		</tr>
+		<tr>
+			<td>make</td>
+			<td>subject</td>
+			<td>Compiles the files and runs the binary with port '6667' and password set to 'password'</td>
+		</tr>
+		<tr>
+			<td>./nctest.sh</td>
+			<td></td>
+			<td>Runs a shell script that in turn runs nc. Automatically logs in into the server</td>
+		</tr>
+	</tbody>
+</table>
 | Command | Arguments | Functionality |
 | --- | --- | --- |
 | make || Compiles the files into ircserv |
