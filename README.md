@@ -12,7 +12,8 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 
 # Usage
 ## Running Server
-| Commands |||
+| <th colspan="3">Spanning Header</th> |
+| Command | Arguments | Functionality |
 | --- | --- | --- |
 | make || Compiles the files into ircserv |
 | ./ircserv | [port] [password] | Runs the binary |
@@ -24,7 +25,7 @@ While this server, in theory, is compatible with all IRC Clients that follow the
 
 ## Bots
 While the IRC Server is mainly for client to client communication. It also contains several bots for users to interact with.
-| Bots |
+| Bots |||
 | --- | --- | --- |
 | ServerBot | //info | A bot that only works through private messages. He can provide some general server information and shutdown the server. |
 | TicTacBot | //play | A bot that can play Tic Tac Toe. |
