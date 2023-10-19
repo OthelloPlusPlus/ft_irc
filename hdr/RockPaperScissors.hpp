@@ -59,7 +59,7 @@ class RockBot: public AClient
 		std::string	getFunFact(std::string shape);
 		
 		
-	public:
+	public: 
 		RockBot(Server &server);
 		~RockBot(void);
 

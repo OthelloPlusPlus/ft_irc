@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Client.hpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 13:49:42 by emlicame      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Client.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/18 19:24:50 by emlicame          #+#    #+#             */
+/*   Updated: 2023/10/19 17:28:34 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,6 @@ class Client : public AClient
 		struct pollfd		pollInfo;
 		
 		bool				_password;
-
-		Client(const Client &src);
-		Client	&operator=(const Client &src);
 
 		void	initialize(int serverFd);
 		bool	readReceive(void);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Client.cpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/13 18:30:53 by emlicame      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/18 19:24:58 by emlicame          #+#    #+#             */
+/*   Updated: 2023/10/19 17:27:14 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,31 +227,4 @@ void	Client::closeFD(void)
 		close(this->pollInfo.fd);
 		this->pollInfo.fd = -1;
 	}
-}
-
-/** ************************************************************************ **\
- * 
- * 	Operators
- * 
-\* ************************************************************************** */
-
-Client	&Client::operator=(const Client &src) {
-	if (this == &src)
-		return (*this);
-	this->socketAddress = src.socketAddress;
-	this->socketAddressLen = src.socketAddressLen;
-	this->pollInfo = src.pollInfo;
-	this->_nickName = src._nickName;
-	this->_userName = src._userName;
-	this->_realName = src._realName;
-	// this->_IpHostName = src._IpHostName;
-	this->_server = src._server;
-	this->_isRegistered = src._isRegistered;
-	this->_password = src._password;
-	this->_buffer = src._buffer;
-	// this->_message = src._message;
-
-	// this->   = src. ; ????
-
-	return (*this);
 }

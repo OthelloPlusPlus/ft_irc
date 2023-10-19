@@ -63,9 +63,10 @@ RockBot::RockBot(Server &server): AClient (server){
 	this->_realName = "Rock-paper-scissors playing Bot";
 	this->_isRegistered = true;
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
-	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< "RockBot"
-				<< C_DGREEN	<< " called."
+	std::cout	<< C_GREEN	<< "RockBot "
+				<< C_DGREEN	<< "Did you summon me?"
+				<< C_GREEN	<< "RockBot "
+				<< C_DGREEN	<< "is here."
 				<< C_RESET	<< std::endl;
 }
 
@@ -78,12 +79,10 @@ RockBot::~RockBot(void){
 	this->closeFD();
 	if (!this->hand.empty())
 		this->hand.clear();
-	std::cout	<< C_DRED	<< "Deconstructor "
-				<< C_RED	<< "RockBot"
-				<< C_DRED	<< " called"
+	std::cout	<< C_RED	<< "RockBot says "
+				<< C_DRED	<< " I'll be back"
 				<< C_RESET	<< std::endl;
 }
-
 
 void	RockBot::rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args){
 
