@@ -12,8 +12,18 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 
 # Usage
 ## Running Server
-<!-- | Test | < | < | -->
-| Command |||
+<table>
+	<thead>
+		<tr><th colspan="3">Title</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>one</td>
+			<td>two</td>
+			<td>three</td>
+		</tr>
+	</tbody>
+| Command | Arguments | Functionality |
 | --- | --- | --- |
 | make || Compiles the files into ircserv |
 | ./ircserv | [port] [password] | Runs the binary |
