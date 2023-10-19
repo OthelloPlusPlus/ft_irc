@@ -22,7 +22,7 @@ The server has been designed for Linux, but should compatible with MacOS too.
 It can be compiled and run using the following terminal commands.
 
 <table>
-	<thead style="background-color: #FF0000;">
+	<thead style="background-color: #C0C0C0;">
 		<tr><th colspan="3">Terminal Commands</th></tr>
 		<tr>
 			<th>Command</th>
@@ -42,12 +42,12 @@ It can be compiled and run using the following terminal commands.
 			<td>Runs the binary</td>
 		</tr>
 		<tr>
-			<td>make</td>
+			<td><a href="Makefile" target="_blank">make</a></td>
 			<td>subject</td>
 			<td>Compiles the files and runs the binary with port '6667' and password set to 'password'</td>
 		</tr>
 		<tr>
-			<td>./nctest.sh</td>
+			<td><a href="nctest.sh" target="_blank">./nctest.sh</a></td>
 			<td></td>
 			<td>Runs a shell script that in turn runs nc. Automatically logs in into the server</td>
 		</tr>
