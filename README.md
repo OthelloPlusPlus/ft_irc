@@ -22,8 +22,10 @@ The server has been designed for Linux, but should compatible with MacOS too.
 It can be compiled and run using the following terminal commands.
 
 <table>
-	<thead style="background-color: #333; color: white;">
-		<tr><th colspan="3">Terminal Commands</th></tr>
+	<thead>
+		<tr style="background-color: #333; color: white;">
+			<th colspan="3">Terminal Commands</th>
+		</tr>
 		<tr>
 			<th>Command</th>
 			<th>Arguments</th>
