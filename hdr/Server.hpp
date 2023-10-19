@@ -107,6 +107,46 @@ class Server
 		void	rmTransferFile(std::string key);
 
 		//Operator overload to caternate to character strings
+# ifdef __APPLE__
+		friend std::string operator+(char c, const Server &src)
+		{
+			return (std::string(1, c) + src);
+		}
+		friend std::string operator+(const char *str, const Server &src)
+		{
+			return (std::string(str) + src);
+		}
+		friend std::string operator+(std::string str, const Server &src)
+		{
+			if (!src.serverName.empty())
+				return (str + src.serverName);
+			if (!src.localIP.empty())
+				return (str + src.localIP);
+			if (!src.publicIP.empty())
+				return (str + src.publicIP);
+			return (str);
+		}
+
+		std::string	operator+(char c)
+		{
+			return (*this + std::string(1, c));
+		}
+		std::string	operator+(const char *str)
+		{
+			return (*this + std::string(str));
+		}
+		std::string	operator+(std::string str)
+		{
+			if (!this->serverName.empty())
+				return (this->serverName + str);
+			if (!this->localIP.empty())
+				return (this->localIP + str);
+			if (!this->publicIP.empty())
+				return (this->publicIP + str);
+			return (str);
+		}
+# else
+#  include <type_traits>
 		template <typename T>
 		friend std::string	operator+(const T add, const Server &src)
 		{
@@ -136,13 +176,14 @@ class Server
 
 			ret = add;
 			if (!this->serverName.empty())
-				return (ret + this->serverName);
+				return (this->serverName + ret);
 			if (!this->localIP.empty())
-				return (ret + this->localIP);
+				return (this->localIP + ret);
 			if (!this->publicIP.empty())
-				return (ret + this->publicIP);
+				return (this->publicIP + ret);
 			return (ret);
 		}
+# endif
 };
 
 # include "Client.hpp"

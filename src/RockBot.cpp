@@ -335,7 +335,7 @@ std::string	RockBot::getMsg(void){
 		std::string name = this->recv.front().substr(1, this->recv.front().find('!') - 1);
 		std::string args = this->recv.front().substr(this->recv.front().find(' ') + 1);
 
-		std::tuple<AClient &, std::string, std::vector<std::string>> parsed = Parse::parseMsg(*this, args);
+		std::tuple<AClient &, std::string, std::vector<std::string> > parsed = Parse::parseMsg(*this, args);
 		this->rockBotRespond(name, std::get<1>(parsed), std::get<2>(parsed));
 		this->recv.pop();
 	}

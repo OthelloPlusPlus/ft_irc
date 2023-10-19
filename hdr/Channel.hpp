@@ -83,6 +83,38 @@ class Channel
 		size_t		getAdminSize(void) const;
 
 		//Operator overload to caternate to character strings
+# ifdef __APPLE__
+		friend std::string operator+(char c, const Channel &src)
+		{
+			return (std::string(1, c) + src);
+		}
+		friend std::string operator+(const char *str, const Channel &src)
+		{
+			return (std::string(str) + src);
+		}
+		friend std::string operator+(std::string str, const Channel &src)
+		{
+			if (!src.name.empty())
+				return (str + src.name);
+			return (str);
+		}
+
+		std::string	operator+(char c)
+		{
+			return (*this + std::string(1, c));
+		}
+		std::string	operator+(const char *str)
+		{
+			return (*this + std::string(str));
+		}
+		std::string	operator+(std::string str)
+		{
+			if (!this->name.empty())
+				return (this->name + str);
+			return (str);
+		}
+# else
+#  include <type_traits>
 		template <typename T>
 		friend std::string	operator+(const T add, const Channel &src)
 		{
@@ -108,9 +140,10 @@ class Channel
 
 			ret = add;
 			if (!this->name.empty())
-				return (ret + this->name);
+				return (this->name + ret);
 			return (ret);
 		}
+# endif
 };
 
 # include "AClient.hpp"

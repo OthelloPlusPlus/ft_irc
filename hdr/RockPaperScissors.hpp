@@ -16,7 +16,7 @@ class Server;
 # define USER 0
 # define BOT 1
 
-enum class e_move { ROCK, PAPER, SCISSORS};
+enum e_move {ROCK, PAPER, SCISSORS};
 
 typedef struct hand_s
 {

@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Command.cpp                                        :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/13 17:41:57 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/19 15:07:08 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,7 +455,9 @@ static void	unknownCmd(AClient &user, const std::string &cmd){
 
 	user.sendMsg(":" + *user.getServer() + " 421 " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
 	if (verboseCheck()	>= V_USER)	
-		std::cout	<<	C_LRED	<<	"The command typed is unknown" 
+		std::cout	<<	C_LRED	<<	"The command '"	
+					<<	C_RED	<< cmd
+					<<	C_LRED	<< "' is unknown" 
 					<<	C_RESET	<<	std::endl;
 	return ;
 }

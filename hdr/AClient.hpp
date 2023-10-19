@@ -62,6 +62,34 @@ class AClient
 		bool	operator<(const AClient &cmp) const;
 		bool	operator<=(const AClient &cmp) const;
 		//Operator overload to caternate to character strings
+# ifdef __APPLE__
+		friend std::string operator+(char c, const AClient &src)
+		{
+			return (std::string(1, c) + src);
+		}
+		friend std::string operator+(const char *str, const AClient &src)
+		{
+			return (std::string(str) + src);
+		}
+		friend std::string operator+(std::string str, const AClient &src)
+		{
+			return (str + src._nickName + "!~" + src._userName + '@' + src._clientIP);
+		}
+
+		std::string	operator+(char c)
+		{
+			return (*this + std::string(1, c));
+		}
+		std::string	operator+(const char *str)
+		{
+			return (*this + std::string(str));
+		}
+		std::string	operator+(std::string str)
+		{
+			return (this->_nickName + "!~" + this->_userName + '@' + this->_clientIP + str);
+		}
+# else
+#  include <type_traits>
 		template <typename T>
 		friend std::string	operator+(const T add, const AClient &src)
 		{
@@ -84,8 +112,9 @@ class AClient
 			std::string ret;
 
 			ret = add;
-			return (ret + this->_nickName + "!~" + this->_userName + '@' + this->_clientIP);
+			return (this->_nickName + "!~" + this->_userName + '@' + this->_clientIP + ret);
 		}
+# endif
 };
 
 #include "Server.hpp"

@@ -48,6 +48,7 @@
 #include <tuple>
 // for std::tuple
 #include <csignal>
+// std::signal
 
 /** ************************************************************************ **\
  * 
@@ -270,13 +271,13 @@ void	Server::shutdownServer(AClient &client, const std::string key)
 
 	if (!client.getIsOperator())
 	{
-		// client.sendMsg("How bout no");
+		client.sendMsg(":ServerBot PRIVMSG " + client.getNickName() + " :You are not allowed to do this");
 		return ;
 	}
 	lock = getenv("IRCADMINPWD");
 	if (lock != key)
 	{
-		// client.sendMsg("Uhhuh uh");
+		client.sendMsg(":ServerBot PRIVMSG " + client.getNickName() + " :Wrong password");
 		return ;
 	}
 	this->state = false;
@@ -334,7 +335,7 @@ void	Server::checkClients(void)
 					std::cout	<< "Recv ["	<< msg.length()	<< "]\t"
 								<< C_ORANGE	<< msg
 								<< C_RESET	<< std::flush;
-				std::tuple<AClient& , std::string, std::vector<std::string>> fwd = Parse::parseMsg(**client, msg);
+				std::tuple<AClient&, std::string, std::vector<std::string> > fwd = Parse::parseMsg(**client, msg);
 				Command::parseCmd(std::get<0>(fwd), std::get<1>(fwd), std::get<2>(fwd));
 				if (welcome == false && (*client)->getIsRegistered())
 					this->sendWelcome(**client);

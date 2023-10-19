@@ -49,7 +49,7 @@ std::vector<std::string> ircSplit( const std::string& input, const std::string& 
 
 }
 
-std::tuple<AClient &, std::string, std::vector<std::string>> Parse::parseMsg(AClient &user, std::string msg){
+std::tuple<AClient &, std::string, std::vector<std::string> > Parse::parseMsg(AClient &user, std::string msg){
 	std::string cmd;
 	std::string arguments;
 	std::vector<std::string>	args;
@@ -81,7 +81,7 @@ std::tuple<AClient &, std::string, std::vector<std::string>> Parse::parseMsg(ACl
 		}
 	}
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
-	return std::tuple<AClient &, std::string, std::vector<std::string>>(user, cmd, args);
+	return std::tuple<AClient &, std::string, std::vector<std::string> >(user, cmd, args);
 }
 
 

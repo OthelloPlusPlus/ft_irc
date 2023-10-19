@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/03/03 20:34:08 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/03/09 20:45:12 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/10/19 14:54:07 by ohengelm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -478,7 +478,7 @@ void	BotTicTacToe::sendMsg(std::string msg)
 {
 	std::string	name(msg.substr(1, msg.find('!') - 1));
 	std::string args(msg.substr(msg.find(' ') + 1));
-	std::tuple<AClient &, std::string, std::vector<std::string>>\
+	std::tuple<AClient &, std::string, std::vector<std::string> >\
 				prsd(Parse::parseMsg(*this, args));
 
 	this->botRespond(name, std::get<0>(prsd), std::get<1>(prsd), std::get<2>(prsd));
