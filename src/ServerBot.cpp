@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   ServerBot.cpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/10/19 20:24:51 by ohengelm      #+#    #+#                 */
+/*   Updated: 2023/10/19 20:39:59 by ohengelm      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "ServerBot.hpp"
 #include "verboseCheck.hpp"
@@ -73,6 +84,8 @@ void	ServerBot::think(std::string dest, std::string arg)
 
 	if (cmd == "//info")
 		this->thinkInfo(dest);
+	else if (cmd == "//motd")
+		this->thinkMOTD(dest, arg);
 	else if (cmd == "//shutdown")
 		this->thinkShutdown(dest, arg);
 	else if (cmd == "//help")
@@ -101,6 +114,7 @@ void	ServerBot::thinkInfo(std::string dest)
 void	ServerBot::thinkShutdown(std::string dest, std::string arg)
 {
 	size_t	pos = arg.find(' ');
+
 	if (pos == std::string::npos)
 		this->send.push("PRIVMSG " + dest + " :You need to provide a password.");
 	else
@@ -112,11 +126,25 @@ void	ServerBot::thinkShutdown(std::string dest, std::string arg)
 	}
 }
 
+void	ServerBot::thinkMOTD(std::string dest, std::string arg)
+{
+	size_t	pos = arg.find(' ');
+
+	if (pos != std::string::npos)
+	{
+		AClient *client = this->_server.getClient(dest);
+		if (client != nullptr)
+			this->_server.setMOTD(*client, arg.substr(pos + 1));
+	}
+	this->send.push("PRIVMSG " + dest + " :MotD: " + this->_server.getMOTD());
+}
+
 void	ServerBot::thinkHelp(std::string dest)
 {
 	this->send.push("PRIVMSG " + dest + " :Hello, I am ServerBot! I am part of this server and can help you a bit.");
 	this->send.push("PRIVMSG " + dest + " :Right now I can:");
 	this->send.push("PRIVMSG " + dest + " ://info:\tTo provide you with server information");
+	this->send.push("PRIVMSG " + dest + " ://motd [new message]:\tTo change the Message of the Day");
 	this->send.push("PRIVMSG " + dest + " ://shutdown [password]:\tTo shutdown the server");
 	this->send.push("PRIVMSG " + dest + " :You can also:");
 	this->send.push("PRIVMSG " + dest + " :/join [channel]:\tTo join a channel");

@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 19:24:50 by emlicame          #+#    #+#             */
-/*   Updated: 2023/10/19 17:28:34 by emlicame         ###   ########.fr       */
+/*   Updated: 2023/10/19 21:48:40 by emlicame         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <netinet/in.h>
 // struct sockaddr_in
 // socklen_t
-
 # include <poll.h>
 // struct pollfd
 # include <iostream>
@@ -31,7 +30,6 @@
 // for std::tuple
 # include <map>
 // std::map
-
 
 class Client : public AClient
 {

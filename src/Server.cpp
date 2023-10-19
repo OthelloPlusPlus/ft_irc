@@ -129,7 +129,7 @@ void	Server::validatePort(void) const
 		throw (std::range_error((msg + "Outside of port range(1024-655535)").c_str()));
 	switch (this->port)
 	{
-		case 0 ... 1023:	throw (std::range_error((msg + "Well-Known Ports(0-1023) not allowed.").c_str()));
+		case 0 ... 1023:	throw(std::range_error((msg + "Well-Known Ports(0-1023) not allowed.").c_str()));
 		case 1433:	throw(std::range_error((msg + "Port reserved for Microsoft SQL Server").c_str()));
 		case 1521:	throw(std::range_error((msg + "Port reserved for Oracle Database").c_str()));
 		case 3306:	throw(std::range_error((msg + "Port reserved for MySQL Database").c_str()));
@@ -637,6 +637,14 @@ int		Server::getPort(void) const
 int		Server::getFD(void) const
 {
 	return (this->pollInfo.fd);
+}
+
+void	Server::setMOTD(AClient &client, std::string msg)
+{
+	if (!client.getIsOperator())
+		client.sendMsg(":ServerBot PRIVMSG " + client.getNickName() + " :You are not allowed to do this");
+	else if (!msg.empty())
+		this->motd = msg;
 }
 
 std::string	Server::getMOTD(void) const
