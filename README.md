@@ -26,7 +26,7 @@ It can be compiled and run using the following temrinal commands.
 	</thead>
 	<tbody>
 		<tr>
-			<td>make</td>
+			<td>[make](Makefile)</td>
 			<td></td>
 			<td>Compiles the files into ircserv</td>
 		</tr>
@@ -69,8 +69,8 @@ We have ports, only good ones allowed!
 ## Sockets
 We have sockets, not to be confused with socks!
 ## Classes
-The bulk of this program consists of classes. There are classes for the [](Server), [](Channels) and the Clients.
-The Clients are derived for the abstract class [](AClient), from which the bots are also derived. Once a Bot or Client is added the IRC Server no longer differentiates between them.
+The bulk of this program consists of classes. There are classes for the [Server](hdr/Server.hpp), [Channels](hdr/Channel.hpp) and the Clients.
+The Clients are derived for the abstract class [AClient](hdr/AClient.hpp), from which the bots are also derived. Once a Bot or Client is added the IRC Server no longer differentiates between them.
 The Server has been structured so that new Bots can easily be implemented.
 They do require definitions for the following public member functions.
 
