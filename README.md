@@ -7,8 +7,14 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 
 ## Table of Contents
 - [Usage](#Usage)
--	 [Usage](#Usage)
+ - [Client](#Client)
+ - [Bots](#Bots)
 - [Information](#Information)
+ - [Enviroment](#Enviroment)
+ - [Sockets](#Sockets)
+ - [Ports](#Ports)
+ - [Classes](#Classes)
+ - [Namespaces](#Namespsaces)
 - [Sources](#Sources)
 
 # Usage
@@ -67,7 +73,7 @@ While the IRC Server is mainly for client to client communication. It also conta
 | [TicTacBot](hdr/BotTicTacToe.hpp) | //play | A bot that can play Tic Tac Toe. |
 | [RockBot](hdr/RockBot.hpp) | //throw | A bot that can play Rock Paper Scissors |
 
-# Explanation
+# Information
 ## Enviroment
 The project contains an [.env](.env) file which valuable information about the server.
 This includes the server name, the password for admins and the level of verbose.
