@@ -7,14 +7,14 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 
 ## Table of Contents
 - [Usage](#Usage)
- - [Client](#Client)
- - [Bots](#Bots)
+  - [Client](#Client)
+  - [Bots](#Bots)
 - [Information](#Information)
- - [Enviroment](#Enviroment)
- - [Sockets](#Sockets)
- - [Ports](#Ports)
- - [Classes](#Classes)
- - [Namespaces](#Namespsaces)
+  - [Enviroment](#Enviroment)
+  - [Sockets](#Sockets)
+  - [Ports](#Ports)
+  - [Classes](#Classes)
+  - [Namespaces](#Namespsaces)
 - [Sources](#Sources)
 
 # Usage
