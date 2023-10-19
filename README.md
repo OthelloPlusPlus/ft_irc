@@ -16,6 +16,7 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
   - [Classes](#Classes)
   - [Namespaces](#Namespaces)
 - [Sources](#Sources)
+- [Creators](#Creators)
 
 # Usage
 The server has been designed for Linux, but should compatible with MacOS too.
@@ -65,7 +66,7 @@ To connect with Pidgin make a new Account and set the following settings.
 - Set Ident name(Advanced) to the desired name
 - Set Real name(Advanced) to the desired full name
 
-Alternatively **nc** can be used to connect. This will however require the user to type in full IRC Protocol. The Shell Script [nctest.sh](#nctest.sh) can be used to quickly connect to the IRC Server and will register the user and execute a few test commands.
+Alternatively **nc** can be used to connect. This will however require the user to type in full IRC Protocol. The Shell Script [nctest.sh](nctest.sh) can be used to quickly connect to the IRC Server and will register the user and execute a few test commands.
 
 ## Bots
 While the IRC Server is mainly for client to client communication. It also contains several bots for users to interact with.
@@ -133,3 +134,12 @@ We made space for those too!
 # Sources
 - https://pidgin.im/
 - https://modern.ircdocs.horse/#introduction
+
+# Creators
+MagicEmy
+- [LinkedIn]()
+- [GitHub]()
+
+Othello
+- [LinkedIn]()
+- [GitHub](https://github.com/OthelloPlusPlus)
