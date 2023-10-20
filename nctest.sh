@@ -55,7 +55,7 @@ CHANNEL="#ncTestChannel"
 	echo > /dev/tty;
 	while [ true ]; do
 		read -p "nc (or quit): " COMMAND;
-		if [ "$COMMAND" == "quit" ]; then
+		if [ "$COMMAND" = "quit" ]; then
 			echo "QUIT :leaving...";
 			break ;
 		else

@@ -25,7 +25,7 @@ class ServerBot: public AClient
 	private:
 		std::queue<std::string>	send;
 		//Bot Responces
-		void	botRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args);
+		void	botRespond(std::string name, const std::string cmd, const std::vector<std::string> &args);
 		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
 		void	think(std::string dest, std::string arg);
 		void	thinkInfo(std::string dest);

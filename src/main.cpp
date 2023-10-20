@@ -49,14 +49,17 @@ int	main(int argc, char **argv)
 		std::cerr	<< C_RED	<< "Error: "
 					<< C_RESET	<< e.what()
 					<< std::endl;
-		return (errno);
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr	<< C_RED	<< "Error: "
-					<< C_RESET	<< e.what() << ' '	<< strerror(errno)
-					<< std::endl;
-		return (errno);
+		if (errno == EINTR)
+			std::cout	<< C_LCYAN	<< "EINTR(4): "
+						<< C_RESET	<< e.what() << strerror(errno)
+						<< std::endl;
+		else
+			std::cerr	<< C_RED	<< "Error: "
+						<< C_RESET	<< e.what() << strerror(errno)
+						<< std::endl;
 	}
-	return (0);
+	return (errno);
 }

@@ -161,6 +161,9 @@ void	Server::readEnv(void)
 		this->serverName = "OMS";
 }
 
+	 #include <sys/types.h>
+       #include <sys/socket.h>
+       #include <netdb.h>
 void	Server::setLocalIP(void)
 {
 	char	hostname[4096];

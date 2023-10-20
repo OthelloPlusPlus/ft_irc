@@ -38,7 +38,7 @@ class BotTicTacToe: public AClient
 		std::map<std::string, game_t>	game;
 
 		//Bot Responces
-		void	botRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args);
+		void	botRespond(std::string name, const std::string cmd, const std::vector<std::string> &args);
 		void	botRespondInvite(const std::vector<std::string> &args);
 		void	botRespondJoin(std::string name, const std::vector<std::string> &args);
 		void	botRespondPart(const std::vector<std::string> &args);

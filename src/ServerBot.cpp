@@ -58,11 +58,10 @@ ServerBot::~ServerBot(void)
  * 
 \* ************************************************************************** */
 
-void	ServerBot::botRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args)
+void	ServerBot::botRespond(std::string name, const std::string cmd, const std::vector<std::string> &args)
 {
 	if (cmd == "PRIVMSG")
 		this->botRespondPrivMsg(name, args);
-	(void)src;
 }
 
 void	ServerBot::botRespondPrivMsg(std::string name, const std::vector<std::string> &args)
@@ -164,7 +163,7 @@ void	ServerBot::sendMsg(std::string msg)
 	std::tuple<AClient &, std::string, std::vector<std::string> >\
 				prsd(Parse::parseMsg(*this, args));
 
-	this->botRespond(name, std::get<0>(prsd), std::get<1>(prsd), std::get<2>(prsd));
+	this->botRespond(name, std::get<1>(prsd), std::get<2>(prsd));
 }
 
 std::string	ServerBot::getMsg(void)
