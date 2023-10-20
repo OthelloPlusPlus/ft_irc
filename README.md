@@ -262,9 +262,8 @@ We made space for those too!
 - https://modern.ircdocs.horse/#introduction
 
 # Creators
-Othello
-
-[<img alt="LinkedIn" width="32px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png" />](https://www.google.com/)
+Othello<br>
+[<img alt="LinkedIn" width="32px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png target="_blank"/>](https://nl.linkedin.com/in/orlando-hengelmolen)
 
 
 
