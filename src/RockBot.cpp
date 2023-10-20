@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/20 18:18:15 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 18:18:16 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 18:46:06 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ std::string RockBot::funFactsScissors[] = {
 RockBot::RockBot(Server &server): AClient (server){
 
 	this->_nickName = "RockBot";
-	this->_userName = "RockPaperScissorBot";
-	this->_realName = "Rock-paper-scissors playing Bot";
+	this->_userName = "RockyBot";
+	this->_realName = "Rock-paper-scissors Bot";
 	this->_isRegistered = true;
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	std::cout	<< C_GREEN	<< "RockBot "
