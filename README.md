@@ -151,13 +151,10 @@ The IRC_VERBOSE setting in .env can be set to adjust the types of output are sen
 	</tbody>
 </table>
 
-<details>
-<summary>## Sockets</Summary>
 ## Sockets
 Using the [int socket()](src/Server.cpp#L190) function, a socket is created for internet communication (**AF_INET**) over which bi-directional communication (**SOCK_STREAM**) is possible.
 Using the [int setsockopt()](src/Server.cpp#L194) function, the socket is set to bind a socket, even if the address is already in use.
 For MacOS systems the function [int fcntl()](src/Server.cpp#L201) is used to ensure the socket is non-blocking (**O_NONBLOCK**).
-</details>
 
 ## Ports
 Then using the [int bind()](src/Server.cpp#L211) function, the socket is bound to the specified port and the function [int listen()](src/Server.cpp#L217) sets it to listen to the port for incoming streams and maintaining a backlog, which can store 128 (**SOMAXCONN**) incoming messages.
