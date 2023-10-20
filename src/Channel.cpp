@@ -521,9 +521,11 @@ void	Channel::sendToChannel(const std::string msg) const
 		(*i).client->sendMsg(msg);
 }
 
-void	Channel::sendToChannel(const AClient &exclude, const std::string msg) const
+void	Channel::sendToChannel(AClient &exclude, const std::string msg) const
 {
-	for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
+	if (!this->userIsInChannel(exclude))
+		exclude.sendMsg(':' + *this->server + " 401 " + exclude.getNickName() + " :You are not in channel");
+	else for (std::vector<ChannelUser>::const_iterator i = this->users.begin(); i != this->users.end(); ++i)
 		if ((*i).client != &exclude)
 			(*i).client->sendMsg(msg);
 }

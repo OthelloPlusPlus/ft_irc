@@ -434,6 +434,14 @@ void	Server::sendPong(AClient &client, const std::string token) const
 	client.sendMsg(':' + *this + " PONG " + *this + " :" + token);
 }
 
+void	Server::sendAllUsers(const std::string msg1, AClient &client, const std::string msg2) const
+{
+	if (!client.getIsOperator())
+		return ;
+	else for (std::vector<AClient *>::const_iterator client = this->clients.begin(); client != this->clients.end(); ++client)
+		(*client)->sendMsg(msg1 + (*client)->getNickName() + msg2);
+}
+
 void	Server::sendChannelList(AClient &client) const
 {
 	std::string	msg;
@@ -644,7 +652,13 @@ void	Server::setMOTD(AClient &client, std::string msg)
 	if (!client.getIsOperator())
 		client.sendMsg(":ServerBot PRIVMSG " + client.getNickName() + " :You are not allowed to do this");
 	else if (!msg.empty())
+	{
 		this->motd = msg;
+		msg = ':' + *this;
+		this->sendAllUsers(msg + " 375 ", client, " :- ft_irc Message of the Day - ");
+		this->sendAllUsers(msg + " 372 ", client, " :- " + this->motd);
+		this->sendAllUsers(msg + " 376 ", client, " :End of /MOTD command.");
+	}
 }
 
 std::string	Server::getMOTD(void) const

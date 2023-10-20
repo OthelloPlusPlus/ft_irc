@@ -83,6 +83,7 @@ class Server
 		void	sendPrivMsg(AClient &client, const std::vector<std::string> &args) const;
 		void	sendNotice(AClient &client, const std::vector<std::string> &args) const;
 		void	sendPong(AClient &client, const std::string token) const;
+		void	sendAllUsers(const std::string msg1, AClient &client, const std::string msg2) const;
 		//Channel Interaction
 		void	sendChannelList(AClient &client) const;
 		void	joinChannel(AClient &client, const std::vector<std::string> &args);

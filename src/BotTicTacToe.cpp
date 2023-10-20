@@ -64,7 +64,7 @@ BotTicTacToe::~BotTicTacToe(void)
  * 
 \* ************************************************************************** */
 
-void	BotTicTacToe::botRespond(std::string name, AClient &src, const std::string cmd, const std::vector<std::string> &args)
+void	BotTicTacToe::botRespond(std::string name, const std::string cmd, const std::vector<std::string> &args)
 {
 	if (cmd == "INVITE")
 		this->botRespondInvite(args);
@@ -74,7 +74,6 @@ void	BotTicTacToe::botRespond(std::string name, AClient &src, const std::string 
 		this->botRespondPart(args);
 	else if (cmd == "PRIVMSG")
 		this->botRespondPrivMsg(name, args);
-	(void)src;
 }
 
 void	BotTicTacToe::botRespondInvite(const std::vector<std::string> &args)
@@ -481,7 +480,7 @@ void	BotTicTacToe::sendMsg(std::string msg)
 	std::tuple<AClient &, std::string, std::vector<std::string> >\
 				prsd(Parse::parseMsg(*this, args));
 
-	this->botRespond(name, std::get<0>(prsd), std::get<1>(prsd), std::get<2>(prsd));
+	this->botRespond(name, std::get<1>(prsd), std::get<2>(prsd));
 }
 
 std::string	BotTicTacToe::getMsg(void)
