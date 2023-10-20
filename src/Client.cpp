@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 19:46:41 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 20:58:43 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 // void bzero(void *s, size_t n);
 // char *strerror(int errnum);
 #include <unistd.h>
-//	int	close(int fildes);
+// int close(int fildes);
 #include <arpa/inet.h>
 // char	*inet_ntoa(struct in_addr);
 #include <poll.h>
@@ -32,7 +32,7 @@
 #include <vector>
 // std::vector
 #include <tuple>   
-// for std::tuple
+// std::tuple
 
 /** ************************************************************************ **\
  * 
@@ -71,10 +71,12 @@ Client::~Client(void) {
 \* ************************************************************************** */
 
 std::string ipAddress(const struct sockaddr_in& socketAddress) {
+
 	return inet_ntoa(socketAddress.sin_addr);
 }
 
 void	Client::initialize(int serverFD) {
+
 	this->socketAddressLen = sizeof(this->socketAddress);
 	this->pollInfo.fd = accept(serverFD, (struct sockaddr *)&this->socketAddress, &this->socketAddressLen);
 	if (this->pollInfo.fd < 0)
@@ -96,7 +98,8 @@ void	Client::sendMsg(std::string msg) {
 					<< C_RESET	<< std::flush;
 }
 
-bool	Client::readReceive(void){
+bool	Client::readReceive(void) {
+
 		char	buffer[4096];
 		ssize_t	recvLen;
 		bzero(buffer, sizeof(buffer));
@@ -114,15 +117,13 @@ bool	Client::readReceive(void){
 		}
 		this->_buffer.append(buffer);
 		return true;
-
 }
 
-bool	Client::pollConnection(void)
-{
+bool	Client::pollConnection(void) {
+
 	if (poll(&this->pollInfo, 1, 0) == -1)
 		return (false);
-	if (this->pollInfo.revents & (POLLERR | POLLHUP))
-	{
+	if (this->pollInfo.revents & (POLLERR | POLLHUP)) {
 		close(this->pollInfo.fd);
 		this->pollInfo.fd = -1;
 		return (false);
@@ -134,14 +135,12 @@ std::string	Client::getMsg(void) {
 	if (pollConnection() == false)
 		return "";
 	if (this->pollInfo.revents & POLLIN) {
-		if(!readReceive())
-		{
+		if(!readReceive()) {
 			return "";
 		}
 	}
 	std::string::size_type pos;
-	if (!this->_buffer.empty() && (pos = this->_buffer.find('\n')) != std::string::npos)
-	{
+	if (!this->_buffer.empty() && (pos = this->_buffer.find('\n')) != std::string::npos) {
 		// Extract the complete message including the delimiter
 		std::string msg;
 		msg = this->_buffer.substr(0, pos + 1);
@@ -155,12 +154,14 @@ std::string	Client::getMsg(void) {
 }
 
 bool	Client::stillActive(void) const {
+
 	return (this->pollInfo.fd != -1);
 }
 
-bool Client::hasPassword(void) const  { return _password; }
+bool	Client::hasPassword(void) const { return _password; }
 
-std::string	Client::getBestName( void ) const {
+	std::string	Client::getBestName( void ) const {
+
 	if (!this->_nickName.empty())
 		return this->_nickName;
 	else if (!this->_clientIP.empty())
@@ -168,24 +169,21 @@ std::string	Client::getBestName( void ) const {
 	return "";
 }
 
-// std::string Client::getSourceName(void) const {
-// 	std::stringstream info;
-//     info << getBestName() << "!~" << _userName << "@" << _clientIP;
-//     return info.str();
-// }
+void	Client::setPollInfofd(int val) {
 
-void Client::setPollInfofd(int val){
 	this->pollInfo.fd = val;
 }
 
-void Client::passwordValidation(bool val){
+void	Client::passwordValidation(bool val) {
+
 	this->_password = val;
 }
 
-void	Client::setIsRegistered(bool val){
-	if (hasPassword() == true && !getNickName().empty() && !getUserName().empty()){
+void	Client::setIsRegistered(bool val) {
+
+	if (hasPassword() == true && !getNickName().empty() && !getUserName().empty()) {
 		this->_isRegistered = true;
-		if (verboseCheck() >= V_USER){
+		if (verboseCheck() >= V_USER) {
 			std::cout	<< "User " C_CYAN 	<< this->getNickName()
 											<< C_RESET " is registered by IRC Othello Magic Server"  << std::endl;	
 			this->printInfo();
@@ -197,7 +195,7 @@ void	Client::setIsRegistered(bool val){
 
 void	Client::printInfo(void) const {
 
-	if (verboseCheck() >= V_DETAILS){
+	if (verboseCheck() >= V_DETAILS) {
 		std::cout << "this->getNickName()\t" << C_BLUE << this->getNickName() << C_RESET	<< std::endl;
 		std::cout << "this->getUserName()\t" << C_BLUE << this->getUserName() << C_RESET	<< std::endl;
 		std::cout << "this->getRealName()\t" << C_BLUE << this->getRealName() << C_RESET	<< std::endl;
@@ -209,8 +207,8 @@ void	Client::printInfo(void) const {
 	}	
 }
 
-void	Client::closeFD(void)
-{
+void	Client::closeFD(void) {
+
 	if (this->pollInfo.fd > 2) {
 		close(this->pollInfo.fd);
 		this->pollInfo.fd = -1;

@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/12 13:20:26 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/12 15:54:49 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 20:34:40 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 /* ====================================||==================================== *\
 ||																			  ||
-||							ANSI Color codes								  ||
+||								ANSI Color codes							  ||
 ||	https://gist.github.com/RabaDabaDoba/145049536f815903c79944599c6f952a	  ||
 ||																			  ||
 ||																			  ||
@@ -61,7 +61,7 @@
 # define CYNB "\e[46m"
 # define WHTB "\e[47m"
 
-//High intensty background 
+//High intensty background
 # define BLKHB "\e[0;100m"
 # define REDHB "\e[0;101m"
 # define GRNHB "\e[0;102m"

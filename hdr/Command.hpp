@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/18 14:45:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 20:11:27 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 20:59:18 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,10 @@
 #include "colors.hpp"
 #include <string>
 
-enum	e_command
-{
+enum	e_command {
 	CMD_USER,
 	CMD_NICK,
-	CMD_PASS, 
+	CMD_PASS,
 	CMD_PING,
 	CMD_QUIT,
 	CMD_AWAY,
@@ -59,8 +58,7 @@ const int CMD_SIZE_OPEN_INT = CMD_SIZE_OPEN;
 const int CMD_SIZE_REGISTERED_INT = CMD_SIZE_REGISTERED;
 const int CMD_SIZE_OPER_INT = CMD_SIZE_OPER;
 
-namespace Command
-{
+namespace Command {
 	void parseCmd(AClient &user, const std::string& cmd, const std::vector<std::string>& args);
 }
 

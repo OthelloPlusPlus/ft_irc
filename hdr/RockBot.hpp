@@ -6,12 +6,12 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/20 18:18:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 18:25:24 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 20:59:55 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ROCKBOT_HPP
-#define ROCKBOT_HPP
+# define ROCKBOT_HPP
 
 class Server;
 
@@ -21,9 +21,9 @@ class Server;
 // std::string
 
 # include <queue>
-//std::queue
+// std::queue
 # include <map>
-//std::map
+// std::map
 
 # define USER 0
 # define BOT 1
@@ -44,7 +44,7 @@ class RockBot: public AClient
 		std::queue<std::string>			recv;
 		std::queue<std::string>			send;
 		std::map<std::string, hand_t>	hand;
-		
+
 		static std::string				funFactsRock[];
 		static std::string				funFactsPaper[];
 		static std::string				funFactsScissors[];
@@ -67,11 +67,9 @@ class RockBot: public AClient
 		void	newGame(std::string key);
 		void	updateGame(std::string key, hand_t &update);
 
-		// void		funFactsFiller(void);
 		std::string	getFunFact(std::string shape);
-		
-		
-	public: 
+
+	public:
 		RockBot(Server &server);
 		~RockBot(void);
 

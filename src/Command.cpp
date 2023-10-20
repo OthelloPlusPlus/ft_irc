@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 20:12:38 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 20:45:02 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,7 +309,8 @@ static void	quit(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	" is exiting the network with the message: "
 						<<	C_LCYAN	<<	args[0]
 						<<	C_RESET	<<	std::endl;
-	} else {
+	}
+	else {
 		user.sendMsg(":" + user + " QUIT Client Quit");
 		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)");
 		if (verboseCheck()	>= V_USER)
@@ -325,12 +326,11 @@ static void	quit(AClient &user, const std::vector<std::string> &args){
 *				AWAY														  *
 \* ************************************************************************** */
 
-static void away(AClient &user, const std::vector<std::string> &args){
+static void away(AClient &user, const std::vector<std::string> &args) {
 	if (args[0] == user.getAway())
 		return ;
 	user.setAway(args[0]);
-	if (args[0].empty())
-	{
+	if (args[0].empty()) {
 		user.sendMsg(':' + *user.getServer() + " 305 " + user.getBestName() + " :You are no longer marked as being away");
 		if (verboseCheck() >= V_USER)
 			std::cout	<< C_RESET	<< "User "
@@ -338,8 +338,7 @@ static void away(AClient &user, const std::vector<std::string> &args){
 						<< C_RESET	<< " is no longer away"
 						<< C_RESET	<< std::endl;
 	}
-	else
-	{
+	else {
 		user.sendMsg(":" + *user.getServer() + " 306 " + user.getBestName() + RPL_NOWAWAY);
 		if (verboseCheck()	>= V_USER)
 				std::cout	<< C_RESET	<< "User "

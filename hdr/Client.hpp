@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/18 19:24:50 by emlicame          #+#    #+#             */
-/*   Updated: 2023/10/19 21:48:40 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Client.hpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/10/20 20:29:28 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 // std::string
 # include <vector>
 // std::vector
-# include <tuple>   
+# include <tuple>
 // for std::tuple
 # include <map>
 // std::map
