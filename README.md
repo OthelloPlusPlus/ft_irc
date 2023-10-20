@@ -264,11 +264,12 @@ We made space for those too!
 # Creators
 Othello<br>
 [<img alt="LinkedIn" height="32px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png" target="_blank" />](https://nl.linkedin.com/in/orlando-hengelmolen)
+[<img alt="LinkedIn" height="32px" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" target="_blank" />](https://github.com/OthelloPlusPlus)
 
 
 
-- [LinkedIn](https://nl.linkedin.com/in/orlando-hengelmolen)
-- [GitHub](https://github.com/OthelloPlusPlus)
+<!-- - [LinkedIn](https://nl.linkedin.com/in/orlando-hengelmolen)
+- [GitHub](https://github.com/OthelloPlusPlus) -->
 
 MagicEmy
 - [LinkedIn]()
