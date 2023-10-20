@@ -76,9 +76,10 @@ static void	readAndSet(std::string file)
 	std::string	line;
 	while (std::getline(fd, line))
 	{
-		size_t	delimPos;
+		if (line.empty())
+			continue ;
 
-		delimPos = line.find('#');
+		size_t	delimPos = line.find('#');
 		if (delimPos != std::string::npos)
 		{
 			line = line.substr(0, delimPos);
