@@ -1,14 +1,9 @@
 # Intro
-<table>
-<tr>
-<td style="width: 70%;">
+<div style="display: flex; flex-direction: row;">
 > This is a quote that I want to align with an image.
-</td>
-<td style="width: 30%;">
-<img src="https://path/to/image.png" alt="Image description" style="width: 100px; height: auto;">
-</td>
-</tr>
-</table>
+<img src="https://path/to/image.png" alt="Image description" style="width: 100px; height: auto; margin-left: 10px;">
+</div>
+
 > Internet Relay Chat or IRC is a text-based communication protocol on the Internet.
 > It offers real-time messaging that can be either public or private. Users can exchange direct messages and join group channels.
 > IRC clients connect to IRC servers in order to join channels. IRC servers are connected together to form a network.
