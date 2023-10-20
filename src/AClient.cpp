@@ -37,7 +37,6 @@ AClient::~AClient(void)
  * 
 \* ************************************************************************** */
 
-
 void	AClient::printInfo(void) const
 {
 	std::cout	<< "this->_clientIP\t"	<< this->_clientIP	<< '\n'
