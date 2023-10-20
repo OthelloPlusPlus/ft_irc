@@ -111,7 +111,7 @@ void	RockBot::botRespondJoin(std::string name, const std::vector<std::string> &a
 
 	if (channel == nullptr || name != this->_nickName)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand!Look, //throw a shape...rock, paper or scissors?");
+	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand!Look, //throw rock or paper or scissors");
 }
 
 void	RockBot::botRespondPart(const std::vector<std::string> &args){
@@ -249,7 +249,7 @@ void	RockBot::rockMove(std::string dest, hand_t &hand){
 
 	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[USER] + " and I play " + hand.shapes[BOT]);
 	if (playerMove == botMove){
-		this->send.push("PRIVMSG " + dest + " :We tied!\t(•_•) ( •_•)");
+		this->send.push("PRIVMSG " + dest + " :We tied!\t(•_•)");
 		return ;
 	}
 
@@ -262,7 +262,7 @@ void	RockBot::rockMove(std::string dest, hand_t &hand){
 		this->send.push("PRIVMSG " + dest + " :Did you know? " + getFunFact(hand.shapes[USER]));
 	}
 	else {
-		this->send.push("PRIVMSG " + dest + " :I won!\t٩(^‿^)۶\tᕕ( ᐛ )ᕗ ");
+		this->send.push("PRIVMSG " + dest + " :I won!\t٩(^‿^)۶");
 		hand.winner[BOT] += 1;
 	}
 	return ;
