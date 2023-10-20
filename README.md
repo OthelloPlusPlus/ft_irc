@@ -1,7 +1,11 @@
 # Intro
 <div style="display: flex; flex-direction: row;">
 > This is a quote that I want to align with an image.
-<img src="https://path/to/image.png" alt="Image description" style="width: 100px; height: auto; margin-left: 10px;">
+> This is a quote that I want to align with an image.
+> This is a quote that I want to align with an image.
+> This is a quote that I want to align with an image.
+> This is a quote that I want to align with an image.
+<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="Image description" style="width: 100px; height: auto; margin-left: 10px;">
 </div>
 
 > Internet Relay Chat or IRC is a text-based communication protocol on the Internet.
