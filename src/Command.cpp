@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/19 15:07:08 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/10/20 20:12:38 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@
 #include <algorithm>
 // std::transform
 // #include <fcntl.h>
+#include <fstream>
+// std::ifstream
+// std::fstream
+#include <sstream>
+//  std::stringstream
 
 static void userName(AClient &user, const std::vector<std::string> &args);
 static void password(AClient &user, const std::vector<std::string> &args);
@@ -68,6 +73,7 @@ e_command	mapToEnum(std::string cmd){
 }
 
 void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<std::string>& args){
+
 	if (args.size() == 0)
 		return ;
 		
@@ -94,6 +100,8 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 		case CMD_PING:		ping(user, args);								break;
 		case CMD_QUIT:		quit(user, args);								break;
 		case CMD_AWAY:		away(user, args);								break;
+		case CMD_SIZE_OPEN:													break;
+		
 		case CMD_SEND:		send(user, args);								break;
 		case CMD_ACCEPT:	accept(user, args);								break;
 		case CMD_REJECT:	reject(user, args);								break;
@@ -106,16 +114,16 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 		case CMD_INVITE:	user.getServer()->sendInvite(user, args);		break;
 		case CMD_TOPIC:		user.getServer()->setChannelTopic(user, args);	break;
 		case CMD_MODE:		user.getServer()->setChannelMode(user, args);	break;
-
 		case CMD_NAMES:		user.getServer()->sendNames(user, args);		break;
 		case CMD_KICK:		user.getServer()->kickUser(user, args);			break;
 		case CMD_NOTICE:	user.getServer()->sendNotice(user, args);		break;
+		case CMD_SIZE_REGISTERED:											break;
+
 		case CMD_OPER:		oper(user, args);								break;
 		case CMD_KILL:		kill(user, args);								break;
-		case CMD_EMPTY:														break;
-		case CMD_SIZE_OPEN:													break;
-		case CMD_SIZE_REGISTERED:											break;
 		case CMD_SIZE_OPER:													break;
+
+		case CMD_EMPTY:														break;
 		case CMD_UNKNOWN:	unknownCmd(user, cmd);							break;
 	}
 }
@@ -133,7 +141,6 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 \* ************************************************************************** */
 
 static void	userName(AClient &user, const std::vector<std::string> &args) {
-
 
 	if (user.getIsRegistered()){
 		user.sendMsg(":" + *user.getServer() + " 462 " + user.getNickName() + ERR_ALREADYREGISTERED);
@@ -166,6 +173,7 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 		for (size_t i = 4; i < args.size(); i++)
 			temp.append(" " + args[i]);
 	}
+
 	user.setRealName(temp);
 	
 	user.setIsRegistered(true);
@@ -176,15 +184,13 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 *				PASS														  *
 \* ************************************************************************** */
 
-static void 	password(AClient &user, const std::vector<std::string>& args) {
-
+static void	password(AClient &user, const std::vector<std::string>& args) {
 
 	if (args.empty() || args[0].empty()){
 		user.sendMsg(":" + *user.getServer() + " 461 " + user.getBestName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Password not submitted. No imput provided"
 						<<	C_RESET	<<	std::endl;
-			
 		return ;
 	}
 	if (user.getIsRegistered() == true){
@@ -209,6 +215,7 @@ static void 	password(AClient &user, const std::vector<std::string>& args) {
 	}
 	if (user.getServer()->validatePassword(args[0]) == 2)
 		user.setIsOperator(true);
+
 	user.passwordValidation(true);
 	user.setIsRegistered(true);
 
@@ -221,7 +228,6 @@ static void 	password(AClient &user, const std::vector<std::string>& args) {
 static void nick(AClient &user, const std::vector<std::string> &args) {
 	
 	std::string nickname = args[0];
-	// std::vector<AClient*> clients = user.getServer()->getClientList();
 
 	if (nickname.empty()) {
 		user.sendMsg(":" + *user.getServer() + " 431 " + ERR_NONICKNAMEGIVEN);
@@ -274,6 +280,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 \* ************************************************************************** */
 
 static void ping(AClient &user, const std::vector<std::string> &args){
+	
 	if (args.empty() || args[0].empty()){
 	
 		user.sendMsg(":" + *user.getServer() + "461 PING " + ERR_NEEDMOREPARAMS);
@@ -291,10 +298,8 @@ static void ping(AClient &user, const std::vector<std::string> &args){
 *				QUIT														  *
 \* ************************************************************************** */
 
-
 static void	quit(AClient &user, const std::vector<std::string> &args){
 	
-
 	if (!args[0].empty()){
 		user.sendMsg(":" + user + " QUIT Client Quit " + args[0]);
 		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)");
@@ -315,7 +320,6 @@ static void	quit(AClient &user, const std::vector<std::string> &args){
 	}
 	user.closeFD();
 }
-
 
 /* ************************************************************************** *\
 *				AWAY														  *
@@ -349,8 +353,8 @@ static void away(AClient &user, const std::vector<std::string> &args){
 /* ************************************************************************** *\
 *				OPER														  *
 \* ************************************************************************** */
-static void	oper(AClient &user, const std::vector<std::string> &args){
-	
+
+static void	oper(AClient &user, const std::vector<std::string> &args) {
 
 	if (args.size() != 2){
 		user.sendMsg(":" + *user.getServer() + " 461 " + user.getNickName() + ERR_NEEDMOREPARAMS);
@@ -402,10 +406,10 @@ static void	oper(AClient &user, const std::vector<std::string> &args){
 	}
 }
 
-
 /* ************************************************************************** *\
 *				KILL														  *
 \* ************************************************************************** */
+
 static void	kill(AClient &user, const std::vector<std::string> &args){
 
 	if (args.size() != 2){
@@ -446,7 +450,7 @@ static void	kill(AClient &user, const std::vector<std::string> &args){
 }
 
 /* ************************************************************************** *\
-*				UNKNOWN CMD														  *
+*				UNKNOWN CMD														*
 \* ************************************************************************** */
 
 static void	unknownCmd(AClient &user, const std::string &cmd){
@@ -459,8 +463,10 @@ static void	unknownCmd(AClient &user, const std::string &cmd){
 					<<	C_RESET	<<	std::endl;
 	return ;
 }
-// 	client.sendMsg(':' + *(client.getServer()) + " 421 " + client.getNickName() + " AUTHSERV: Feature not supported");
 
+/* ************************************************************************** *\
+*				MSG - User not registered										*
+\* ************************************************************************** */
 
 static void	userNotRegisteredMsg(AClient &user, std::string cmd){
 
@@ -473,6 +479,10 @@ static void	userNotRegisteredMsg(AClient &user, std::string cmd){
 					<< C_RESET	<< std::endl;
 }
 
+/* ************************************************************************** *\
+*				MSG - User not Operator										*
+\* ************************************************************************** */
+
 static void	userNotOperatorMsg(AClient &user, std::string cmd){
 
 	if (verboseCheck() >= V_USER)
@@ -484,21 +494,9 @@ static void	userNotOperatorMsg(AClient &user, std::string cmd){
 					<< C_RESET	<< std::endl;
 }
 
-
-// static file_t	findFile(AClient &user, std::string key) {
-// 	file_t	newFile;
-
-// 	std::map<std::string, file_t>::const_iterator i = user.getServer()->fileTr.find(key);
-// 	if (i == user.getServer()->fileTr.end())
-// 		return (newFile);
-// 	return (i->second);
-// }
 /* ************************************************************************** *\
 *				SEND - File Transfer											*
 \* ************************************************************************** */
-
-#include <fstream>
-#include <sstream>
 
 static void	send(AClient &user, const std::vector<std::string> &args){
 	
@@ -553,11 +551,8 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 					<< C_LCYAN	<< fileName
 					<< C_RESET	<< " has been sent to user "
 					<< C_LCYAN	<< clientName->getNickName()
-					<< C_RESET	<< " waiting for reply"	
-
-					
+					<< C_RESET	<< " waiting for reply"
 					<< C_RESET	<< std::endl;
-	
 }
 
 // (*(dynamic_cast<Client *>(&user))).fileTr[sendFile.fileName] = sendFile;
@@ -565,7 +560,6 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 /* ************************************************************************** *\
 *				ACCEPT - File Transfer											*
 \* ************************************************************************** */
-
 
 static void accept(AClient &user, const std::vector<std::string> &args){
 
@@ -660,7 +654,6 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 /* ************************************************************************** *\
 *				REJECT - File Transfer											*
 \* ************************************************************************** */
-
 
 static void reject(AClient &user, const std::vector<std::string> &args) {
 

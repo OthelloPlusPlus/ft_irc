@@ -43,9 +43,9 @@ Chck if multiple ctrl-D freeze the nc session also in Mac
 
 
 ## Actual todo list
-- Adjust file transfer for server changes
-- File Cleanup
+- Adjust file transfer for server  TEST!!!!!! and clean
+- File Cleanup 
 - Testing
-- README.md
+- README.md Namespace - check what possible with gif 
 - Evaluate
 - get outstanding, cause we deserve it!
