@@ -72,6 +72,7 @@ static void	readAndSet(std::string file)
 	if (!fd.is_open())
 		throw (std::runtime_error("Failed to open " + file + "."));
 
+	fd.seekg(0);
 	std::string	line;
 	while (std::getline(fd, line))
 	{
@@ -92,6 +93,8 @@ static void	readAndSet(std::string file)
 		}
 		std::string	variable = trimLine(line.substr(0, delimPos), " \t");
 		std::string	value = trimLine(line.substr(delimPos + 1), " \t");
+		std::cout	<< "variable\t["<<variable<<"]\n"
+					<< "value\t["<<value<<']'<<std::endl;
 		if (setenv(variable.c_str(), value.c_str(), 1))
 		{
 			fd.close();
