@@ -46,13 +46,11 @@ class Client : public AClient
 		bool	hasPassword(void) const;
 		void	setPollInfofd(int val);
 
-
 	protected:	
 
 	public:
 		Client(Server &server);
 		~Client(void);
-
 
 		std::string	getMsg(void);
 		void		sendMsg(std::string msg);

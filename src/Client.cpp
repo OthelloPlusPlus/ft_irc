@@ -160,7 +160,6 @@ bool	Client::stillActive(void) const {
 
 bool Client::hasPassword(void) const  { return _password; }
 
-
 std::string	Client::getBestName( void ) const {
 	if (!this->_nickName.empty())
 		return this->_nickName;
@@ -179,11 +178,9 @@ void Client::setPollInfofd(int val){
 	this->pollInfo.fd = val;
 }
 
-
 void Client::passwordValidation(bool val){
 	this->_password = val;
 }
-
 
 void	Client::setIsRegistered(bool val){
 	if (hasPassword() == true && !getNickName().empty() && !getUserName().empty()){
