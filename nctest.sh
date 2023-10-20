@@ -12,7 +12,7 @@
 
 #! /bin/bash
 
-if [ "$(uname)" == "Darwin" ]; then
+if [ "$(uname)" = "Darwin" ]; then
 	IRC_SERVER=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')
 else
 	IRC_SERVER=$(hostname -I | awk '{print $1}')

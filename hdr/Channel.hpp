@@ -75,7 +75,7 @@ class Channel
 		void	sendMode(AClient &client) const;
 		//Messaging
 		void	sendToChannel(const std::string msg) const;
-		void	sendToChannel(const AClient &exclude, const std::string msg) const;
+		void	sendToChannel(AClient &exclude, const std::string msg) const;
 		//Getters
 		std::string	getName(void) const;
 		std::string getTopic(void) const;

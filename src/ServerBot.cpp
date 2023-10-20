@@ -122,6 +122,7 @@ void	ServerBot::thinkShutdown(std::string dest, std::string arg)
 		if (client == nullptr)
 			return ;
 		this->_server.shutdownServer(*client, arg.substr(pos + 1));
+		this->_server.sendAllUsers(':' + this->_nickName + " PRIVMSG ", *client, " :Server Shutdown!");
 	}
 }
 
