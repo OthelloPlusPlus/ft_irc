@@ -100,6 +100,8 @@ While the IRC Server is mainly for client to client communication. It also conta
 </table>
 
 # Information
+The IRC Server has been written in C++ and runs a server that responds to IRC Protocol messages.
+
 ## Environment
 The project contains an [.env](.env) file which valuable information about the server.
 This includes the server name, the password for admins and the level of verbose.
@@ -149,13 +151,15 @@ The IRC_VERBOSE setting in .env can be set to adjust the types of output are sen
 	</tbody>
 </table>
 
-## Sockets
+<details>
+<summary>## Sockets</Summary>
 Using the [int socket()](src/Server.cpp#L190) function, a socket is created for internet communication (**AF_INET**) over which bi-directional communication (**SOCK_STREAM**) is possible.
 Using the [int setsockopt()](src/Server.cpp#L194) function, the socket is set to bind a socket, even if the address is already in use.
 For MacOS systems the function [int fcntl()](src/Server.cpp#L201) is used to ensure the socket is non-blocking (**O_NONBLOCK**).
+</details>
 
 ## Ports
-Then using the [int bind()](https://man7.org/linux/man-pages/man2/bind.2.html) function, the socket is bound to the specified port and the function [int listen()](src/Server.cpp#L217) sets it to listen to the port for incoming streams and maintaining a backlog, which can store 128 (**SOMAXCONN**) incoming messages.
+Then using the [int bind()](src/Server.cpp#L211) function, the socket is bound to the specified port and the function [int listen()](src/Server.cpp#L217) sets it to listen to the port for incoming streams and maintaining a backlog, which can store 128 (**SOMAXCONN**) incoming messages.
 The accepted ports have been restricted to avoid usage ports that have predefined uses.
 
 <table>
@@ -214,6 +218,9 @@ The accepted ports have been restricted to avoid usage ports that have predefine
 	</tbody>
 </table>
 
+## Poll
+The chosen function to monitor incomming messages is **poll()**. It is called at two points. In the [Server](src/Server.cpp#L296) to monitor new connections and in the [Client](src/Client.cpp#L129) to monitor for new messages.
+
 ## Classes
 The bulk of this program consists of classes. There are classes for the [Server](hdr/Server.hpp), [Channels](hdr/Channel.hpp) and the Clients.
 The Clients are derived for the abstract class [AClient](hdr/AClient.hpp), from which the bots are also derived. Once a Bot or Client is added the IRC Server no longer differentiates between them.
@@ -263,13 +270,8 @@ We made space for those too!
 
 # Creators
 Othello<br>
-[<img alt="LinkedIn" height="32px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png" target="_blank" />](https://nl.linkedin.com/in/orlando-hengelmolen)
 [<img alt="LinkedIn" height="32px" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" target="_blank" />](https://github.com/OthelloPlusPlus)
-
-
-
-<!-- - [LinkedIn](https://nl.linkedin.com/in/orlando-hengelmolen)
-- [GitHub](https://github.com/OthelloPlusPlus) -->
+[<img alt="LinkedIn" height="32px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png" target="_blank" />](https://nl.linkedin.com/in/orlando-hengelmolen)
 
 MagicEmy
 - [LinkedIn]()
