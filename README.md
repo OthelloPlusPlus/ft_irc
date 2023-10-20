@@ -263,7 +263,8 @@ We made space for those too!
 
 # Creators
 Othello
-[![LinkedIn logo](https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png)](https://www.linkedin.com/in/your-linkedin-username)
+[![LinkedIn logo](https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png) style="width: 32px; height: 32px;)](https://www.linkedin.com/in/your-linkedin-username)
+
 
 - [LinkedIn](https://nl.linkedin.com/in/orlando-hengelmolen)
 - [GitHub](https://github.com/OthelloPlusPlus)
