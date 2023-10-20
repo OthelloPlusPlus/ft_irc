@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/20 18:18:15 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 18:46:06 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 19:43:55 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,12 @@ RockBot::RockBot(Server &server): AClient (server){
 	this->_realName = "Rock-paper-scissors Bot";
 	this->_isRegistered = true;
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
-	std::cout	<< C_GREEN	<< "RockBot "
-				<< C_DGREEN	<< "Did you summon me?"
-				<< C_GREEN	<< "RockBot "
-				<< C_DGREEN	<< "is here."
-				<< C_RESET	<< std::endl;
+	if (verboseCheck() >= V_DETAILS)
+		std::cout	<< C_GREEN	<< "RockBot "
+					<< C_DGREEN	<< "Did you summon me?"
+					<< C_GREEN	<< "RockBot "
+					<< C_DGREEN	<< "is here."
+					<< C_RESET	<< std::endl;
 }
 
 /****************************************************************************************\
@@ -91,9 +92,10 @@ RockBot::~RockBot(void){
 	this->closeFD();
 	if (!this->hand.empty())
 		this->hand.clear();
-	std::cout	<< C_RED	<< "RockBot"
-				<< C_DRED	<< " says: I'll be back"
-				<< C_RESET	<< std::endl;
+	if (verboseCheck() >= V_DETAILS)
+		std::cout	<< C_RED	<< "RockBot"
+					<< C_DRED	<< " says: I'll be back"
+					<< C_RESET	<< std::endl;
 }
 
 void	RockBot::rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args){
@@ -138,14 +140,12 @@ void	RockBot::botRespondPrivMsg(std::string name, const std::vector<std::string>
 
 	std::string	dest;
 
-	if (args[0][0] == '#')
-	{
+	if (args[0][0] == '#'){
 		Channel *channel = this->_server.getChannel(args[0]);
 		if (channel != nullptr)
 			dest = channel->getName();
 	}
-	else
-	{
+	else {
 		AClient *client = this->_server.getClient(name);
 		if (client != nullptr)
 			dest = client->getNickName();
@@ -173,15 +173,13 @@ void	RockBot::think(std::string dest, std::string arg){
 
 void	RockBot::botPlays(std::string dest, std::string arg){
 
-	try 
-	{
+	try	{
 		hand_t	hand = this->findGame(dest);
 		if (this->getPlayerMove(hand, arg))
 			this->rockMove(dest, hand);
 		this->updateGame(dest, hand);
-	}
-	catch(const std::exception& e)
-	{
+	} 
+	catch(const std::exception& e) {
 		this->send.push("PRIVMSG " + dest + " :" + e.what());
 	}
 }
@@ -214,7 +212,6 @@ bool	RockBot::getPlayerMove(hand_t &hand, std::string arg){
 	hand.moves++;
 	return (true);
 }
-
 
 e_move	mapToeMove(std::string shape){
 
@@ -312,8 +309,7 @@ void	RockBot::helpBot(std::string dest){
 hand_t	RockBot::findGame(std::string key){
 
 	std::map<std::string, hand_t>::const_iterator i = this->hand.find(key);
-	if (i == this->hand.end())
-	{
+	if (i == this->hand.end()){
 		this->newGame(key);
 		i = this->hand.find(key);
 	}
@@ -376,4 +372,3 @@ void	RockBot::closeFD(void){
 	while (!this->send.empty())
 		this->send.pop();
 }
-
