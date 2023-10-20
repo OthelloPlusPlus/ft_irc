@@ -70,11 +70,34 @@ Alternatively **nc** can be used to connect. This will however require the user 
 
 ## Bots
 While the IRC Server is mainly for client to client communication. It also contains several bots for users to interact with.
-| Bots |||
-| --- | --- | --- |
-| [ServerBot](hdr/ServerBot.hpp) | //info | A bot that only works through private messages. He can provide some general server information and shutdown the server. |
-| [TicTacBot](hdr/BotTicTacToe.hpp) | //play | A bot that can play Tic Tac Toe. |
-| [RockBot](hdr/RockBot.hpp) | //throw | A bot that can play Rock Paper Scissors |
+
+<table>
+	<thead style="background-color: #C0C0C0;">
+		<tr><th colspan="3">Bots</th></tr>
+		<tr>
+			<th>Main</th>
+			<th>Primary Call</th>
+			<th>Functionality</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><a href="hdr/ServerBot.hpp" target="_blank">ServerBot</a></td>
+			<td>//info</td>
+			<td>A bot that only works through private messages. He can provide some general server information and shutdown the server</td>
+		</tr>
+		<tr>
+			<td><a href="hdr/BotTicTacToe.hpp" target="_blank">TicTacBot</a></td>
+			<td>//play</td>
+			<td>A bot that can play Tic Tac Toe</td>
+		</tr>
+		<tr>
+			<td><a href="hdr/RockBot.hpp" target="_blank">RockBot</a></td>
+			<td>//throw</td>
+			<td>A bot that can play Rock Paper Scissors</td>
+		</tr>
+	</tbody>
+</table>
 
 # Information
 ## Environment
@@ -83,14 +106,48 @@ This includes the server name, the password for admins and the level of verbose.
 Whenever this file is changes, the server automatically updates accordingly.
 
 The IRC_VERBOSE setting in .env can be set to adjust the types of output are sent to the standard output.
-| Setting | enum | Message Type |
-| --- | --- | --- |
-| 0 | V_SILENT | Silent |
-| 1 | V_ADMIN | Include Admin messages |
-| 2 | V_DETAILS | Include Details on construction and deconstruction of users | 
-| 3 | V_CHANNEL | Include Channel events |
-| 4 | V_USER | Include User events |
-| 5 | V_MSG | Include all messages sent to and from the Server |
+<table>
+	<thead style="background-color: #C0C0C0;">
+		<tr><th colspan="3">Verbose Settings</th></tr>
+		<tr>
+			<th>Setting</th>
+			<th>enum</th>
+			<th>Message Type</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>0</td>
+			<td>V_SILENT</td>
+			<td>Silent</td>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td>V_ADMIN</td>
+			<td>Include Admin messages</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>V_DETAILS</td>
+			<td>Include Details on construction and deconstruction of users</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td>V_CHANNEL</td>
+			<td>Include Channel events</td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td>V_USER</td>
+			<td>Include User events</td>
+		</tr>
+		<tr>
+			<td>5</td>
+			<td>V_MSG</td>
+			<td>Include all messages sent to and from the Server</td>
+		</tr>
+	</tbody>
+</table>
 
 ## Sockets
 Using the [int socket()](src/Server.cpp#L190) function, a socket is created for internet communication (**AF_INET**) over which bi-directional communication (**SOCK_STREAM**) is possible.
@@ -101,19 +158,61 @@ For MacOS systems the function [int fcntl()](src/Server.cpp#L201) is used to ens
 Then using the [int bind()](https://man7.org/linux/man-pages/man2/bind.2.html) function, the socket is bound to the specified port and the function [int listen()](src/Server.cpp#L217) sets it to listen to the port for incoming streams and maintaining a backlog, which can store 128 (**SOMAXCONN**) incoming messages.
 The accepted ports have been restricted to avoid usage ports that have predefined uses.
 
-| Port | Usage |
-| --- | --- |
-| 0 ... 1023 | Well-Known Ports(0-1023) |
-| 1433 | Microsoft SQL Server |
-| 1521 | Oracle Database |
-| 3306 | MySQL Database |
-| 5000 | UPnP (Universal Plug and Play) control point |
-| 5222 | XMPP (Extensible Messaging and Presence Protocol) |
-| 5432 | PostgreSQL Database |
-| 7070 | Real-Time Messaging Protocol (RTMP) |
-| 8080 | Alternate HTTP (commonly used for web servers) |
-| 8443 | HTTPS Alternate (often used for secure web traffic) |
-| 9090 | Alternate Web Server (often used for web proxy servers) |
+<table>
+	<thead style="background-color: #C0C0C0;">
+		<tr><th colspan="2">Restricted Ports</th></tr>
+		<tr>
+			<th>Port</th>
+			<th>Usage</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>0 ... 1023</td>
+			<td>Well-Known Ports(0-1023)</td>
+		</tr>
+		<tr>
+			<td>1433</td>
+			<td>Microsoft SQL Server</td>
+		</tr>
+		<tr>
+			<td>1521</td>
+			<td>Oracle Database</td>
+		</tr>
+		<tr>
+			<td>3306</td>
+			<td>MySQL Database</td>
+		</tr>
+		<tr>
+			<td>5000</td>
+			<td>UPnP (Universal Plug and Play) control point</td>
+		</tr>
+		<tr>
+			<td>5222</td>
+			<td>XMPP (Extensible Messaging and Presence Protocol)</td>
+		</tr>
+		<tr>
+			<td>5432</td>
+			<td>PostgreSQL Database</td>
+		</tr>
+		<tr>
+			<td>7070</td>
+			<td>Real-Time Messaging Protocol (RTMP)</td>
+		</tr>
+		<tr>
+			<td>8080</td>
+			<td>Alternate HTTP (commonly used for web servers)</td>
+		</tr>
+		<tr>
+			<td>8443</td>
+			<td>HTTPS Alternate (often used for secure web traffic)</td>
+		</tr>
+		<tr>
+			<td>9090</td>
+			<td>Alternate Web Server (often used for web proxy servers)</td>
+		</tr>
+	</tbody>
+</table>
 
 ## Classes
 The bulk of this program consists of classes. There are classes for the [Server](hdr/Server.hpp), [Channels](hdr/Channel.hpp) and the Clients.
@@ -121,12 +220,39 @@ The Clients are derived for the abstract class [AClient](hdr/AClient.hpp), from 
 The Server has been structured so that new Bots can easily be implemented.
 They do require definitions for the following public member functions.
 
-| Return | Public Member Function | Usage |
-| --- | --- | --- |
-| bool | stillActive(void) const | Whether an AClient is still active |
-| void | closeFD(void) | Clean up function for any File Descriptors or alternatives used |
-| std::string | getMsg(void) | Messages the AClient wants to send to the server |
-| void | sendMsg(std::string msg) | Messages sent to the AClient |
+
+<table>
+	<thead style="background-color: #C0C0C0;">
+		<tr><th colspan="3">AClient Pure Virtual Public Member Functions</th></tr>
+		<tr>
+			<th>Return</th>
+			<th>Public Member Function</th>
+			<th>Usage</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>bool</td>
+			<td>stillActive(void) const</td>
+			<td>Returns whether an Aclient is active</td>
+		</tr>
+		<tr>
+			<td>void</td>
+			<td>closeFD(void)</td>
+			<td>Clean up function for any File Descriptor or used alternatives</td>
+		</tr>
+		<tr>
+			<td>std::string</td>
+			<td>getMsg(void)</td>
+			<td>Messages the AClient wants to send to the server</td>
+		</tr>
+		<tr>
+			<td>void</td>
+			<td>sendMsg(std::string msg)</td>
+			<td>Messages sent to the AClient</td>
+		</tr>
+	</tbody>
+</table>
 
 ## Namespaces
 We made space for those too!
@@ -137,7 +263,8 @@ We made space for those too!
 
 # Creators
 Othello
-- [LinkedIn]()
+[![LinkedIn logo](https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png)](https://www.linkedin.com/in/your-linkedin-username)
+- [LinkedIn](https://nl.linkedin.com/in/orlando-hengelmolen)
 - [GitHub](https://github.com/OthelloPlusPlus)
 
 MagicEmy
