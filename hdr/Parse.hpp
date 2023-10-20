@@ -28,5 +28,4 @@ namespace Parse
     parseMsg(AClient &user, std::string msg);
 }
 
-
 #endif

@@ -149,11 +149,6 @@ const std::string	&AClient::getBuffer(void) const
 	return (this->_buffer);
 }
 
-// std::string	AClient::getSourceName(void) const
-// {
-// 	return (this->_nickName + "!~" + this->_userName + '@' + this->_clientIP);
-// }
-
 /** ************************************************************************ **\
  * 
  * 	Operators

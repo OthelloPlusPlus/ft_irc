@@ -21,7 +21,6 @@
 #include <algorithm>
 // std::transform
 // #include <fcntl.h>
-// //close
 
 static void userName(AClient &user, const std::vector<std::string> &args);
 static void password(AClient &user, const std::vector<std::string> &args);
@@ -120,7 +119,6 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 		case CMD_UNKNOWN:	unknownCmd(user, cmd);							break;
 	}
 }
-
 
 /* ************************************************************************** *\
 *																			  *
@@ -720,5 +718,4 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 	
 	user.getServer()->rmTransferFile(argsFile);
 	// user.getServer()->fileTr.erase(argsFile);
-	
 }

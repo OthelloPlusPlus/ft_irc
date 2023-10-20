@@ -62,25 +62,6 @@ const int CMD_SIZE_OPER_INT = CMD_SIZE_OPER;
 namespace Command
 {
 	void parseCmd(AClient &user, const std::string& cmd, const std::vector<std::string>& args);
-	
-	// static void user(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void password(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void nick(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void ping(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void quit(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void away(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void oper(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void kill(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void	send(AClient &user, const std::string &cmd, const std::vector<std::string> &args);
-	// static void accept(AClient &user,const std::string &cmd, const std::vector<std::string> &args);
-	// static void reject(AClient &user,const std::string &cmd, const std::vector<std::string> &args);
-
-	// static void unknownCmd(AClient &user, const std::string &cmd);
-
-	// static void	userNotRegisteredMsg(AClient &user, std::string cmd);
-	// static void	userNotOperatorMsg(AClient &user, std::string cmd);
 }
 
 #endif
-
-///home/emlicame/Desktop/file.doc
