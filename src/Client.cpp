@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 18:15:16 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 19:46:41 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,16 @@ Client::Client(Server &server) : AClient(server), _password(false) {
 
 /******************************************************************************\
  * 
- * 	Deconstructors
+ * 	Destructors
  * 
 \* ************************************************************************** */
 
 Client::~Client(void) {
-	std::cout	<< C_DRED	<< "The wild "
-				<< C_RED	<< "Client " << this->getBestName()
-				<< C_DRED	<< " fled"
-				<< C_RESET	<< std::endl;
+	if (verboseCheck() >= V_USER)
+		std::cout	<< C_DRED	<< "The wild "
+					<< C_RED	<< "Client " << this->getBestName()
+					<< C_DRED	<< " fled"
+					<< C_RESET	<< std::endl;
 }
 
 /** ************************************************************************ **\
