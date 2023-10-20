@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/16 15:46:37 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/10/20 18:12:25 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/09/29 19:08:56 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,11 @@ static void	readAndSet(std::string file)
 	std::cout	<< "Updating env by reading .env file..."	<< std::endl;
 	if (!fd.is_open())
 		throw (std::runtime_error("Failed to open " + file + "."));
-std::cout << "Current position: " << fd.tellg() << std::endl;
-	fd.seekg(0);
-std::cout << "Current position: " << fd.tellg() << std::endl;
+	fd.clear();
+	fd.seekg(fd.beg);
 	std::string	line;
 	while (std::getline(fd, line))
 	{
-std::cout << "Current position: " << fd.tellg() << std::endl;
 		size_t	delimPos;
 
 		delimPos = line.find('#');
@@ -95,15 +93,12 @@ std::cout << "Current position: " << fd.tellg() << std::endl;
 		}
 		std::string	variable = trimLine(line.substr(0, delimPos), " \t");
 		std::string	value = trimLine(line.substr(delimPos + 1), " \t");
-std::cout	<< "variable\t["<<variable<<"]\n"
-			<< "value\t["<<value<<']'<<std::endl;
 		if (setenv(variable.c_str(), value.c_str(), 1))
 		{
 			fd.close();
 			throw (std::runtime_error("setenv(): "));
 		}
 	}
-std::cout << "Current position: " << fd.tellg() << std::endl;
 	fd.close();
 }
 
