@@ -15,7 +15,7 @@
 #include "Command.hpp"
 #include "ServerBot.hpp"
 #include "BotTicTacToe.hpp"
-#include "RockPaperScissors.hpp"
+#include "RockBot.hpp"
 #include "verboseCheck.hpp"
 #include "colors.hpp"
 
