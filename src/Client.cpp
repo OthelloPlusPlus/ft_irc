@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: emlicame <emlicame@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/18 19:24:58 by emlicame          #+#    #+#             */
-/*   Updated: 2023/10/19 17:27:14 by emlicame         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Client.cpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/10/20 18:15:16 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #include "Command.hpp"
 // namespace Command
 
-#include <iomanip>
 #include <string.h>
 // void bzero(void *s, size_t n);
 // char *strerror(int errnum);
@@ -42,20 +41,13 @@
 \* ************************************************************************** */
 
 Client::Client(Server &server) : AClient(server), _password(false) {
-	std::cout	<< C_DGREEN	<< "Param constructor "
-				<< C_GREEN	<< "Client"
-				<< C_DGREEN	<< " called.\n"
-				<< C_RESET	<< std::endl;
+	if (verboseCheck() >= V_USER)
+		std::cout	<< C_DGREEN	<< "A wild "
+					<< C_GREEN	<< "Client"
+					<< C_DGREEN	<< " appeared."
+					<< C_RESET	<< std::endl;
 	initialize(server.getFD());
 	this->sendMsg(UHBLU ":" + this->_server + " NOTICE * :*** To register please use commands\n" HBLU "- PASS\n- USER(user_name * host :realname)\n- NICK" CRESET);
-}
-
-Client::Client(const Client &src) : AClient(src._server), _password(src._password) {
-	*this = src;
-	std::cout	<< C_DGREEN	<< "Copy constructor "
-				<< C_GREEN	<< "Client"
-				<< C_DGREEN	<< " called."
-				<< C_RESET	<< std::endl;
 }
 
 /******************************************************************************\
@@ -65,9 +57,9 @@ Client::Client(const Client &src) : AClient(src._server), _password(src._passwor
 \* ************************************************************************** */
 
 Client::~Client(void) {
-	std::cout	<< C_DRED	<< "Deconstructor "
-				<< C_RED	<< "Client"
-				<< C_DRED	<< " called"
+	std::cout	<< C_DRED	<< "The wild "
+				<< C_RED	<< "Client " << this->getBestName()
+				<< C_DRED	<< " fled"
 				<< C_RESET	<< std::endl;
 }
 
@@ -196,12 +188,10 @@ void	Client::setIsRegistered(bool val){
 	if (hasPassword() == true && !getNickName().empty() && !getUserName().empty()){
 		this->_isRegistered = true;
 		if (verboseCheck() >= V_USER){
-			std::cout	<< std::left 		<< C_HEADER	 
-						<< getNickName() 	<< " is now registered in the " << std::getenv("IRC_SERVNAME")
-						<< std::setw(76) 	<< C_RESET		<< std::endl;;
-		} else {
 			std::cout	<< "User " C_CYAN 	<< this->getNickName()
-											<< C_RESET " is registered by IRC Othello Magic Server"  << std::endl;
+											<< C_RESET " is registered by IRC Othello Magic Server"  << std::endl;	
+			this->printInfo();
+			std::cout << verboseCheck() << std::endl;
 		}
 	}
 	(void)val;

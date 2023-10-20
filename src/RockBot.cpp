@@ -1,4 +1,16 @@
-#include "RockPaperScissors.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   RockBot.cpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/10/20 18:18:15 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/10/20 18:18:16 by emlicame      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "RockBot.hpp"
 #include "Command.hpp"
 #include "colors.hpp"
 #include "Parse.hpp"
@@ -79,8 +91,8 @@ RockBot::~RockBot(void){
 	this->closeFD();
 	if (!this->hand.empty())
 		this->hand.clear();
-	std::cout	<< C_RED	<< "RockBot says "
-				<< C_DRED	<< " I'll be back"
+	std::cout	<< C_RED	<< "RockBot"
+				<< C_DRED	<< " says: I'll be back"
 				<< C_RESET	<< std::endl;
 }
 

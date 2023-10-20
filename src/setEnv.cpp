@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/16 15:46:37 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/09/29 19:08:56 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/20 18:12:25 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,10 @@ static void	readAndSet(std::string file)
 
 	fd.seekg(0);
 	std::string	line;
+	std::cout	<< __func__ <<__LINE__	<< std::endl;
 	while (std::getline(fd, line))
 	{
+	std::cout	<< __func__ <<__LINE__	<< std::endl;
 		size_t	delimPos;
 
 		delimPos = line.find('#');
