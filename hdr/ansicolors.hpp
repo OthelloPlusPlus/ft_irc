@@ -71,7 +71,6 @@
 # define CYNHB "\e[0;106m"
 # define WHTHB "\e[0;107m"
 
-
 //High intensty text
 # define HBLK "\e[0;90m"
 # define HRED "\e[0;91m"

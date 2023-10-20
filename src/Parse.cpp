@@ -83,5 +83,3 @@ std::tuple<AClient &, std::string, std::vector<std::string> > Parse::parseMsg(AC
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
 	return std::tuple<AClient &, std::string, std::vector<std::string> >(user, cmd, args);
 }
-
-

@@ -24,7 +24,6 @@
 #include <algorithm>
 //std::transform
 
-
 std::string RockBot::funFactsRock[] = {
 	"Magma that comes from volcanoes is liquid rock.",
 	"Some rocks can float on water.",
@@ -303,8 +302,6 @@ void	RockBot::helpBot(std::string dest){
 	this->send.push("PRIVMSG " + dest + " ://stats\t\t\t\tto display the current game");
 	this->send.push("PRIVMSG " + dest + " ://restart\t\t\tto start again");
 }
-
-
 
 hand_t	RockBot::findGame(std::string key){
 
