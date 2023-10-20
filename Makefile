@@ -14,11 +14,11 @@ NAME =	ircserv
 
 CC =	c++
 CFLAGS +=	-Wall -Wextra -Werror
-ifeq ($(shell uname), Darwin)
-	CFLAGS +=	-std=c++11
-else
-	CFLAGS +=	-std=c++98
-endif
+# ifeq ($(shell uname), Darwin)
+CFLAGS +=	-std=c++11
+# else
+# 	CFLAGS +=	-std=c++98
+# endif
 DEPFLAGS +=	-MMD -MF $(DEP_DIR)$*.d
 
 INCL_HDR :=	$(shell find . -type f -name '*.hpp' -exec dirname "{}" \; | \
@@ -54,8 +54,7 @@ $(NAME): $(OBJ)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@printf	"Compiling object file: %s\n"	$@
-	printf $*
-	$(CC) $(CFLAGS) $(DEPFLAGS) $(INCL_HDR) -c $< -o $@
+	@$(CC) $(CFLAGS) $(DEPFLAGS) $(INCL_HDR) -c $< -o $@
 
 -include $(DEP)
 
