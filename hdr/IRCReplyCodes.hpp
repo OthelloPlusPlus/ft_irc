@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   IRCReplyCodes.hpp                                   :+:    :+:            */
+/*   IRCReplyCodes.hpp                                  :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: ohengelm <ohengelm@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/30 18:02:21 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/08/30 18:02:21 by ohengelm      ########   odam.nl         */
+/*   Updated: 2023/10/24 19:50:14 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,29 +90,29 @@
 # define RPL_REHASHING				"382"
 # define RPL_TIME					"391"
 # define ERR_UNKNOWNERROR			"400"
-# define ERR_NOSUCHNICK				" :No such nick/channel"	//401
-# define ERR_NOSUCHSERVER			" :No such user or server"	//402
+# define ERR_NOSUCHNICK				" :No such nick/channel"		//401
+# define ERR_NOSUCHSERVER			" :No such user or server"		//402
 # define ERR_NOSUCHCHANNEL			"403"
 # define ERR_CANNOTSENDTOCHAN		"404"
 # define ERR_TOOMANYCHANNELS		"405"
 # define ERR_WASNOSUCHNICK			"406"
-# define ERR_NOORIGIN				" :No origin specified"	//409
+# define ERR_NOORIGIN				" :No origin specified"			//409
 # define ERR_NORECIPIENT			"411"
 # define ERR_NOTEXTTOSEND			"412"
 # define ERR_INPUTTOOLONG			"417"
-# define ERR_UNKNOWNCOMMAND			" :Unknown command"	//421
+# define ERR_UNKNOWNCOMMAND			" :Unknown command"				//421
 # define ERR_NOMOTD					"422"
-# define ERR_NONICKNAMEGIVEN		" :No nickname given"	//431
-# define ERR_ERRONEUSNICKNAME		" :Erroneus nickname"	//432
+# define ERR_NONICKNAMEGIVEN		" :No nickname given"			//431
+# define ERR_ERRONEUSNICKNAME		" :Erroneus nickname"			//432
 # define ERR_NICKNAMEINUSE			" :Nickname is already in use"	//433
 # define ERR_NICKCOLLISION			" :Nickname collision KILL from <user>@<host>"	//436
 # define ERR_USERNOTINCHANNEL		"441"
 # define ERR_NOTONCHANNEL			"442"
 # define ERR_USERONCHANNEL			"443"
 # define ERR_NOTREGISTERED			"451"
-# define ERR_NEEDMOREPARAMS			" :Not enough parameters"	//461
-# define ERR_ALREADYREGISTERED		" :You may not reregister again"	//462
-# define ERR_PASSWDMISMATCH			" :Password incorrect"	//464
+# define ERR_NEEDMOREPARAMS			" :Not enough parameters"		//461
+# define ERR_ALREADYREGISTERED		" :You may not reregister again"//462
+# define ERR_PASSWDMISMATCH			" :Password incorrect"			//464
 # define ERR_YOUREBANNEDCREEP		"465"
 # define ERR_CHANNELISFULL			"471"
 # define ERR_UNKNOWNMODE			"472"

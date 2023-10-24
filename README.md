@@ -261,7 +261,17 @@ They do require definitions for the following public member functions.
 </table>
 
 ## Namespaces
-We made space for those too!
+Namespace-Based Encapsulation for Command and Parse Functionality
+
+This program utilizes namespaces, namely [Command](hdr/Command.hpp)and [Parse](hdr/Parse.hpp), to organize and encapsulate related functions. While classes are typically used for encapsulation in C++, namespaces offer an alternative approach that provides logical grouping and enhances code maintainability.
+
+Using namespaces eliminates the need to instantiate objects for accessing commands or parsing functionality, simplifying code usage and reducing memory overhead.
+
+The [Command](src/Command.cpp) namespace employs static functions to restrict their usage within the namespace itself. This effectively prevents unintended external access, simulating private access control. Only the main function is declared in the header file, while the remaining functions are called locally within the source file.
+
+The [Parse](src/Parse.cpp) namespace demonstrates another encapsulation strategy. It declares the main function in the header file and defines it in the source file, while auxiliary functions are declared and defined within an unnamed namespace in the source file. This approach limits the visibility of auxiliary functions to the parseMsg function, preventing their direct use outside the namespace.
+
+These two namespace implementations showcase different techniques to achieve encapsulation and protect the usage of methods within a namespace context.
 
 # Sources
 - https://pidgin.im/

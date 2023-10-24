@@ -6,18 +6,19 @@
 /*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/08/17 17:27:22 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 20:45:02 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/24 19:44:25 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 #include "colors.hpp"
+#include "ansicolors.hpp"
 #include <string>
 // std::string
 #include <vector>
 // std::vector
 #include <unistd.h>
-//	int	close(int filedes);
+// int close(int filedes);
 #include <algorithm>
 // std::transform
 // #include <fcntl.h>
@@ -35,15 +36,15 @@ static void quit(AClient &user, const std::vector<std::string> &args);
 static void away(AClient &user, const std::vector<std::string> &args);
 static void oper(AClient &user, const std::vector<std::string> &args);
 static void kill(AClient &user, const std::vector<std::string> &args);
-static void	send(AClient &user, const std::vector<std::string> &args);
+static void send(AClient &user, const std::vector<std::string> &args);
 static void accept(AClient &user, const std::vector<std::string> &args);
 static void reject(AClient &user, const std::vector<std::string> &args);
 
 static void unknownCmd(AClient &user, const std::string &cmd);
 
-static void	userNotRegisteredMsg(AClient &user, std::string cmd);
-static void	userNotOperatorMsg(AClient &user, std::string cmd);
-	
+static void userNotRegisteredMsg(AClient &user, std::string cmd);
+static void userNotOperatorMsg(AClient &user, std::string cmd);
+
 e_command	mapToEnum(std::string cmd){
 	if (cmd == "USER") return CMD_USER;
 	if (cmd == "NICK") return CMD_NICK;
@@ -72,21 +73,21 @@ e_command	mapToEnum(std::string cmd){
 	return CMD_UNKNOWN;
 }
 
-void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<std::string>& args){
+void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<std::string>& args) {
 
 	if (args.size() == 0)
 		return ;
 		
 	e_command command = mapToEnum(cmd);
 	
-	if (command > CMD_SIZE_OPEN_INT && command < CMD_SIZE_REGISTERED_INT){
+	if (command > CMD_SIZE_OPEN_INT && command < CMD_SIZE_REGISTERED_INT) {
 		if (!user.getIsRegistered()){
 			userNotRegisteredMsg(user, cmd);
 			return;
 		}
 	}
 
-	if (command > CMD_SIZE_REGISTERED_INT && command < CMD_SIZE_OPER_INT){
+	if (command > CMD_SIZE_REGISTERED_INT && command < CMD_SIZE_OPER_INT) {
 		if (!user.getIsOperator()){
 			userNotOperatorMsg(user, cmd);
 			return;
@@ -133,7 +134,7 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 *																			  *
 *				Static Functions											  *
 *																			  *
-*																			  *		
+*																			  *
 \* ************************************************************************** */
 
 /* ************************************************************************** *\
@@ -142,7 +143,7 @@ void Command::parseCmd(AClient &user, const std::string& cmd, const std::vector<
 
 static void	userName(AClient &user, const std::vector<std::string> &args) {
 
-	if (user.getIsRegistered()){
+	if (user.getIsRegistered()) {
 		user.sendMsg(":" + *user.getServer() + " 462 " + user.getNickName() + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
@@ -152,7 +153,7 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 		return ;
 	}
 
-	if (args.size() < 4){
+	if (args.size() < 4) {
 		user.sendMsg(":" + *user.getServer() + " 461 " + user.getBestName() + " " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error: format required: USER <user name> * <host> :<realname>" 
@@ -161,13 +162,13 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 	}
 
 	user.setUserName(args[0]);
-	if (args[1] != "*"){
+	if (args[1] != "*") {
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error: format required: USER <username> * <host> :<realname>" 
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	
+
 	std::string temp = args[3].substr(0);
 	if (args.size() > 4){
 		for (size_t i = 4; i < args.size(); i++)
@@ -175,25 +176,24 @@ static void	userName(AClient &user, const std::vector<std::string> &args) {
 	}
 
 	user.setRealName(temp);
-	
 	user.setIsRegistered(true);
-	
+
 }
 
 /* ************************************************************************** *\
-*				PASS														  *
+*				PASS														   *
 \* ************************************************************************** */
 
 static void	password(AClient &user, const std::vector<std::string>& args) {
 
-	if (args.empty() || args[0].empty()){
+	if (args.empty() || args[0].empty()) {
 		user.sendMsg(":" + *user.getServer() + " 461 " + user.getBestName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Password not submitted. No imput provided"
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	if (user.getIsRegistered() == true){
+	if (user.getIsRegistered() == true) {
 		user.sendMsg(":" + *user.getServer() + " 462 " + user.getNickName() + ERR_ALREADYREGISTERED);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User "
@@ -202,8 +202,8 @@ static void	password(AClient &user, const std::vector<std::string>& args) {
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	
-	if (user.getServer()->validatePassword(args[0]) == 0 ){
+
+	if (user.getServer()->validatePassword(args[0]) == 0 ) {
 		user.sendMsg(":" + *user.getServer() + " 464 " + user.getBestName() + " " + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cerr	<<	C_LRED	<<	"Wrong password " 
@@ -222,11 +222,11 @@ static void	password(AClient &user, const std::vector<std::string>& args) {
 }
 
 /* ************************************************************************** *\
-*				NICK														  *
+*				NICK														   *
 \* ************************************************************************** */
 
 static void nick(AClient &user, const std::vector<std::string> &args) {
-	
+
 	std::string nickname = args[0];
 
 	if (nickname.empty()) {
@@ -238,9 +238,9 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	
+
 	AClient	*clientName = user.getServer()->getClient(nickname);
-	if (clientName != nullptr && clientName != &user){
+	if (clientName != nullptr && clientName != &user) {
 		user.sendMsg(":" + *user.getServer() + " 433 " + nickname +  ERR_NICKNAMEINUSE);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Nick name not available. [" 
@@ -250,7 +250,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 		return ;
 	}
 
-	if (isdigit(nickname.at(0))){
+	if (isdigit(nickname.at(0))) {
 		user.sendMsg(":" + *user.getServer() + " 432 " + nickname  + ERR_ERRONEUSNICKNAME);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong character in name [" 
@@ -259,7 +259,7 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	for (size_t i = 1; i < nickname.size(); i++){
+	for (size_t i = 1; i < nickname.size(); i++) {
 		if (!isalnum(nickname[i])){
 			user.sendMsg(":" + *user.getServer() + "432 " + nickname + ERR_ERRONEUSNICKNAME);
 			if (verboseCheck()	>= V_USER)
@@ -270,19 +270,20 @@ static void nick(AClient &user, const std::vector<std::string> &args) {
 			return ;
 		}
 	}
+
 	user.setNickName(nickname);
 	user.setIsRegistered(true);
 
 }
 
 /* ************************************************************************** *\
-*				PING														  *
+*				PING														   *
 \* ************************************************************************** */
 
-static void ping(AClient &user, const std::vector<std::string> &args){
-	
-	if (args.empty() || args[0].empty()){
-	
+static void ping(AClient &user, const std::vector<std::string> &args) {
+
+	if (args.empty() || args[0].empty()) {
+
 		user.sendMsg(":" + *user.getServer() + "461 PING " + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"No imput provided. Command " 
@@ -291,16 +292,18 @@ static void ping(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
+
 	user.getServer()->sendPong(user, args[0]);
+
 }
 
 /* ************************************************************************** *\
-*				QUIT														  *
+*				QUIT														   *
 \* ************************************************************************** */
 
-static void	quit(AClient &user, const std::vector<std::string> &args){
-	
-	if (!args[0].empty()){
+static void	quit(AClient &user, const std::vector<std::string> &args) {
+
+	if (!args[0].empty()) {
 		user.sendMsg(":" + user + " QUIT Client Quit " + args[0]);
 		user.sendMsg("ERROR :Closing Link: " + user.getClientIP() + " (Client Quit)");
 		if (verboseCheck()	>= V_USER)
@@ -319,14 +322,17 @@ static void	quit(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	" is exiting the network"
 						<<	C_RESET	<<	std::endl;
 	}
+
 	user.closeFD();
+
 }
 
 /* ************************************************************************** *\
-*				AWAY														  *
+*				AWAY														   *
 \* ************************************************************************** */
 
 static void away(AClient &user, const std::vector<std::string> &args) {
+
 	if (args[0] == user.getAway())
 		return ;
 	user.setAway(args[0]);
@@ -350,7 +356,7 @@ static void away(AClient &user, const std::vector<std::string> &args) {
 }
 
 /* ************************************************************************** *\
-*				OPER														  *
+*				OPER														   *
 \* ************************************************************************** */
 
 static void	oper(AClient &user, const std::vector<std::string> &args) {
@@ -364,8 +370,8 @@ static void	oper(AClient &user, const std::vector<std::string> &args) {
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-		
-	if (user.getServer()->validatePassword(args[1]) != 2){
+
+	if (user.getServer()->validatePassword(args[1]) != 2) {
 		user.sendMsg(":" + *user.getServer() + " 464 " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Wrong password. Command " 
@@ -374,7 +380,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args) {
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	if (user.getIsOperator() == false){
+	if (user.getIsOperator() == false) {
 		user.sendMsg(":" + *user.getServer() + " 464 " + user.getNickName() + ERR_PASSWDMISMATCH);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
@@ -383,7 +389,7 @@ static void	oper(AClient &user, const std::vector<std::string> &args) {
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	
+
 	AClient	*clientName = user.getServer()->getClient(args[0]);
 	if (clientName == nullptr){
 		user.sendMsg(":" + *user.getServer() + " 491 " + args[0] + ERR_NOOPERHOST);
@@ -406,19 +412,19 @@ static void	oper(AClient &user, const std::vector<std::string> &args) {
 }
 
 /* ************************************************************************** *\
-*				KILL														  *
+*				KILL														   *
 \* ************************************************************************** */
 
-static void	kill(AClient &user, const std::vector<std::string> &args){
+static void	kill(AClient &user, const std::vector<std::string> &args) {
 
-	if (args.size() != 2){
+	if (args.size() != 2) {
 		user.sendMsg(":" + *user.getServer() + " 461 " + user.getNickName() + ERR_NEEDMOREPARAMS);
 		if (verboseCheck()	>= V_USER)	
 			std::cout	<<	C_LRED	<<	"Target not submitted. No imput provided" 
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	if (user.getIsOperator() == false){
+	if (user.getIsOperator() == false) {
 		user.sendMsg(":" + *user.getServer() + " 481 " + user.getNickName() + ERR_NOPRIVILEGES);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"User " 
@@ -428,7 +434,7 @@ static void	kill(AClient &user, const std::vector<std::string> &args){
 		return ;
 	}
 	AClient	*clientName = user.getServer()->getClient(args[0]);
-	if (clientName != nullptr){
+	if (clientName != nullptr) {
 		user.sendMsg("ERROR :Closing Link: " + *user.getServer() + " Killed " + clientName->getNickName() + ": " + args[args.size() - 1]);
 		clientName->closeFD();
 		if (verboseCheck()	>= V_USER)
@@ -442,21 +448,21 @@ static void	kill(AClient &user, const std::vector<std::string> &args){
 		if (verboseCheck() >= V_USER)
 			std::cout 	<<	C_LRED	<<	"Server or user "
 						<<	C_RESET	<<	args[0]
-						<<	C_LRED	<<	" targeted to be killed, does not exist"	
+						<<	C_LRED	<<	" targeted to be killed, does not exist"
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
 }
 
 /* ************************************************************************** *\
-*				UNKNOWN CMD														*
+*				UNKNOWN CMD													   *
 \* ************************************************************************** */
 
 static void	unknownCmd(AClient &user, const std::string &cmd){
 
 	user.sendMsg(":" + *user.getServer() + " 421 " + user.getBestName() + " " + cmd + ERR_UNKNOWNCOMMAND);
 	if (verboseCheck()	>= V_USER)	
-		std::cout	<<	C_LRED	<<	"The command '"	
+		std::cout	<<	C_LRED	<<	"The command '"
 					<<	C_RED	<< cmd
 					<<	C_LRED	<< "' is unknown" 
 					<<	C_RESET	<<	std::endl;
@@ -464,7 +470,7 @@ static void	unknownCmd(AClient &user, const std::string &cmd){
 }
 
 /* ************************************************************************** *\
-*				MSG - User not registered										*
+*				MSG - User not registered									   *
 \* ************************************************************************** */
 
 static void	userNotRegisteredMsg(AClient &user, std::string cmd){
@@ -479,7 +485,7 @@ static void	userNotRegisteredMsg(AClient &user, std::string cmd){
 }
 
 /* ************************************************************************** *\
-*				MSG - User not Operator										*
+*				MSG - User not Operator										   *
 \* ************************************************************************** */
 
 static void	userNotOperatorMsg(AClient &user, std::string cmd){
@@ -494,7 +500,7 @@ static void	userNotOperatorMsg(AClient &user, std::string cmd){
 }
 
 /* ************************************************************************** *\
-*				SEND - File Transfer											*
+*				SEND - File Transfer										   *
 \* ************************************************************************** */
 
 static void	send(AClient &user, const std::vector<std::string> &args){
@@ -506,7 +512,7 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	
+
 	file_t	sendFile;
 	sendFile.senderName = user.getNickName();
 	sendFile.receiverName = args[0];
@@ -542,7 +548,6 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 	clientName->sendMsg("- To reject write [REJECT <sender_name> <file_name>]");
 
 	user.getServer()->setTransferFile(sendFile.fileName, sendFile);
-	// user.getServer()->fileTr[sendFile.fileName] = sendFile;
 
 	user.sendMsg(fileName + " sent");
 	if (verboseCheck()	>= V_USER)
@@ -553,8 +558,6 @@ static void	send(AClient &user, const std::vector<std::string> &args){
 					<< C_RESET	<< " waiting for reply"
 					<< C_RESET	<< std::endl;
 }
-
-// (*(dynamic_cast<Client *>(&user))).fileTr[sendFile.fileName] = sendFile;
 
 /* ************************************************************************** *\
 *				ACCEPT - File Transfer											*
@@ -572,10 +575,11 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	std::endl;
 		return ;
 	}
-	std::string receiverName = args[0];
-	AClient	*clientName = user.getServer()->getClient(receiverName);
+	std::string senderName = args[0];
+
+	AClient	*clientName = user.getServer()->getClient(senderName);
 	if (clientName == nullptr){
-		user.sendMsg(":" + *user.getServer() + " 401 " + receiverName + ERR_NOSUCHNICK);
+		user.sendMsg(":" + *user.getServer() + " 401 " + senderName + ERR_NOSUCHNICK);
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Request rejected  " 
 						<<	C_RESET	<<	user.getServer()->getName()
@@ -583,23 +587,12 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	args[0] <<	std::endl;
 		return ;
 	}
-	if (receiverName != clientName->getNickName()){
-		user.sendMsg(":" + *user.getServer() + " 401 " + receiverName + ERR_NOSUCHNICK);
-		if (verboseCheck()	>= V_USER)
-			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	user.getServer()->getName()
-						<<	C_LRED	<<	" the nickname "
-						<<	C_RESET	<<	receiverName
-						<<	C_LRED	<<	" is not the sender"
-						<<	C_RESET	<<	std::endl;
-		return;
-	}
+
 	std::string argsFile = args[1];
 
 	file_t	sendFile = user.getServer()->getTransferFile(argsFile);
-	// file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
-    	user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
+		user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
 						<<	C_RESET	<<	user.getServer()->getName()
@@ -609,15 +602,15 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 						<<	C_RESET	<<	std::endl;
 		return;
 	}
-	
+
 	std::string filePath = argsFile;
-	
+
 	if (args.size() > 2)
 		filePath = args[2];
 
 	size_t	pos = filePath.find_last_of('/');
 	std::string	newfileName = filePath.substr(pos + 1);
-	 
+ 
 	std::fstream outFile(filePath, std::fstream::out);
 	if (!outFile.is_open())	{
 		user.sendMsg(":" + *user.getServer() + " 402 " + user.getNickName() + " :Error. Failed to open the output file");
@@ -636,18 +629,20 @@ static void accept(AClient &user, const std::vector<std::string> &args){
 	std::string userPath;
 	if (args.size() > 2)
 		userPath = " as " + filePath;
-	std::cout << "userPath [" << userPath << std::endl;
 	user.sendMsg(sendFile.fileName + " accepted" + userPath);
-	clientName->sendMsg(sendFile.fileName + " accepted");
+	if (verboseCheck()	>= V_USER)
+		std::cout	<< C_RESET	<< "File "
+					<< C_LCYAN	<< argsFile
+					<< C_RESET	<< " sent by "
+					<< C_LCYAN	<< clientName->getNickName()
+					<< C_RESET	<< " has been accepted "
+					<< C_LCYAN	<< userPath
+					<< C_RESET	<< std::endl;
 	
+	clientName->sendMsg(sendFile.fileName + " accepted");
+
 	// Remove the file entry from the map after processing
 	user.getServer()->rmTransferFile(argsFile);
-	// user.getServer()->fileTr.erase(argsFile);
-	
-	//For the server destructor ?
-    // Clear all elements from the map
-	// if (!user.getServer()->fileTr.empty())
-	// 	user.getServer()->fileTr.clear();
 }
 
 /* ************************************************************************** *\
@@ -676,7 +671,7 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 						<<	C_LRED	<<	" no user can be found for the supplied nickname "
 						<<	C_RESET	<<	senderName <<	std::endl;
 		return ;
-		
+
 	}
 	if (senderName != clientName->getNickName()){
 		user.sendMsg(":" + *user.getServer() + " 401 " + senderName + ERR_NOSUCHNICK);
@@ -692,9 +687,8 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 	std::string argsFile = args[1];
 
 	file_t	sendFile = user.getServer()->getTransferFile(argsFile);
-	// file_t sendFile = findFile(user, argsFile);
 	if (sendFile.fileName.empty()) {
-    	user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
+		user.sendMsg(":" + *user.getServer() + " ERROR " + user.getNickName() + " :File not found");
 		if (verboseCheck()	>= V_USER)
 			std::cout	<<	C_LRED	<<	"Error " 
 						<<	C_RESET	<<	user.getServer()->getName()
@@ -704,10 +698,9 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 						<<	C_RESET	<<	std::endl;
 		return;
 	}
-	
+
 	user.sendMsg(sendFile.fileName + " rejected");
 	clientName->sendMsg(sendFile.fileName + " rejected");
-	
+
 	user.getServer()->rmTransferFile(argsFile);
-	// user.getServer()->fileTr.erase(argsFile);
 }

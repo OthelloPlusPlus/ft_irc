@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:50 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 20:29:28 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/24 19:45:49 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class Client : public AClient
 		struct sockaddr_in	socketAddress;
 		socklen_t			socketAddressLen;
 		struct pollfd		pollInfo;
-		
+
 		bool				_password;
 
 		void	initialize(int serverFd);
@@ -46,7 +46,7 @@ class Client : public AClient
 		bool	hasPassword(void) const;
 		void	setPollInfofd(int val);
 
-	protected:	
+	protected:
 
 	public:
 		Client(Server &server);
@@ -54,15 +54,14 @@ class Client : public AClient
 
 		std::string	getMsg(void);
 		void		sendMsg(std::string msg);
-		void		printInfo(void) const;
-		
+		bool		stillActive(void) const;
+
 		std::string	getBestName (void) const; 
 
 		void		passwordValidation(bool val);
 		void		setIsRegistered(bool val);
 
-
-		bool		stillActive(void) const;
+		void		printInfo(void) const;
 		void		closeFD(void);
 };
 

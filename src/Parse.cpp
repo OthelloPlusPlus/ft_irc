@@ -23,17 +23,19 @@
 #include <algorithm>
 // std::transform
 
-namespace
-{
+namespace {
+
 //removed the trailing "\r\n"
-std::string cleanMsg(std::string msg){
+std::string cleanMsg(std::string msg) {
+
 	std::string del = "\r\n";
 	int end = msg.find_first_of(del, 0); 
 	msg = msg.substr(0, end);
 	return msg;
 }
 
-std::vector<std::string> ircSplit( const std::string& input, const std::string& delimiter){
+std::vector<std::string> ircSplit( const std::string& input, const std::string& delimiter) {
+
 	std::vector<std::string> tokens;
 	size_t start = 0, end = 0;
 
@@ -49,11 +51,12 @@ std::vector<std::string> ircSplit( const std::string& input, const std::string& 
 
 }
 
-std::tuple<AClient &, std::string, std::vector<std::string> > Parse::parseMsg(AClient &user, std::string msg){
+std::tuple<AClient &, std::string, std::vector<std::string> > Parse::parseMsg(AClient &user, std::string msg) {
+
 	std::string cmd;
 	std::string arguments;
 	std::vector<std::string>	args;
-	
+
 	std::string clMsg = cleanMsg(msg);
 	size_t spacePos = clMsg.find(' ');
 	if (spacePos != std::string::npos) {
@@ -64,6 +67,7 @@ std::tuple<AClient &, std::string, std::vector<std::string> > Parse::parseMsg(AC
 		cmd = clMsg.substr(0, spacePos);
 		args.push_back(arguments);
 	}
+
 	size_t colPos = arguments.find(':');
 	if (colPos != std::string::npos) {
 		std::string firstPart = arguments.substr(0, colPos);
@@ -80,6 +84,7 @@ std::tuple<AClient &, std::string, std::vector<std::string> > Parse::parseMsg(AC
 			args.push_back(arguments);
 		}
 	}
+
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
 	return std::tuple<AClient &, std::string, std::vector<std::string> >(user, cmd, args);
 }

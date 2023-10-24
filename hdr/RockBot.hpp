@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/20 18:18:40 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 20:59:55 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/24 19:51:50 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ class Server;
 # include <map>
 // std::map
 
-# define USER 0
-# define BOT 1
+# define USER	0
+# define BOT	1
 
 enum e_move {ROCK, PAPER, SCISSORS};
 
@@ -55,7 +55,7 @@ class RockBot: public AClient
 		void	botRespondPart(const std::vector<std::string> &args);
 		void	botRespondPrivMsg(std::string name, const std::vector<std::string> &args);
 		void	think(std::string dest, std::string arg);
-		
+
 		void	botPlays(std::string dest, std::string arg);
 		bool	getPlayerMove(hand_t &hand, std::string arg);
 		void	rockMove(std::string dest, hand_t &hand);

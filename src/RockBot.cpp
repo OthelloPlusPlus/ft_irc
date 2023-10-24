@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/20 18:18:15 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 19:43:55 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/24 14:10:11 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <ctime>
 // std::time_t time( std::time_t* arg );
 #include <algorithm>
-//std::transform
+// std::transform
 
 std::string RockBot::funFactsRock[] = {
 	"Magma that comes from volcanoes is liquid rock.",
@@ -50,7 +50,7 @@ std::string RockBot::funFactsPaper[] = {
 	"It can take five liters of water to make one sheet of paper."
 	};
 
-std::string RockBot::funFactsScissors[] = {		
+std::string RockBot::funFactsScissors[] = {
 	"You shouldn't run with scissors.",
 	"The first scissors with a pivot between the blades were being used by the sixth century AD.",
 	"The first scissor blades were constructed from bronze.",
@@ -67,7 +67,7 @@ std::string RockBot::funFactsScissors[] = {
 *			Constructor																	*
 \****************************************************************************************/
 
-RockBot::RockBot(Server &server): AClient (server){
+RockBot::RockBot(Server &server): AClient (server) {
 
 	this->_nickName = "RockBot";
 	this->_userName = "RockyBot";
@@ -86,7 +86,7 @@ RockBot::RockBot(Server &server): AClient (server){
 *			Destructor																	*
 \****************************************************************************************/
 
-RockBot::~RockBot(void){
+RockBot::~RockBot(void) {
 
 	this->closeFD();
 	if (!this->hand.empty())
@@ -97,7 +97,7 @@ RockBot::~RockBot(void){
 					<< C_RESET	<< std::endl;
 }
 
-void	RockBot::rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args){
+void	RockBot::rockBotRespond(std::string name, const std::string cmd, const std::vector<std::string> &args) {
 
 	if (cmd == "INVITE")
 		this->botRespondInvite(args);
@@ -124,7 +124,8 @@ void	RockBot::botRespondJoin(std::string name, const std::vector<std::string> &a
 
 	if (channel == nullptr || name != this->_nickName)
 		return ;
-	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand!Look, //throw rock or paper or scissors");
+	this->send.push("PRIVMSG " + channel->getName() + " :I'm a bot with a hand! Look, //throw rock or paper or scissors");
+	this->send.push("PRIVMSG " + channel->getName() + " :for help, write //helpbot");
 }
 
 void	RockBot::botRespondPart(const std::vector<std::string> &args){
@@ -257,20 +258,20 @@ void	RockBot::rockMove(std::string dest, hand_t &hand){
 
 	this->send.push("PRIVMSG " + dest + " :You play " + hand.shapes[USER] + " and I play " + hand.shapes[BOT]);
 	if (playerMove == botMove){
-		this->send.push("PRIVMSG " + dest + " :We tied!\t(•_•)");
+		this->send.push("PRIVMSG " + dest + " :We tied!  (•_•)");
 		return ;
 	}
 
 	if ((playerMove == e_move::ROCK && botMove == e_move::SCISSORS)	|| \
 		(playerMove == e_move::PAPER && botMove == e_move::ROCK)	|| \
 		(playerMove == e_move::SCISSORS  && botMove == e_move::PAPER)){
-		this->send.push("PRIVMSG " + dest + " :You won!\t(╥﹏╥)");
+		this->send.push("PRIVMSG " + dest + " :You won!  (╥﹏╥)");
 		hand.winner[USER] += 1;
 		std::cout << "fun fact " << getFunFact(hand.shapes[USER]) << std::endl;
 		this->send.push("PRIVMSG " + dest + " :Did you know? " + getFunFact(hand.shapes[USER]));
 	}
 	else {
-		this->send.push("PRIVMSG " + dest + " :I won!\t٩(^‿^)۶");
+		this->send.push("PRIVMSG " + dest + " :I won!  ٩(^‿^)۶");
 		hand.winner[BOT] += 1;
 	}
 	return ;
