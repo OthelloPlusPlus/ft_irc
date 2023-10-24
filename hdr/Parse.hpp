@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Parse.hpp                                          :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
+/*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/09/18 18:37:36 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/20 20:32:25 by emlicame      ########   odam.nl         */
+/*   Created: 2023/10/24 20:21:57 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/10/24 20:22:02 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 

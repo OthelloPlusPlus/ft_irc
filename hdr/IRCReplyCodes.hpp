@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   IRCReplyCodes.hpp                                  :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ohengelm <ohengelm@student.codam.nl>         +#+                     */
+/*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/08/30 18:02:21 by ohengelm      #+#    #+#                 */
-/*   Updated: 2023/10/24 19:50:14 by emlicame      ########   odam.nl         */
+/*   Created: 2023/10/24 20:23:08 by emlicame      #+#    #+#                 */
+/*   Updated: 2023/10/24 20:23:11 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
