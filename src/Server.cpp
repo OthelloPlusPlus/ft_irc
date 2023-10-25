@@ -512,7 +512,10 @@ void	Server::sendInvite(AClient &client, const std::vector<std::string> &args) c
 		for (std::set<AClient *>::iterator j = name.begin(); j != name.end(); ++j)
 		{
 			if (!(*i)->userIsInChannel(**j))
+			{
 				(*j)->sendMsg(':' + client + " INVITE " + (*j)->getNickName() + " :" + (*i)->getName());
+				(*i)->addInvite(**j);
+			}
 			else
 				client.sendMsg(':' + *this + " 443 " + client.getNickName() + ' ' + (*j)->getNickName() + ' ' + (*i)->getName() + " :is already on channel");
 		}

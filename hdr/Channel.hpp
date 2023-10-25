@@ -20,6 +20,8 @@ class Server;
 // std::string
 #include <vector>
 // std::vector
+#include <set>
+// std::set
 
 struct ChannelUser
 {
@@ -40,6 +42,7 @@ class Channel
 
 		Server	*server;
 		std::vector<ChannelUser>	users;
+		std::set<std::string>		invitedUsers;
 
 		//User Management
 		bool	addClientValidate(const AClient &newClient, const std::string password);
@@ -62,6 +65,7 @@ class Channel
 		~Channel(void);
 		//User Management
 		void	addClient(AClient &newClient, bool admin, const std::string password);
+		void	addInvite(AClient &addClient);
 		void	kickUser(AClient &client, const std::vector<std::string> &names);
 		void	removeUser(const AClient &client);
 		void	promoteOldestUser(void);

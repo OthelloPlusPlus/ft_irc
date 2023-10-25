@@ -48,6 +48,7 @@ Channel::Channel(std::string name, Server *server): name(name), modeInvite(false
 Channel::~Channel(void)
 {
 	this->users.clear();
+	this->invitedUsers.empty();
 	if (verboseCheck() >= V_CHANNEL)
 		std::cout	<< C_RED	<< "Channel "
 					<< C_RESET	<< this->name
@@ -109,6 +110,16 @@ bool	Channel::addClientValidate(const AClient &newClient, const std::string pass
 						<< C_RESET	<< std::endl;
 		return (false);
 	}
+	std::set<std::string>::iterator	i = this->invitedUsers.find(newClient.getNickName());
+	if (this->modeInvite)
+	{
+		if (i != this->invitedUsers.end())
+		{
+			this->invitedUsers.erase(i);
+			return (true);
+		}
+		return (false);
+	}
 	if (!this->key.empty() && this->key != password)
 	{
 		if (verboseCheck() >= V_CHANNEL)
@@ -125,7 +136,14 @@ bool	Channel::addClientValidate(const AClient &newClient, const std::string pass
 		}
 		return (false);
 	}
+	if (i != this->invitedUsers.end())
+		this->invitedUsers.erase(i);
 	return (true);
+}
+
+void	Channel::addInvite(AClient &addClient)
+{
+	this->invitedUsers.insert(addClient.getNickName());
 }
 
 void	Channel::sendTopic(AClient &client) const
