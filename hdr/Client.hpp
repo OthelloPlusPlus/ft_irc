@@ -61,7 +61,6 @@ class Client : public AClient
 		void		passwordValidation(bool val);
 		void		setIsRegistered(bool val);
 
-		// void		printInfo(void) const;
 		void		closeFD(void);
 };
 

@@ -20,7 +20,7 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
 - [Creators](#Creators)
 
 # Usage
-The server has been designed for Linux, but should compatible with MacOS too.
+The server has been created for and tested on Linux, but also has been designed to be compatible with MacOS.
 It can be compiled and run using the following terminal commands.
 
 <table>
@@ -156,12 +156,12 @@ The IRC_VERBOSE setting in .env can be set to adjust the types of output are sen
 </table>
 
 ## Sockets
-Using the [int socket()](src/Server.cpp#L190) function, a socket is created for internet communication (**AF_INET**) over which bi-directional communication (**SOCK_STREAM**) is possible.
-Using the [int setsockopt()](src/Server.cpp#L194) function, the socket is set to bind a socket, even if the address is already in use.
-For MacOS systems the function [int fcntl()](src/Server.cpp#L201) is used to ensure the socket is non-blocking (**O_NONBLOCK**).
+Using the [int socket()](src/Server.cpp#L194) function, a socket is created for internet communication (**AF_INET**) over which bi-directional communication (**SOCK_STREAM**) is possible.
+Using the [int setsockopt()](src/Server.cpp#L198) function, the socket is set to bind a socket, even if the address is already in use.
+For MacOS systems the function [int fcntl()](src/Server.cpp#L205) is used to ensure the socket is non-blocking (**O_NONBLOCK**).
 
 ## Ports
-Then using the [int bind()](src/Server.cpp#L211) function, the socket is bound to the specified port and the function [int listen()](src/Server.cpp#L217) sets it to listen to the port for incoming streams and maintaining a backlog, which can store 128 (**SOMAXCONN**) incoming messages.
+Then using the [int bind()](src/Server.cpp#L215) function, the socket is bound to the specified port and the function [int listen()](src/Server.cpp#L221) sets it to listen to the port for incoming streams and maintaining a backlog, which can store 128 (**SOMAXCONN**) incoming messages.
 The accepted ports have been restricted to avoid usage ports that have predefined uses.
 
 <table>
@@ -221,7 +221,7 @@ The accepted ports have been restricted to avoid usage ports that have predefine
 </table>
 
 ## Poll
-The chosen function to monitor incomming messages is **poll()**. It is called at two points. In the [Server](src/Server.cpp#L296) to monitor new connections and in the [Client](src/Client.cpp#L129) to monitor for new messages.
+The chosen function to monitor incomming messages is **poll()**. It is called at two points. In the [Server](src/Server.cpp#L300) to monitor new connections and in the [Client](src/Client.cpp#L129) to monitor for new messages.
 
 ## Classes
 The bulk of this program consists of classes. There are classes for the [Server](hdr/Server.hpp), [Channels](hdr/Channel.hpp) and the Clients.

@@ -49,7 +49,7 @@ std::vector<std::string> ircSplit( const std::string& input, const std::string& 
 	return tokens;
 }
 
-}
+}// endof namespace
 
 std::tuple<AClient &, std::string, std::vector<std::string> > Parse::parseMsg(AClient &user, std::string msg) {
 

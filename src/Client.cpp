@@ -224,36 +224,6 @@ const char* verboseToString(e_verbose verbose) {
     }
 }
 
-// void	Client::printInfo(void) const {
-
-// 	std::unordered_map<int, std::string> verboseNames = {
-//         {V_ERR, "V_ERR"},
-//         {V_SILENT, "V_SILENT"},
-//         {V_ADMIN, "V_ADMIN"},
-//         {V_CHANNEL, "V_CHANNEL"},
-//         {V_USER, "V_USER"},
-//         {V_DETAILS, "V_DETAILS"},
-//         {V_MSG, "V_MSG"}
-//     };
-
-//     auto it = verboseNames.find(verboseCheck());
-
-// 	if (verboseCheck() >= V_DETAILS) {
-// 		std::cout << "this->getNickName()\t" << C_BLUE	<< this->getNickName()	<< C_RESET	<< std::endl;
-// 		std::cout << "this->getUserName()\t" << C_BLUE	<< this->getUserName()	<< C_RESET	<< std::endl;
-// 		std::cout << "this->getRealName()\t" << C_BLUE	<< this->getRealName()	<< C_RESET	<< std::endl;
-// 		std::cout << "this->getClientIP()\t" << C_BLUE	<< this->getClientIP()	<< C_RESET	<< std::endl;
-// 		std::cout << "this->getIsRegistered()\t" << C_BLUE << this->getIsRegistered() << C_RESET	<< std::endl;
-// 		std::cout << "this->hasPassword()\t" << C_BLUE	<< this->hasPassword()	<< C_RESET	<< std::endl;
-// 		std::cout << "this->getIsOperator\t" << C_BLUE	<< this->getIsOperator()<< C_RESET	<< std::endl;
-// 		std::cout << "Verbose Value \t\t" 	 << C_BLUE	<< verboseCheck()		<< C_RESET	<< std::endl;
-// 		if (it != verboseNames.end())
-// 			std::cout << "Verbose level\t\t" << C_BLUE	<< it->second 			<< C_RESET	<< std::endl;
-//     	else
-// 			std::cout << "Unknown Verbose level:\t" << C_BLUE	<<verboseCheck() 	<< C_RESET	<< std::endl;
-// 	}
-// }
-
 void	Client::closeFD(void) {
 
 	if (this->pollInfo.fd > 2) {
