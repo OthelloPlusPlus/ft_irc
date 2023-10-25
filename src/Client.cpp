@@ -34,6 +34,10 @@
 #include <tuple>   
 // std::tuple
 
+#ifndef BUFFER_SIZE
+# define BUFFER_SIZE 4096
+#endif
+
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -102,7 +106,7 @@ void	Client::sendMsg(std::string msg) {
 
 bool	Client::readReceive(void) {
 
-	char	buffer[409688];
+	char	buffer[BUFFER_SIZE];
 	ssize_t	recvLen;
 	bzero(buffer, sizeof(buffer));
 	recvLen = recv(this->pollInfo.fd, buffer, sizeof(buffer) - 1, 0);

@@ -50,6 +50,10 @@
 #include <csignal>
 // std::signal
 
+#ifndef BUFFER_SIZE
+# define BUFFER_SIZE 4096
+#endif
+
 /** ************************************************************************ **\
  * 
  * 	Constructors
@@ -163,7 +167,7 @@ void	Server::readEnv(void)
 
 void	Server::setLocalIP(void)
 {
-	char	hostname[4096];
+	char	hostname[BUFFER_SIZE];
 	struct ifaddrs	*ifap0, *ifap;
 
 	if (gethostname(hostname, sizeof(hostname)) == 0)
