@@ -68,7 +68,7 @@ To connect with Pidgin make a new Account and set the following settings.
 - Set Ident name(Advanced) to the desired name
 - Set Real name(Advanced) to the desired full name
 ![ModifyAccountAdvanced](imgs/AccountAdvanced.png)
-<p>
+<p float="center">
 <img src="imgs/AccountBasic.png" alt="ModifyAccountBasic" width="42%"/>
 <img src="imgs/AccountBasic.png" alt="ModifyAccountBasic" width="42%"/>
 </p>
