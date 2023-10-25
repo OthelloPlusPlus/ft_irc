@@ -59,7 +59,7 @@ It can be compiled and run using the following terminal commands.
 ## Client
 While this server, in theory, is compatible with all IRC Clients that follow the IRC protocol. It has been tested using [Pidgin](https://pidgin.im/) and is fully compatible with it.
 To connect with Pidgin make a new Account and set the following settings.
-- Set Protocol to '**IRC**' ![Protocol](./imgs/Protocol.png)
+- Set Protocol to '**IRC**' ![Protocol](imgs/Protocol.png)
 - Set Username to the desired Nickname
 - Set Server to the **Local IP Address** provided by the IRC Server
 - Set Password to the password passed to the server
