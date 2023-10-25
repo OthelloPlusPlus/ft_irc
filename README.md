@@ -66,7 +66,8 @@ To connect with Pidgin make a new Account and set the following settings.
 - Set Port(Advanced) to the port passed to the server
 - Set Ident name(Advanced) to the desired name
 - Set Real name(Advanced) to the desired full name
-[<img alt="Protocol" height="32px" src="imgs/Protocol.png" target="_blank" />](https://github.com/OthelloPlusPlus)
+<br>
+[<img alt="Protocol" height="32px" src="imgs/Account.png" target="_blank" />](https://github.com/OthelloPlusPlus)
 
 Alternatively **nc** can be used to connect. This will however require the user to type in full IRC Protocol. The Shell Script [nctest.sh](nctest.sh) can be used to quickly connect to the IRC Server and will register the user and execute a few test commands.
 
