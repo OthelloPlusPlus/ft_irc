@@ -63,7 +63,6 @@ To connect with Pidgin make a new Account and set the following settings.
 - Set Username to the desired Nickname
 - Set Server to the **Local IP Address** provided by the IRC Server
 - Set Password to the password passed to the server
-
 - Set Port(Advanced) to the port passed to the server
 - Set Ident name(Advanced) to the desired name
 - Set Real name(Advanced) to the desired full name
