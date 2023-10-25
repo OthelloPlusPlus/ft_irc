@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/18 19:24:58 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/24 14:48:16 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/25 11:59:03 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ Client::Client(Server &server) : AClient(server), _password(false) {
 					<< C_DGREEN	<< " appeared."
 					<< C_RESET	<< std::endl;
 	initialize(server.getFD());
-	this->sendMsg(UHBLU ":" + this->_server + " NOTICE * :*** To register please use commands\n" HBLU "- PASS\n- USER(user_name * host :realname)\n- NICK" CRESET);
+	this->sendMsg(UHBLU ":" + this->_server + " NOTICE * :*** To register please use commands\n" HBLU "- PASS\n- USER <user_name> * <host> :<realname>\n- NICK" CRESET);
 };
 
 /******************************************************************************\
@@ -102,7 +102,7 @@ void	Client::sendMsg(std::string msg) {
 
 bool	Client::readReceive(void) {
 
-	char	buffer[4096];
+	char	buffer[409688];
 	ssize_t	recvLen;
 	bzero(buffer, sizeof(buffer));
 	recvLen = recv(this->pollInfo.fd, buffer, sizeof(buffer) - 1, 0);

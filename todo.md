@@ -43,9 +43,10 @@ Chck if multiple ctrl-D freeze the nc session also in Mac
 
 
 ## Actual todo list
-- Adjust file transfer for server  TEST!!!!!! and clean
-- File Cleanup 
 - Testing
-- README.md Namespace - check what possible with gif 
+- README.md check what possible with gif 
 - Evaluate
 - get outstanding, cause we deserve it!
+
+
+// this->sendMsg(UHBLU ":" + this->_server + " NOTICE * :*** To get the list of commands use HELP" CRESET);

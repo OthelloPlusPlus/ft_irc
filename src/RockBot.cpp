@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/20 18:18:15 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/24 14:10:11 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/25 12:08:13 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ RockBot::RockBot(Server &server): AClient (server) {
 	this->_isRegistered = true;
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	if (verboseCheck() >= V_DETAILS)
-		std::cout	<< C_GREEN	<< "RockBot "
-					<< C_DGREEN	<< "Did you summon me?"
+		std::cout	<< C_GREEN	<< "RockBot:   "
+					<< C_DGREEN	<< "Did you summon me? "
 					<< C_GREEN	<< "RockBot "
 					<< C_DGREEN	<< "is here."
 					<< C_RESET	<< std::endl;
@@ -167,7 +167,8 @@ void	RockBot::think(std::string dest, std::string arg){
 		this->helpBot(dest);
 	else if (dest[0] != '#')
 		this->send.push("PRIVMSG " + dest + " :Huh?");
-	else if (dest[0] == '#' && cmd.compare(0, 2, "//") == 0)
+	else if (dest[0] == '#' && cmd.compare(0, 2, "//") == 0 && \
+			cmd != "//play" && cmd != "//level" && cmd != "//show" && cmd != "//reset" && cmd != "//help")
 		this->send.push("PRIVMSG " + dest + " :Hemmhh...I don't recognise this command ¯\\_(ツ)_/¯");
 }
 
