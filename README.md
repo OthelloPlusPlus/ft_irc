@@ -270,8 +270,8 @@ Namespace-Based Encapsulation for Command and Parse Functionality
 
 This program utilizes namespaces, namely [Command](hdr/Command.hpp) and [Parse](hdr/Parse.hpp), to organize and encapsulate related functions.
 
-While classes are typically used for encapsulation in C++, we used namespaces as an alternative approach that provides logical grouping and 
-enhances code maintainability.Using namespaces we eliminated the need to instantiate objects for accessing commands or parsing functionality, simplifying code usage and reducing memory overhead.
+While classes are typically used for encapsulation in C++, the program makes use of namespaces as an alternative approach that provides logical grouping and enhances code maintainability. 
+The use of namespaces eliminates the need to instantiate objects for accessing commands or parsing functionality, simplifying code usage and reducing memory overhead.
 
 The [Command](src/Command.cpp) namespace employs static functions to restrict their usage within the namespace itself. This effectively prevents unintended external access, simulating private access control. Only the main function is declared in the header file, while the remaining functions are called locally within the source file.
 
