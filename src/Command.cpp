@@ -6,7 +6,7 @@
 /*   By: emlicame <emlicame@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/24 20:22:20 by emlicame      #+#    #+#                 */
-/*   Updated: 2023/10/24 20:22:23 by emlicame      ########   odam.nl         */
+/*   Updated: 2023/10/25 19:54:22 by emlicame      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -673,17 +673,7 @@ static void reject(AClient &user, const std::vector<std::string> &args) {
 		return ;
 
 	}
-	if (senderName != clientName->getNickName()){
-		user.sendMsg(":" + *user.getServer() + " 401 " + senderName + ERR_NOSUCHNICK);
-		if (verboseCheck()	>= V_USER)
-			std::cout	<<	C_LRED	<<	"Request rejected  " 
-						<<	C_RESET	<<	user.getServer()->getName()
-						<<	C_LRED	<<	" the nickname "
-						<<	C_RESET	<<	senderName
-						<<	C_LRED	<<	" is not the sender"
-						<<	C_RESET	<<	std::endl;
-		return;
-	}
+
 	std::string argsFile = args[1];
 
 	file_t	sendFile = user.getServer()->getTransferFile(argsFile);
