@@ -16,6 +16,7 @@ This program creates and runs an IRC server. It follows the IRC protocols when c
   - [Poll](#Poll)
   - [Classes](#Classes)
   - [Namespaces](#Namespaces)
+- [Evaluation](#Evaluation)
 - [Sources](#Sources)
 - [Creators](#Creators)
 
@@ -276,6 +277,10 @@ The [Command](src/Command.cpp) namespace employs static functions to restrict th
 The [Parse](src/Parse.cpp) namespace demonstrates another encapsulation strategy. It declares the main function in the header file and defines it in the source file, while auxiliary functions are declared and defined within an unnamed namespace in the source file. This approach limits the visibility of auxiliary functions to the [parseMsg()](src/Parse.cpp#L54) function, preventing their direct use outside the namespace.
 
 These two namespace implementations showcase different techniques to achieve encapsulation and protect the usage of methods within a namespace context.
+
+# Evaluation
+**Score:** 122%
+> "I am absolutely mesmerised by this project. You put so much work and thought into this, it is brilliant! Everything works so well and even the tiniest details are well thought through! There is just one tiny forgotten check, but other than that it is freakin' awesome!"
 
 # Sources
 - https://pidgin.im/
