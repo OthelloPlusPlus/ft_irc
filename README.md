@@ -68,8 +68,8 @@ To connect with Pidgin make a new Account and set the following settings.
 - Set Ident name(Advanced) to the desired name
 - Set Real name(Advanced) to the desired full name
 ![ModifyAccountAdvanced](imgs/AccountAdvanced.png)
-<img src="imgs/AccountBasic.png" alt="ModifyAccountBasic" width="50%"/>
-<img src="imgs/AccountBasic.png" alt="ModifyAccountBasic" width="50%"/>
+<img src="imgs/AccountBasic.png" alt="ModifyAccountBasic" width="49%"/>
+<img src="imgs/AccountBasic.png" alt="ModifyAccountBasic" width="49%"/>
 Alternatively **nc** can be used to connect. This will however require the user to type in full IRC Protocol. The Shell Script [nctest.sh](nctest.sh) can be used to quickly connect to the IRC Server and will register the user and execute a few test commands.
 
 ## Bots
