@@ -14,11 +14,7 @@ NAME =	ircserv
 
 CC =	c++
 CFLAGS +=	-Wall -Wextra -Werror
-# ifeq ($(shell uname), Darwin)
 CFLAGS +=	-std=c++11
-# else
-# 	CFLAGS +=	-std=c++98
-# endif
 DEPFLAGS +=	-MMD -MF $(DEP_DIR)$*.d
 
 INCL_HDR :=	$(shell find . -type f -name '*.hpp' -exec dirname "{}" \; | \
@@ -61,18 +57,12 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 subject: all
 	./$(NAME) 6667 password
 
-eaves:#remove (also in fclean)
-	@$(CC) ./functiontesting/poll/eavesdrop.cpp -o eavesdrop
-	@printf	"Running eavesdrop:\n"
-	@./eavesdrop
-
 clean:
 	@rm -f $(OBJ)
 	@rm -f $(DEP)
 
 fclean: clean
 	@rm -f $(NAME)
-	@rm -f eavesdrop
 	@rm -f ._*
 	@rmdir $(DIRS) 2> /dev/null || true
 
