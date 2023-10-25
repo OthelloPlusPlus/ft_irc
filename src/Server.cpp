@@ -291,7 +291,7 @@ void	Server::handlerSIGINT(int signal)
 {
 	std::signal(SIGINT, SIG_DFL);
 	std::cout	<< "SIGINT received: "	<< signal
-				<< "\nRepeat SIGINT to force shutdown"<< std::endl;
+				<< "\nRepeat SIGINT to force shutdown"	<< std::endl;
 	Server::state = false;
 }
 

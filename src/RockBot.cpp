@@ -166,10 +166,7 @@ void	RockBot::think(std::string dest, std::string arg){
 	else if (cmd == "//helpbot")
 		this->helpBot(dest);
 	else if (dest[0] != '#')
-		this->send.push("PRIVMSG " + dest + " :Huh?");
-	else if (dest[0] == '#' && cmd.compare(0, 2, "//") == 0 && \
-			cmd != "//play" && cmd != "//level" && cmd != "//show" && cmd != "//reset" && cmd != "//help")
-		this->send.push("PRIVMSG " + dest + " :Hemmhh...I don't recognise this command ¯\\_(ツ)_/¯");
+		this->send.push("PRIVMSG " + dest + " :Huh? ¯\\_(ツ)_/¯");
 }
 
 void	RockBot::botPlays(std::string dest, std::string arg){
@@ -301,8 +298,8 @@ void	RockBot::helpBot(std::string dest){
 
 	this->send.push("PRIVMSG " + dest + " :I can play Rock - paper - scissors!");
 	this->send.push("PRIVMSG " + dest + " ://throw  <shape>\tto challenge me");
-	this->send.push("PRIVMSG " + dest + " ://stats\t\t\t\tto display the current game");
-	this->send.push("PRIVMSG " + dest + " ://restart\t\t\tto start again");
+	this->send.push("PRIVMSG " + dest + " ://stats\tto display the current game");
+	this->send.push("PRIVMSG " + dest + " ://restart\tto start again");
 }
 
 hand_t	RockBot::findGame(std::string key){

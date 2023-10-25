@@ -11,7 +11,11 @@
 /* ************************************************************************** */
 
 #include "AClient.hpp"
+#include "verboseCheck.hpp"
+#include "colors.hpp"
+
 #include <iostream>
+// std::cout
 
 /** ************************************************************************ **\
  * 
@@ -39,14 +43,14 @@ AClient::~AClient(void)
 
 void	AClient::printInfo(void) const
 {
-	std::cout	<< "this->_clientIP\t"	<< this->_clientIP	<< '\n'
-				<< "this->_nickName\t"	<< this->_nickName	<< '\n'
-				<< "this->_userName\t"	<< this->_userName	<< '\n'
-				<< "this->_realName\t"	<< this->_realName	<< '\n'
-				<< "this->_isRegistered\t"	<< this->_isRegistered	<< '\n'
-				<< "this->_isOperator\t"	<< this->_isOperator	<< '\n'
-				<< "this->_buffer\t"	<< this->_buffer	<< '\n'
-				<< std::flush;
+	if (verboseCheck() >= V_DETAILS)
+		std::cout	<< C_RESET	<< "this->_clientIP()\t"	<< C_BLUE	<< this->_clientIP	<< '\n'
+					<< C_RESET	<< "this->_nickName()\t"	<< C_BLUE	<< this->_nickName	<< '\n'
+					<< C_RESET	<< "this->_userName()\t"	<< C_BLUE	<< this->_userName	<< '\n'
+					<< C_RESET	<< "this->_realName()\t"	<< C_BLUE	<< this->_realName	<< '\n'
+					<< C_RESET	<< "this->_isRegistered()\t"	<< C_BLUE	<< this->_isRegistered	<< '\n'
+					<< C_RESET	<< "this->_isOperator()\t"	<< C_BLUE	<< this->_isOperator	<< '\n'
+					<< C_RESET	<< std::flush;
 }
 
 void	AClient::passwordValidation(bool val)
