@@ -281,6 +281,16 @@ These two namespace implementations showcase different techniques to achieve enc
 # Evaluation
 **Score:** 122%
 > "I am absolutely mesmerised by this project. You put so much work and thought into this, it is brilliant! Everything works so well and even the tiniest details are well thought through! There is just one tiny forgotten check, but other than that it is freakin' awesome!"
+> 		- Fellow student
+
+**Score:** %
+> ""
+> 		- <a href="" target="_blank">Fellow student</a>
+
+**Score:** %
+> ""
+> 		- [Fellow student]()
+
 
 # Sources
 - https://pidgin.im/
