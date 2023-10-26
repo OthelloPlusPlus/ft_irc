@@ -154,7 +154,7 @@ void	Server::readEnv(void)
 
 	std::cout	<< "Reading env for crucial information...\n";
 	env = std::getenv("IRCADMINPWD");
-	if (!env)
+	if (!env || std::string(env).empty())
 		throw (std::runtime_error("Admin password not found in env."));
 	if (this->passwordUser == env)
 		throw (std::runtime_error("Invalid password set."));

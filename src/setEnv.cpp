@@ -25,6 +25,10 @@
 #include <sys/stat.h>
 // struct stat
 // time_t
+#include <thread>
+// std::this_thread::sleep_for()
+#include <chrono>
+// std::chrono::
 
 static bool			newInfo(std::string file);
 static void			readAndSet(std::string file);
@@ -58,6 +62,12 @@ static bool	newInfo(std::string file)
 		throw (std::runtime_error("Failed to read meta-data of " + file + "."));
 	if (fileInfo.st_mtime > last)
 	{
+		for (time_t end = time(nullptr) + std::chrono::seconds(60).count(); fileInfo.st_size == 0 && time(nullptr) < end; )
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			if (stat(file.c_str(), &fileInfo) != 0)
+				throw (std::runtime_error("Failed to read meta-data of " + file + "."));
+		}
 		last = fileInfo.st_mtime;
 		return (true);
 	}
@@ -71,8 +81,6 @@ static void	readAndSet(std::string file)
 	std::cout	<< "Updating env by reading .env file..."	<< std::endl;
 	if (!fd.is_open())
 		throw (std::runtime_error("Failed to open " + file + "."));
-	fd.clear();
-	fd.seekg(fd.beg);
 	std::string	line;
 	while (std::getline(fd, line))
 	{
@@ -106,7 +114,7 @@ static void	readAndSet(std::string file)
 static std::string	trimLine(std::string line, std::string trim)
 {
 	if (line.empty() || line.find_first_not_of(trim) == std::string::npos)
-		return (line);
+		return ("");
 	line = line.substr(line.find_first_not_of(trim));
 	line = line.substr(0, line.find_last_not_of(trim) + 1);
 	return (line);
