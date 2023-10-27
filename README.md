@@ -71,6 +71,7 @@ To connect with Pidgin make a new Account and set the following settings.
 	<img src="https://github.com/OthelloPlusPlus/ft_irc/blob/img/AccountBasic.png" alt="ModifyAccountBasic" width="49%"/>
 	<img src="https://github.com/OthelloPlusPlus/ft_irc/blob/img/AccountAdvanced.png" alt="ModifyAccountAdvanced" width="49%"/>
 </p>
+
 Alternatively **nc** can be used to connect. This will however require the user to type in full IRC Protocol. The Shell Script [nctest.sh](nctest.sh) can be used to quickly connect to the IRC Server and will register the user and execute a few test commands.
 
 ## Bots
@@ -135,18 +136,18 @@ The IRC_VERBOSE setting in .env can be set to adjust the types of output are sen
 		</tr>
 		<tr>
 			<td>2</td>
-			<td>V_DETAILS</td>
-			<td>Include Details on construction and deconstruction of users</td>
-		</tr>
-		<tr>
-			<td>3</td>
 			<td>V_CHANNEL</td>
 			<td>Include Channel events</td>
 		</tr>
 		<tr>
-			<td>4</td>
+			<td>3</td>
 			<td>V_USER</td>
 			<td>Include User events</td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td>V_DETAILS</td>
+			<td>Include Details on construction and deconstruction of users</td>
 		</tr>
 		<tr>
 			<td>5</td>
@@ -283,13 +284,13 @@ These two namespace implementations showcase different techniques to achieve enc
 > "I am absolutely mesmerised by this project. You put so much work and thought into this, it is brilliant! Everything works so well and even the tiniest details are well thought through! There is just one tiny forgotten check, but other than that it is freakin' awesome!"
 > 		- Fellow student
 
-**Score:** %
-> ""
-> 		- <a href="" target="_blank">Fellow student</a>
+**Score:** 125%
+> "I am very disappointed by this evaluation, I was told in advance that something might not be working entirely as it should, but instead I could only find excellent functionality and perfect understanding of the topic and the subject. It was enthusiastically explained and very clear that you were both knowledgeable on the entire topic. So now I have to go back home disappointed in myself for not being able to find any flaws. I don't like it AT ALL! "
+> 		- [Alexander Von Benckendorff](https://github.com/alexbenkey/)
 
-**Score:** %
-> ""
-> 		- [Fellow student]()
+**Score:** 125%
+> "everything works correctly it handles edge cases, and I have no words because it's seem a program the can be bought by someone!"
+> 		- [Debora Monfrini](https://github.com/greedymelon)
 
 
 # Sources
